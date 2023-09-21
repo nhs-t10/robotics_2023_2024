@@ -25,6 +25,7 @@ public class Motor implements AutoCloseable {
 
     /**
      * Instantiate a {@link Motor}.
+     * Also uses an encoder. Todo: add interesting methods incorporating encoder
      *
      * @param motor     The {@link DcMotor} that is associated with this {@link Motor}.
      * @param tickCount The number of ticks for a full revolution of this motor.
@@ -64,6 +65,17 @@ public class Motor implements AutoCloseable {
         this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.motor.setPower(0);
     }
+
+    /**
+     * Gets the current encoder position
+     * @author arlanz
+     */
+    public int getPosition() { return motor.getCurrentPosition(); }
+
+    /**
+     * gets the number of motor rotations
+     */
+    public double getMotorRotations(){ return getPosition() / tickCount;}
 
     /**
      * Closes the internal {@link DcMotor} device. <strong>THIS SHOULD BE CALLED WHEN MOTORS ARE DONE BEING
