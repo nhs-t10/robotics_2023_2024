@@ -43,8 +43,9 @@ String executeCommand(String... args) {
 String getLatestGitHash() { return executeCommand('git', 'rev-parse', '--short', 'HEAD') }
 int getGitCommitCount() { return executeCommand('git', 'log', '--oneline').count("\n") }
 String getGitBranch() { return executeCommand('git', 'rev-parse', '--abbrev-ref', 'HEAD') }
+String getTime() { return System.currentTimeMillis().toString().substring(4, 10) }
 
-version "2.${getGitCommitCount()}+${getLatestGitHash()}@${getGitBranch()}-${System.currentTimeMillis()}"
+version "3.${getGitCommitCount()}, Build ${getTime()} (Commit ${getLatestGitHash()}@${getGitBranch()})"
 
 android.applicationVariants.configureEach { v ->
     tasks.create("javadoc${v.name.capitalize()}", Javadoc) {
