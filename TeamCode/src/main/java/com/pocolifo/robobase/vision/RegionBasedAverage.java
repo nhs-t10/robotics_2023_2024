@@ -1,5 +1,6 @@
 package com.pocolifo.robobase.vision;
 
+import centerstage.SpikePosition;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
