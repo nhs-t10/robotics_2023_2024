@@ -57,6 +57,26 @@ public class Robot {
         return 45.72 >= widthCm && 45.72 >= lengthCm && 45.72 >= heightCm;
     }
 
+    /**
+     * Used to set motor coefficients to forward/backward, if hardware sets them up backward
+     * Also used to adjust motor power, to correct drift/uneven motor power
+     * DONT DELETE! (unless you know what you're doing) All driveOmni functions run through here, eventually. You've been warned.
+     * Should be changed every
+     * @author arlanz
+     */
+    public final double[][] omniDriveCoefficients =
+            {
+            //total:
+                    {1, 1, 1, 1},
+            //vertical
+                    {1, 1, 1, 1},
+            //horizontal
+                    {1, 1, 1, 1},
+            //rotational
+                    {1, 1, 1, 1}
+            };
+
+
     public Robot(double widthCm, double lengthCm, double heightCm, int teamNumber, String robotName, boolean hasWarningSticker) {
         this.widthCm = widthCm;
         this.lengthCm = lengthCm;
