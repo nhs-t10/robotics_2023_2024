@@ -99,6 +99,7 @@ public class Webcam implements AutoCloseable {
 		this.pipeline = pipeline;
 		this.webcam.setPipeline(pipeline);
 		this.webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+		this.pipeline.init();
 	}
 
 	/**

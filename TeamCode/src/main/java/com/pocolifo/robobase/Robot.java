@@ -47,15 +47,15 @@ public class Robot {
     // TODO: Add more metrics about the robot in real life.
 
     /**
-     * Determine if the robot meets dimension requirements.
-     *
-     * @return True if the robot meets the dimension requirements, false if it doesn't.
-     * @author youngermax
+     * True if the robot passes the following inspection requirements:
+     * <ul>
+     *     <li>18 in >= width</li>
+     *     <li>18 in >= length</li>
+     *     <li>18 in >= height</li>
+     *     <li>Robot has a warning sticker</li>
+     * </ul>
      */
-    public boolean doesPassDimensionInspection() {
-        // 45.72 is equivalent to 18 inches, the requirements for a robot
-        return 45.72 >= widthCm && 45.72 >= lengthCm && 45.72 >= heightCm;
-    }
+    public final boolean isPassingInspection;
 
     /**
      * Used to set motor coefficients to forward/backward, if hardware sets them up backward
@@ -84,5 +84,8 @@ public class Robot {
         this.teamNumber = teamNumber;
         this.robotName = robotName;
         this.hasWarningSticker = hasWarningSticker;
+
+        // 45.72 is equivalent to 18 inches, the requirements for a robot
+        this.isPassingInspection = 45.72 >= widthCm && 45.72 >= lengthCm && 45.72 >= heightCm && hasWarningSticker;
     }
 }
