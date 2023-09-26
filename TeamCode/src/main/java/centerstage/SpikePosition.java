@@ -1,4 +1,4 @@
-package com.pocolifo.robobase.vision;
+package centerstage;
 
 public enum SpikePosition {
     LEFT,
