@@ -22,4 +22,8 @@ public abstract class AbstractResultCvPipeline<T> extends OpenCvPipeline {
 	public T getResult() {
 		return result;
 	}
+
+	public void init() {
+		
+	}
 }
