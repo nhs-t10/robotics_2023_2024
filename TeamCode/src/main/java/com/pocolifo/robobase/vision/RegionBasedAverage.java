@@ -8,6 +8,8 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import centerstage.SpikePosition;
+
 public class RegionBasedAverage extends AbstractResultCvPipeline<Integer> {
     static final Scalar BLUE = new Scalar(0, 0, 255);
     static final Scalar GREEN = new Scalar(0, 255, 0);
