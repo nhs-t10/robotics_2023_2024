@@ -10,6 +10,8 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 
+import centerstage.SpikePosition;
+
 public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
     static final Scalar YCRCB_MIN = new Scalar(0, 95, 190);
     static final Scalar YCRCB_MAX = new Scalar(125, 105, 250);
