@@ -1,5 +1,6 @@
 package com.pocolifo.robobase.vision;
 
+import com.pocolifo.robobase.Alliance;
 import centerstage.SpikePosition;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -11,6 +12,7 @@ import org.opencv.imgproc.Imgproc;
 import centerstage.SpikePosition;
 
 public class RegionBasedAverage extends AbstractResultCvPipeline<Integer> {
+    static Alliance alliance = Alliance.Red;
     static final Scalar BLUE = new Scalar(0, 0, 255);
     static final Scalar GREEN = new Scalar(0, 255, 0);
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109, 98);
