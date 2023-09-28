@@ -281,20 +281,17 @@ public class CarWheels implements AutoCloseable, MovementAware {
     public void driveOmni(float verticalPower, float horizontalPower, float rotationalPower) {
         // Drive the wheels to match the controller input
         // TODO: Add explanation here -- even I don't know how this works
-        horizontalPower *= -1;
-        verticalPower *= -1;
-        rotationalPower *= -1;
-        float[] vals = new float[]{
-                verticalPower - horizontalPower - rotationalPower,
-                verticalPower + rotationalPower + horizontalPower,
-                verticalPower - rotationalPower + horizontalPower,
-                verticalPower + rotationalPower - horizontalPower
-        };
+        double[] vals = new double[]{
+                this.robot.omniDriveCoefficients[0][0]*(verticalPower*this.robot.omniDriveCoefficients[1][0] + horizontalPower*this.robot.omniDriveCoefficients[2][0] + rotationalPower*this.robot.omniDriveCoefficients[3][0]),
+                this.robot.omniDriveCoefficients[0][1]*(verticalPower*this.robot.omniDriveCoefficients[1][1] + horizontalPower*this.robot.omniDriveCoefficients[2][1] + rotationalPower*this.robot.omniDriveCoefficients[3][1]),
+                this.robot.omniDriveCoefficients[0][2]*(verticalPower*this.robot.omniDriveCoefficients[1][2] + horizontalPower*this.robot.omniDriveCoefficients[2][2] + rotationalPower*this.robot.omniDriveCoefficients[3][2]),
+                this.robot.omniDriveCoefficients[0][3]*(verticalPower*this.robot.omniDriveCoefficients[1][3] + horizontalPower*this.robot.omniDriveCoefficients[2][3] + rotationalPower*this.robot.omniDriveCoefficients[3][3]),
+                };
 
         // Normalize values if needed
-        float max = 0;
+        double max = 0;
 
-        for (float value : vals) {
+        for (double value : vals) {
             max = Math.max(Math.abs(value), max);
         }
 
@@ -305,7 +302,7 @@ public class CarWheels implements AutoCloseable, MovementAware {
             }
         }
 
-        this.driveIndividually(-vals[0], vals[1], -vals[2], vals[3]);
+        this.driveIndividually(vals[0], vals[1], vals[2], vals[3]);
     }
 
     /**

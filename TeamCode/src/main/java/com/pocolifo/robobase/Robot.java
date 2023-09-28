@@ -58,22 +58,23 @@ public class Robot {
     public final boolean isPassingInspection;
 
     /**
+     * Order of motors is FrontLeft, FrontRight, BackLeft, BackRight
      * Used to set motor coefficients to forward/backward, if hardware sets them up backward
      * Also used to adjust motor power, to correct drift/uneven motor power
-     * DONT DELETE! (unless you know what you're doing) All driveOmni functions run through here, eventually. You've been warned.
+     * DON'T DELETE! (unless you know what you're doing) All driveOmni functions run through here, eventually. You've been warned.
      * Should be changed every
      * @author arlanz
      */
     public final double[][] omniDriveCoefficients =
             {
-            //total:
+            //total CHANGE EACH YEAR IF NEEDED
+                    {-1, -1, -1, -1},
+            //vertical DON'T TOUCH, unless there's real problems
                     {1, 1, 1, 1},
-            //vertical
-                    {1, 1, 1, 1},
-            //horizontal
-                    {1, 1, 1, 1},
-            //rotational
-                    {1, 1, 1, 1}
+            //horizontal DON'T TOUCH, unless there's real problems
+                    {-1, 1, 1, -1},
+            //rotational DON'T TOUCH, unless there's real problems
+                    {-1, 1, -1, 1}
             };
 
 
