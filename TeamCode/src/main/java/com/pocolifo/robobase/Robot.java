@@ -1,6 +1,7 @@
 package com.pocolifo.robobase;
 
 import com.pocolifo.robobase.motor.CarWheels;
+import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 
 /**
  * Data and other information about the robot. This should be kept as accurate and up-to-date as possible!
@@ -58,33 +59,21 @@ public class Robot {
     public final boolean isPassingInspection;
 
     /**
-     * Order of motors is FrontLeft, FrontRight, BackLeft, BackRight
-     * Used to set motor coefficients to forward/backward, if hardware sets them up backward
-     * Also used to adjust motor power, to correct drift/uneven motor power
-     * DON'T DELETE! (unless you know what you're doing) All driveOmni functions run through here, eventually. You've been warned.
-     * Should be changed every
-     * @author arlanz
+     * All motor movements are multiplied by these coefficients.
+     * These coefficients should be changed every year ONLY if needed.
+     *
+     * @see OmniDriveCoefficients
      */
-    public final double[][] omniDriveCoefficients =
-            {
-            //total CHANGE EACH YEAR IF NEEDED
-                    {-1, -1, -1, -1},
-            //vertical DON'T TOUCH, unless there's real problems
-                    {1, 1, 1, 1},
-            //horizontal DON'T TOUCH, unless there's real problems
-                    {-1, 1, 1, -1},
-            //rotational DON'T TOUCH, unless there's real problems
-                    {-1, 1, -1, 1}
-            };
+    public final OmniDriveCoefficients omniDriveCoefficients;
 
-
-    public Robot(double widthCm, double lengthCm, double heightCm, int teamNumber, String robotName, boolean hasWarningSticker) {
+    public Robot(double widthCm, double lengthCm, double heightCm, int teamNumber, String robotName, boolean hasWarningSticker, OmniDriveCoefficients omniDriveCoefficients) {
         this.widthCm = widthCm;
         this.lengthCm = lengthCm;
         this.heightCm = heightCm;
         this.teamNumber = teamNumber;
         this.robotName = robotName;
         this.hasWarningSticker = hasWarningSticker;
+        this.omniDriveCoefficients = omniDriveCoefficients;
 
         // 45.72 is equivalent to 18 inches, the requirements for a robot
         this.isPassingInspection = 45.72 >= widthCm && 45.72 >= lengthCm && 45.72 >= heightCm && hasWarningSticker;

@@ -181,10 +181,13 @@ public class CarWheels implements AutoCloseable, MovementAware {
      * @author youngermax
      */
     public void driveIndividually(double frontLeft, double frontRight, double backLeft, double backRight) {
-        this.frontLeft.drive(frontLeft);
-        this.frontRight.drive(frontRight);
-        this.backLeft.drive(backLeft);
-        this.backRight.drive(backRight);
+        // Validate inputs
+        OmniDriveCoefficients.CoefficientSet set = new OmniDriveCoefficients.CoefficientSet(frontLeft, frontRight, backLeft, backRight);
+
+        this.frontLeft.drive(set.frontLeft);
+        this.frontRight.drive(set.frontRight);
+        this.backLeft.drive(set.backLeft);
+        this.backRight.drive(set.backRight);
     }
 
     /**
@@ -280,33 +283,22 @@ public class CarWheels implements AutoCloseable, MovementAware {
      */
     public void driveOmni(float verticalPower, float horizontalPower, float rotationalPower) {
         // Drive the wheels to match the controller input
-        // TODO: Add explanation here -- even I don't know how this works
-        double[] vals = new double[]{
-                this.robot.omniDriveCoefficients[0][0]*(verticalPower*this.robot.omniDriveCoefficients[1][0] + horizontalPower*this.robot.omniDriveCoefficients[2][0] + rotationalPower*this.robot.omniDriveCoefficients[3][0]),
-                this.robot.omniDriveCoefficients[0][1]*(verticalPower*this.robot.omniDriveCoefficients[1][1] + horizontalPower*this.robot.omniDriveCoefficients[2][1] + rotationalPower*this.robot.omniDriveCoefficients[3][1]),
-                this.robot.omniDriveCoefficients[0][2]*(verticalPower*this.robot.omniDriveCoefficients[1][2] + horizontalPower*this.robot.omniDriveCoefficients[2][2] + rotationalPower*this.robot.omniDriveCoefficients[3][2]),
-                this.robot.omniDriveCoefficients[0][3]*(verticalPower*this.robot.omniDriveCoefficients[1][3] + horizontalPower*this.robot.omniDriveCoefficients[2][3] + rotationalPower*this.robot.omniDriveCoefficients[3][3]),
-                };
+        OmniDriveCoefficients.CoefficientSet vals = this.robot.omniDriveCoefficients.calculateCoefficientsWithPower(
+                verticalPower,
+                horizontalPower,
+                rotationalPower
+        );
 
-        // Normalize values if needed
-        double max = 0;
-
-        for (double value : vals) {
-            max = Math.max(Math.abs(value), max);
-        }
-
-        // Normalize only if the max value in the array has a greater distance from zero than 1
-        if (max > 1) {
-            for (int i = 0; vals.length > i; i++) {
-                vals[i] /= max;
-            }
-        }
-
-        this.driveIndividually(vals[0], vals[1], vals[2], vals[3]);
+        this.driveIndividually(
+                vals.frontLeft,
+                vals.frontRight,
+                vals.backLeft,
+                vals.backRight
+        );
     }
 
     /**
-     * Closes the internal motors. <strong>THIS SHOULD BE CALLED WHEN THE MOTORS ARE DONE BEING USED!</strong>
+     * Closes the internal motors.
      *
      * @author youngermax
      */
