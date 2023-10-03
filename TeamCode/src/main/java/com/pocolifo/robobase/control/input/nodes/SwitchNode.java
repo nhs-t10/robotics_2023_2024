@@ -37,13 +37,6 @@ public class SwitchNode extends InputManagerInputNode {
         this.node = node;
         this.node1 = node1;
     }
-    public SwitchNode(InputManagerInputNode input1, InputManagerInputNode input2, InputManagerInputNode node, InputManagerInputNode node1, boolean led) {
-        this.input1 = input1;
-        this.input2 = input2;
-        this.node = node;
-        this.node1 = node1;
-        SwitchNode.led = led;
-    }
 
     @Override
     public void init(InputManager boss) {
@@ -63,18 +56,9 @@ public class SwitchNode extends InputManagerInputNode {
 
         if(state == State.GAMEPAD_1 && isPressed && !wasPressed) {
             state = State.GAMEPAD_2;
-
-            if(led) {
-                InputManager.vibrategp2(3);
-                InputManager.ledgp2();
-            }
-        }else if(state == State.GAMEPAD_2 && isPressed2 && !wasPressed2) {
+        }
+        else if(state == State.GAMEPAD_2 && isPressed2 && !wasPressed2) {
             state = State.GAMEPAD_1;
-
-            if(led) {
-                InputManager.vibrategp(3);
-                InputManager.ledgp1();
-            }
         }
         wasPressed = isPressed;
         wasPressed2 = isPressed2;

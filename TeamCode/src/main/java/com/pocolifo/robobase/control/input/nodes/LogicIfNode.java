@@ -7,7 +7,7 @@ import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
 import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
 
-public class IfNode extends InputManagerInputNode {
+public class LogicIfNode extends InputManagerInputNode {
     private final InputManagerInputNode node;
     private final InputManagerInputNode nodeIfOff;
     private final InputManagerInputNode nodeIfOn;
@@ -16,7 +16,7 @@ public class IfNode extends InputManagerInputNode {
     private boolean toggledOn;
     private boolean on;
 
-    public IfNode(InputManagerInputNode onOff, InputManagerInputNode ifOn, InputManagerInputNode ifOff) {
+    public LogicIfNode(InputManagerInputNode onOff, InputManagerInputNode ifOn, InputManagerInputNode ifOff) {
         this.node = onOff;
         this.nodeIfOn = ifOn;
         this.nodeIfOff = ifOff;

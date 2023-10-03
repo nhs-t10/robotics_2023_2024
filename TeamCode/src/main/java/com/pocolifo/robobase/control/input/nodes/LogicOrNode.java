@@ -6,7 +6,7 @@ import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
 import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
 
-public class AnyNode extends InputManagerInputNode {
+public class LogicOrNode extends InputManagerInputNode {
     private final InputManagerInputNode[] inputs;
 
     private final InputManagerNodeResult result = new InputManagerNodeResult();
@@ -15,9 +15,9 @@ public class AnyNode extends InputManagerInputNode {
      * Takes an array of multiple inputs and returns true if any of the inputs individually evaluate to true. <br>
      * If and only if all of the inputs evaluate false, the AnyNode will evaluate false.
      * @param inputs The list of inputs included in the AnyNode
-     * @see AllNode#AllNode(InputManagerInputNode...)  AllNode
+     * @see LogicAndNode#LogicAndNode(InputManagerInputNode...)  AllNode
      */
-    public AnyNode(InputManagerInputNode... inputs) {
+    public LogicOrNode(InputManagerInputNode... inputs) {
         this.inputs = inputs;
     }
 
