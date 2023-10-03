@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
-import com.pocolifo.robobase.control.input.nodeUtils.RobotTime;
 
 public class DoubleClickNode extends InputManagerInputNode {
     private final InputManagerInputNode node;
@@ -40,7 +39,7 @@ public class DoubleClickNode extends InputManagerInputNode {
         //only register a doubleclick on rising edge
         boolean isClickedRisingEdge = clickedCheck && !lastTimeClicked;
 
-        long now = RobotTime.currentTimeMillis();
+        long now = System.currentTimeMillis();
         long lastValidClickTime = now - clickLimitOffsetMs;
 
         //if the first click was before the last valid time, reset the time-keepy-tracky variables
@@ -53,7 +52,7 @@ public class DoubleClickNode extends InputManagerInputNode {
             if(firstClicked) {
                 currentlyDblClicked = true;
             } else {
-                timeClickedFirst = RobotTime.currentTimeMillis();
+                timeClickedFirst = System.currentTimeMillis();
                 firstClicked = true;
             }
         } else {

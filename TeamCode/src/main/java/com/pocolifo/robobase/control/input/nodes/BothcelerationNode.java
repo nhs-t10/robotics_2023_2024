@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
 import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
-import com.pocolifo.robobase.control.input.nodeUtils.RobotTime;
 
 
 public class BothcelerationNode extends InputManagerInputNode{
@@ -64,7 +63,7 @@ public class BothcelerationNode extends InputManagerInputNode{
         if(interpolationStartTime == 0) result.setFloat(defaultSpeed.getResult().getFloat());
 
         if(isPressed != wasPressed) {
-            interpolationStartTime = RobotTime.currentTimeMillis();
+            interpolationStartTime = System.currentTimeMillis();
             interpolationStartValue = result.getFloat();
             if(isPressed) {
                 interpolationEndValue = alternativeSpeed.getResult().getFloat();
@@ -73,7 +72,7 @@ public class BothcelerationNode extends InputManagerInputNode{
             }
         }
 
-        long timeSinceStart = RobotTime.currentTimeMillis() - interpolationStartTime;
+        long timeSinceStart = System.currentTimeMillis() - interpolationStartTime;
         float percentageCompleted = Math.max(0,Math.min(1, timeSinceStart / totalMovementTime));
 
         float resultNumber = interpolationStartValue + percentageCompleted * (interpolationEndValue - interpolationStartValue);

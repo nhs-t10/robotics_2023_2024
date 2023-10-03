@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
 import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
-import com.pocolifo.robobase.control.input.nodeUtils.RobotTime;
 
 public class DecelerationNode extends InputManagerInputNode{
 
@@ -60,7 +59,7 @@ public class DecelerationNode extends InputManagerInputNode{
         boolean isPressed = control.getResult().getBool();
 
         if(isPressed == false && wasPressed == true) {
-            decelerationStartTime = RobotTime.currentTimeMillis();
+            decelerationStartTime = System.currentTimeMillis();
         }
 
         float starting = startingSpeed.getResult().getFloat();
@@ -68,8 +67,8 @@ public class DecelerationNode extends InputManagerInputNode{
 
         float resultNumber = starting;
 
-        if(!isPressed && RobotTime.currentTimeMillis() < (decelerationStartTime + totalMovementTime) && decelerationStartTime != 0) {
-            long timeSinceStart = RobotTime.currentTimeMillis() - decelerationStartTime;
+        if(!isPressed && System.currentTimeMillis() < (decelerationStartTime + totalMovementTime) && decelerationStartTime != 0) {
+            long timeSinceStart = System.currentTimeMillis() - decelerationStartTime;
             float percentageCompleted = Math.min(1, timeSinceStart / totalMovementTime);
 
             resultNumber = starting - percentageCompleted * (starting - ending);
