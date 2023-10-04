@@ -22,4 +22,13 @@ public class StringUtils {
         for(int i = amount; i > 0; i--) result.append(str);
         return result.toString();
     }
+
+    public static String escapeString(String value) {
+        return value
+                .replace("\\", "\\\\")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\"", "\\\"")
+                .replace("\t", "\\t");
+    }
 }
