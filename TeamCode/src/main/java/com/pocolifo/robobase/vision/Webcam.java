@@ -133,4 +133,66 @@ public class Webcam implements AutoCloseable {
 		this.clearPipeline();
 		this.webcam.closeCameraDevice();
 	}
+
+	//  Extra function that only works in pipelines: GridDraw draws a grid on the phone view of the camera.
+	//	Why, you ask? So you can easily calibrate the box!
+	//
+	//  Width is the sideways resolution, height is the up-down resolution
+	/*
+	    void gridDraw(int width, int height, Mat input) {
+        final Scalar GREEN = new Scalar(0, 255, 0);
+        final Scalar RED = new Scalar(255,0,0);
+        Scalar COLOR = GREEN;
+        Point TopLeftThing = new Point(0,0);
+        Point BottomRightThing = new Point(width,0);
+        for (int currentHeight = 0; currentHeight < height; currentHeight += 20)
+        {
+            TopLeftThing.y = currentHeight;
+            BottomRightThing.y = currentHeight;
+            if (currentHeight % 100 == 0)
+            {
+                COLOR = RED;
+            }
+            else
+            {
+                COLOR = GREEN;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    TopLeftThing, // First point which defines the rectangle
+                    BottomRightThing, // Second point which defines the rectangle
+                    COLOR, // The color the rectangle is drawn in
+                    1); // Thickness of the rectangle lines
+
+        }
+        TopLeftThing.x = 0;
+        TopLeftThing.y = 0;
+        BottomRightThing.x = 0;
+        BottomRightThing.y = height;
+        for (int currentWidth = 0; currentWidth < width; currentWidth += 20)
+        {
+            TopLeftThing.x = currentWidth;
+            BottomRightThing.x = currentWidth;
+
+            if (currentWidth % 100 == 0)
+            {
+                COLOR = RED;
+            }
+            else
+            {
+                COLOR = GREEN;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    TopLeftThing, // First point which defines the rectangle
+                    BottomRightThing, // Second point which defines the rectangle
+                    COLOR, // The color the rectangle is drawn in
+                    1); // Thickness of the rectangle lines
+
+        }
+    }
+
+	 */
 }

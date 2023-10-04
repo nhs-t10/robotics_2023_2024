@@ -181,10 +181,13 @@ public class CarWheels implements AutoCloseable, MovementAware {
      * @author youngermax
      */
     public void driveIndividually(double frontLeft, double frontRight, double backLeft, double backRight) {
-        this.frontLeft.drive(frontLeft);
-        this.frontRight.drive(frontRight);
-        this.backLeft.drive(backLeft);
-        this.backRight.drive(backRight);
+        // Validate inputs
+        OmniDriveCoefficients.CoefficientSet set = new OmniDriveCoefficients.CoefficientSet(frontLeft, frontRight, backLeft, backRight);
+
+        this.frontLeft.drive(set.frontLeft);
+        this.frontRight.drive(set.frontRight);
+        this.backLeft.drive(set.backLeft);
+        this.backRight.drive(set.backRight);
     }
 
     /**
@@ -280,36 +283,22 @@ public class CarWheels implements AutoCloseable, MovementAware {
      */
     public void driveOmni(float verticalPower, float horizontalPower, float rotationalPower) {
         // Drive the wheels to match the controller input
-        // TODO: Add explanation here -- even I don't know how this works
-        horizontalPower *= -1;
-        verticalPower *= -1;
-        rotationalPower *= -1;
-        float[] vals = new float[]{
-                verticalPower - horizontalPower - rotationalPower,
-                verticalPower + rotationalPower + horizontalPower,
-                verticalPower - rotationalPower + horizontalPower,
-                verticalPower + rotationalPower - horizontalPower
-        };
+        OmniDriveCoefficients.CoefficientSet vals = this.robot.omniDriveCoefficients.calculateCoefficientsWithPower(
+                verticalPower,
+                horizontalPower,
+                rotationalPower
+        );
 
-        // Normalize values if needed
-        float max = 0;
-
-        for (float value : vals) {
-            max = Math.max(Math.abs(value), max);
-        }
-
-        // Normalize only if the max value in the array has a greater distance from zero than 1
-        if (max > 1) {
-            for (int i = 0; vals.length > i; i++) {
-                vals[i] /= max;
-            }
-        }
-
-        this.driveIndividually(-vals[0], vals[1], -vals[2], vals[3]);
+        this.driveIndividually(
+                vals.frontLeft,
+                vals.frontRight,
+                vals.backLeft,
+                vals.backRight
+        );
     }
 
     /**
-     * Closes the internal motors. <strong>THIS SHOULD BE CALLED WHEN THE MOTORS ARE DONE BEING USED!</strong>
+     * Closes the internal motors.
      *
      * @author youngermax
      */
