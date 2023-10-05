@@ -34,6 +34,7 @@ public class GetColorYCrCb extends AutonomousOpMode {
      */
     @Override
     public void run() {
-
+        System.out.println("Cr: " + webcam.getPipeline().getResult());
+        System.out.println("Cb: " + webcam.getPipeline().getSecondaryResult());
     }
 }
