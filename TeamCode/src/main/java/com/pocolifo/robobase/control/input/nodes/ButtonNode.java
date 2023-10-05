@@ -36,9 +36,9 @@ public class ButtonNode extends InputManagerInputNode {
     @NonNull
     @Override
     public InputManagerNodeResult getResult() {
-//        if(keyHandle == null) {
-//            logger.log(key);
-//        }
+        if(keyHandle == null) {
+            System.out.println(key);
+        }
         this.result.setFloat(keyHandle.get());
         return result;
     }
