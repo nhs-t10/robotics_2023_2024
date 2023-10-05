@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import centerstage.SpikePosition;
 
-@Autonomous(name = "Webcam Testing " + BuildProperties.VERSION)
+@Autonomous(name = "Color Auto " + BuildProperties.VERSION)
 public class GetColorYCrCb extends AutonomousOpMode {
 
     Webcam webcam;

@@ -13,7 +13,7 @@ public class Constants {
             false,
             new OmniDriveCoefficients(
                     new double[] { -1, -1, -1, -1 },
-                    new double[] {  1,  1,  1,  1 },
+                    new double[] { -1, -1,  1,  1 },
                     new double[] { -1,  1,  1, -1 },
                     new double[] { -1,  1, -1,  1 }
             )

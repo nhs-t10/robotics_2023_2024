@@ -38,7 +38,7 @@ public class TestingTeleOp extends TeleOpOpMode {
 
         this.useMicroMovement = new Toggleable(() -> this.gamepad1.a);
 
-        this.intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+//        this.intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
 
         this.intake = new Pressable(() -> this.gamepad1.b);
 
@@ -48,14 +48,14 @@ public class TestingTeleOp extends TeleOpOpMode {
     @Override
     public void loop() {
         this.gamepadCarWheels.update(this.useMicroMovement.get());
-        if (this.intake.get()) {
-            intakeServo.setDirection(DcMotorSimple.Direction.FORWARD);
-            intakeServo.setPower(0.2);
-        } else if (this.outtake.get()) {
-            intakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
-            intakeServo.setPower(0.2);
-        } else {
-            intakeServo.setPower(0);
-        }
+//        if (this.intake.get()) {
+//            intakeServo.setDirection(DcMotorSimple.Direction.FORWARD);
+//            intakeServo.setPower(0.2);
+//        } else if (this.outtake.get()) {
+//            intakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
+//            intakeServo.setPower(0.2);
+//        } else {
+//            intakeServo.setPower(0);
+//        }
     }
 }
