@@ -30,7 +30,7 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
     int largeBlobCenterX, inputWidth;
 
     // Volatile since accessed by OpMode thread w/o synchronization
-    private volatile SpikePosition position = SpikePosition.LEFT;
+    private volatile SpikePosition position = SpikePosition.NOT_FOUND;
 
     /**
     * @return the spike position
