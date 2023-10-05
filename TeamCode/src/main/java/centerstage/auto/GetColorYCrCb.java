@@ -22,9 +22,6 @@ public class GetColorYCrCb extends AutonomousOpMode {
         webcam = new Webcam(hardwareMap, "Webcam");
 
         webcam.open(new ColorTellerYCrCb());
-
-        System.out.println("Cr: " + webcam.getPipeline().getResult());
-        System.out.println("Cb: " + webcam.getPipeline().getSecondaryResult());
         //
 //        webcam.getPipeline().getResult();
     }
