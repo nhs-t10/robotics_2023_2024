@@ -28,6 +28,6 @@ public class WebcamTestingAuto extends AutonomousOpMode {
      */
     @Override
     public void run() {
-
+        System.out.println(webcam.getPipeline().getResult());
     }
 }
