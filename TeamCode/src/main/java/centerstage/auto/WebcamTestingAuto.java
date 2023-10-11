@@ -9,7 +9,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous(name = "Webcam Testing " + BuildProperties.VERSION)
 public class WebcamTestingAuto extends AutonomousOpMode {
 
-    Webcam webcam;
+    private Webcam webcam;
+    private EdgeDetection redEdgeDetector;
+    private EdgeDetection blueEdgeDetector;
+
 
     /**
      *
@@ -18,7 +21,8 @@ public class WebcamTestingAuto extends AutonomousOpMode {
     public void initialize() {
         webcam = new Webcam(hardwareMap, "Webcam");
 
-        webcam.open(new EdgeDetection());
+
+//        webcam.open();
 //
 //        webcam.getPipeline().getResult();
     }

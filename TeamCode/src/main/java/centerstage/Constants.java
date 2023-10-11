@@ -2,6 +2,7 @@ package centerstage;
 
 import com.pocolifo.robobase.Robot;
 import com.pocolifo.robobase.motor.OmniDriveCoefficients;
+import org.opencv.core.Scalar;
 
 public class Constants {
     public static final Robot ROBOT = new Robot(
@@ -13,11 +14,17 @@ public class Constants {
             false,
             new OmniDriveCoefficients(
                     new double[] { -1, -1, -1, -1 },
-                    new double[] { -1, 1,  1,  1 },
-                    new double[] { -1,  1,  -1, -1 },
-                    new double[] { 1,  1, -1,  1 }
+                    new double[] { -1,  1,  1,  1 },
+                    new double[] { -1,  1, -1, -1 },
+                    new double[] {  1,  1, -1,  1 }
             )
     );
+
+    public static final Scalar RED_YCRCB_MIN = new Scalar(0, 95, 190);
+    public static final Scalar RED_YCRCB_MAX = new Scalar(125, 105, 250);
+
+    public static final Scalar BLUE_YCRCB_MIN = new Scalar(0, 128, 96);
+    public static final Scalar BLUE_YCRCB_MAX = new Scalar(128, 255, 128);
 
     public static final double MOTOR_TICK_COUNT = 753.2d;
 }

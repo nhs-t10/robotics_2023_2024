@@ -76,11 +76,6 @@ public class OmniDriveCoefficients {
          * @param backRight  Coefficient for back right  motor.
          */
         public CoefficientSet(double frontLeft, double frontRight, double backLeft, double backRight) {
-            precondition(frontLeft);
-            precondition(frontRight);
-            precondition(backLeft);
-            precondition(backRight);
-
             this.frontLeft = frontLeft;
             this.frontRight = frontRight;
             this.backLeft = backLeft;
@@ -94,13 +89,6 @@ public class OmniDriveCoefficients {
          */
         public CoefficientSet(double[] coefficients) {
             this(coefficients[0], coefficients[1], coefficients[2], coefficients[3]);
-        }
-
-        // Utility for making sure the domain is allowed.
-        private static void precondition(double v) {
-            if (Math.abs(v) > 1) {
-                throw new RuntimeException("Motor coefficient in set is outside the allowed [-1, 1] domain: " + v);
-            }
         }
     }
 }

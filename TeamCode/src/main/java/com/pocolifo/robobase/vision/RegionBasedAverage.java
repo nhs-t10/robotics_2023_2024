@@ -12,7 +12,7 @@ import org.opencv.imgproc.Imgproc;
 import centerstage.SpikePosition;
 
 public class RegionBasedAverage extends AbstractResultCvPipeline<Integer> {
-    static Alliance alliance = Alliance.Red;
+    static Alliance alliance = Alliance.RED;
     static final Scalar BLUE = new Scalar(0, 0, 255);
     static final Scalar GREEN = new Scalar(0, 255, 0);
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109, 98);
@@ -231,5 +231,10 @@ public class RegionBasedAverage extends AbstractResultCvPipeline<Integer> {
     public Integer getResult() {
         result =  position.ordinal();
         return super.getResult();
+    }
+
+    @Override
+    public void init() {
+
     }
 }

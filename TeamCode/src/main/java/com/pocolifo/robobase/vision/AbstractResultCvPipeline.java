@@ -13,7 +13,6 @@ public abstract class AbstractResultCvPipeline<T> extends OpenCvPipeline {
 	 * The result of the webcam processor.
 	 */
 	protected T result;
-	protected T secondaryResult;
 
 	/**
 	 * Get the current result of the pipeline.
@@ -24,9 +23,8 @@ public abstract class AbstractResultCvPipeline<T> extends OpenCvPipeline {
 		return result;
 	}
 
-	public T getSecondaryResult() {return secondaryResult;}
-
-	public void init() {
-		
-	}
+	/**
+	 * Runs when the pipeline is first set.
+	 */
+	public abstract void init();
 }

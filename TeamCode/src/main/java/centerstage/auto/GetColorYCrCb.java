@@ -12,7 +12,7 @@ import centerstage.SpikePosition;
 @Autonomous(name = "Color Auto " + BuildProperties.VERSION)
 public class GetColorYCrCb extends AutonomousOpMode {
 
-    Webcam webcam;
+    private Webcam webcam;
 
     /**
      *
@@ -22,8 +22,6 @@ public class GetColorYCrCb extends AutonomousOpMode {
         webcam = new Webcam(hardwareMap, "Webcam");
 
         webcam.open(new ColorTellerYCrCb());
-        //
-//        webcam.getPipeline().getResult();
     }
 
     /**
@@ -31,7 +29,8 @@ public class GetColorYCrCb extends AutonomousOpMode {
      */
     @Override
     public void run() {
-        System.out.println("Cr: " + webcam.getPipeline().getResult());
-        System.out.println("Cb: " + webcam.getPipeline().getSecondaryResult());
+//        ColorTellerYCrCb.YCrCbResult result = ((ColorTellerYCrCb) webcam.getPipeline()).getResult();
+//        if (result != null) {
+//            System.out.printf("Result: %d %d%n", result.cr, result.cb);
     }
 }
