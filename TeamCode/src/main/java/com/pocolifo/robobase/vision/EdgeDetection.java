@@ -81,6 +81,12 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
                 new Point(biggestContourRect.x + biggestContourRect.width, biggestContourRect.y + biggestContourRect.height), // Second point which defines the rectangle
                 new Scalar(0.5, 255, 0), // The color the rectangle is drawn in
                 2); // Thickness of the rectangle lines
+        Imgproc.putText(input,
+                position.toString(),
+                new Point(0, 0),
+                0,
+                10,
+                new Scalar(0, 128, 128));
 
         int largeBlobCenterX = biggestContourRect.x + (biggestContourRect.width / 2);
         int inputWidth = input.width();
