@@ -48,6 +48,7 @@ public class TestingTeleOp extends TeleOpOpMode {
     @Override
     public void loop() {
         this.gamepadCarWheels.update(this.useMicroMovement.get());
+        useMicroMovement.processUpdates();
 //        if (this.intake.get()) {
 //            intakeServo.setDirection(DcMotorSimple.Direction.FORWARD);
 //            intakeServo.setPower(0.2);
