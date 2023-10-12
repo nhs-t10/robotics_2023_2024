@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import centerstage.SpikePosition;
 
 public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
+
+
     private final Scalar ycrcbMin;
     private final Scalar ycrcbMax;
 
@@ -82,7 +84,7 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
                 new Scalar(0.5, 255, 0), // The color the rectangle is drawn in
                 2); // Thickness of the rectangle lines
         Imgproc.putText(input,
-                position.toString(),
+                result.toString(),
                 new Point(0, 0),
                 0,
                 10,

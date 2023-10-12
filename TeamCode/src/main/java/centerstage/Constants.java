@@ -20,8 +20,8 @@ public class Constants {
             )
     );
 
-    public static final Scalar RED_YCRCB_MIN = new Scalar(0, 95, 190);
-    public static final Scalar RED_YCRCB_MAX = new Scalar(125, 105, 250);
+    static final Scalar RED_YCRCB_MIN = new Scalar(166, 77, 63);
+    static final Scalar RED_YCRCB_MAX = new Scalar(75, 110, 172);
 
     public static final Scalar BLUE_YCRCB_MIN = new Scalar(0, 128, 96);
     public static final Scalar BLUE_YCRCB_MAX = new Scalar(128, 255, 128);
