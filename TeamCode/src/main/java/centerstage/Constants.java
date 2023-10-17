@@ -20,11 +20,11 @@ public class Constants {
             )
     );
 
-    public static final Scalar RED_ycbcr_MIN = new Scalar(166, 77, 63);
-    public static final Scalar RED_ycbcr_MAX = new Scalar(75, 110, 172);
+    public static final Scalar RED_YCBCR_MIN = new Scalar(166, 77, 63);
+    public static final Scalar RED_YCBCR_MAX = new Scalar(75, 110, 172);
 
-    public static final Scalar BLUE_ycbcr_MIN = new Scalar(0, 128, 96);
-    public static final Scalar BLUE_ycbcr_MAX = new Scalar(128, 255, 128);
+    public static final Scalar BLUE_YCBCR_MIN = new Scalar(0, 128, 96);
+    public static final Scalar BLUE_YCBCR_MAX = new Scalar(128, 255, 128);
 
     public static final double MOTOR_TICK_COUNT = 753.2d;
 }
