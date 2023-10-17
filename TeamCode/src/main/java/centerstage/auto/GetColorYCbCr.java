@@ -7,7 +7,7 @@ import com.pocolifo.robobase.vision.ColorTellerYCbCr;
 import com.pocolifo.robobase.vision.Webcam;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Color Auto " + BuildProperties.VERSION)
+@Autonomous(name = "Color Tell " + BuildProperties.VERSION)
 public class GetColorYCbCr extends AutonomousOpMode {
 
     private Webcam webcam;
@@ -29,15 +29,17 @@ public class GetColorYCbCr extends AutonomousOpMode {
     public void run() {
         telemetry.addLine("running");
         telemetry.update();
+        for(int i = 0; i < 30; i++) {
         ColorTellerYCbCr.ycbcrResult result = ((ColorTellerYCbCr) webcam.getPipeline()).getResult();
-        if (result != null) {
-            telemetry.addData("Cr: ", result.cr);
-            telemetry.addData("Cb: ", result.cb);
-            telemetry.update();
-        }
-        else{
-            telemetry.addLine("Null");
-            telemetry.update();
+            if (result != null) {
+                telemetry.addData("Cr: ", result.cr);
+                telemetry.addData("Cb: ", result.cb);
+                telemetry.update();
+            } else {
+                telemetry.addLine("Null");
+                telemetry.update();
+            }
+            sleep(1000);
         }
     }
 }
