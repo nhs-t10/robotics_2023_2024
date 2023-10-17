@@ -27,8 +27,17 @@ public class GetColorYCbCr extends AutonomousOpMode {
      */
     @Override
     public void run() {
-//        ColorTellerycbcr.ycbcrResult result = ((ColorTellerycbcr) webcam.getPipeline()).getResult();
-//        if (result != null) {
-//            System.out.printf("Result: %d %d%n", result.cr, result.cb);
+        telemetry.addLine("running");
+        telemetry.update();
+        ColorTellerYCbCr.ycbcrResult result = ((ColorTellerYCbCr) webcam.getPipeline()).getResult();
+        if (result != null) {
+            telemetry.addData("Cr: ", result.cr);
+            telemetry.addData("Cb: ", result.cb);
+            telemetry.update();
+        }
+        else{
+            telemetry.addLine("Null");
+            telemetry.update();
+        }
     }
 }

@@ -3,6 +3,8 @@ package com.pocolifo.robobase.vision;
 
 import static com.pocolifo.robobase.vision.RegionBasedAverage.BLUE;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -93,6 +95,12 @@ public class ColorTellerYCbCr extends AbstractResultCvPipeline<ColorTellerYCbCr.
                 2); // Thickness of the rectangle lines
 
         return input;
+    }
+
+    @Override
+    public ycbcrResult getResult()
+    {
+        return result;
     }
 
     @Override
