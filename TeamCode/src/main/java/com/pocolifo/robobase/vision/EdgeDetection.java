@@ -15,28 +15,28 @@ import centerstage.SpikePosition;
 public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
 
 
-    private final Scalar ycrcbMin;
-    private final Scalar ycrcbMax;
+    private final Scalar ycbcrMin;
+    private final Scalar ycbcrMax;
 
     // These variables are used only in `processFrame`. They CAN NOT be declared locally.
     // Under the hood, OpenCV allocates memory for Mat every time `processFrame` is called.
     // Therefore, they must be initialized once in the instance-level.
     private ArrayList<MatOfPoint> contours;
-    private Mat convertedToYCrCb;
+    private Mat convertedToycbcr;
     private Mat matchedPixels;
     private Mat hierarchy;
     private MatOfPoint biggestContour;
 
 
     public EdgeDetection(Scalar min, Scalar max) {
-        this.ycrcbMin = min;
-        this.ycrcbMax = max;
+        this.ycbcrMin = min;
+        this.ycbcrMax = max;
     }
 
     @Override
     public void init() {
         contours = new ArrayList<>();
-        convertedToYCrCb = new Mat();
+        convertedToycbcr = new Mat();
         matchedPixels = new Mat();
         hierarchy = new Mat();
         biggestContour = null;
@@ -49,11 +49,11 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
      */
     @Override
     public synchronized Mat processFrame(Mat input) {
-        //convert the input to YCrCb, which is better for analysis than the default bgr.
-        Imgproc.cvtColor(input, convertedToYCrCb, Imgproc.COLOR_BGR2YCrCb);
+        //convert the input to ycbcr, which is better for analysis than the default bgr.
+        Imgproc.cvtColor(input, convertedToycbcr, Imgproc.COLOR_BGR2YCrCb);//Imgproc uses YCrCb, correct naming is YCbCr
 
         //filter the image to ONLY redish pixels
-        Core.inRange(convertedToYCrCb, ycrcbMin, ycrcbMax, matchedPixels);
+        Core.inRange(convertedToycbcr, ycbcrMin, ycbcrMax, matchedPixels);
 
         //Find the biggest blob of reddish pixels.
         //It likes using a list of Matrices of points instead of something more simple, but that's ok.

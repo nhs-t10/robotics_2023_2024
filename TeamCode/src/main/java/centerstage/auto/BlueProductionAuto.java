@@ -8,6 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous(name = "Blue " + BuildProperties.VERSION)
 public class BlueProductionAuto extends BaseProductionAuto {
     public BlueProductionAuto() {
-        super(new EdgeDetection(Constants.BLUE_YCRCB_MIN, Constants.BLUE_YCRCB_MAX));
+        super(new EdgeDetection(Constants.BLUE_ycbcr_MIN, Constants.BLUE_ycbcr_MAX));
     }
 }

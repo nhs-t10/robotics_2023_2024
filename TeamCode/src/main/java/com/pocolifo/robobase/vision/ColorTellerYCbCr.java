@@ -10,7 +10,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class ColorTellerYCrCb extends AbstractResultCvPipeline<ColorTellerYCrCb.YCrCbResult> {
+public class ColorTellerYCbCr extends AbstractResultCvPipeline<ColorTellerYCbCr.ycbcrResult> {
     private static final Point TopLeftAnchorPoint = new Point(300, 318); //Base Picture is 600 x 480 when taken on the robot.
     private static final int REGION_WIDTH = 20; //1cm
     private static final int REGION_HEIGHT = 20; //1cm
@@ -18,16 +18,16 @@ public class ColorTellerYCrCb extends AbstractResultCvPipeline<ColorTellerYCrCb.
 
     // Working variables. Because of memory concerns, we're not allowed to make ANY non-primitive variables within the `processFrame` method.
     //Mat is what you see
-    Mat YCrCb = new Mat(), Region_Cr = new Mat(), Region_Cb = new Mat(), Cr = new Mat(), Cb = new Mat();
+    Mat ycbcr = new Mat(), Region_Cr = new Mat(), Region_Cb = new Mat(), Cr = new Mat(), Cb = new Mat();
 
     private void inputToCr(Mat input) {
-        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(YCrCb, Cr, 1);
+        Imgproc.cvtColor(input, ycbcr, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(ycbcr, Cr, 1);
     }
 
     private void inputToCb(Mat input) {
-        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(YCrCb, Cb, 2);
+        Imgproc.cvtColor(input, ycbcr, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(ycbcr, Cb, 2);
     }
 
     private void drawGrid(int width, int height, Mat input) {
@@ -79,7 +79,7 @@ public class ColorTellerYCrCb extends AbstractResultCvPipeline<ColorTellerYCrCb.
         inputToCr(input);
         inputToCb(input);
 
-        result = new YCrCbResult();
+        result = new ycbcrResult();
         result.cr = (int) Core.mean(Region_Cr).val[0];
         result.cb = (int) Core.mean(Region_Cb).val[0];
 
@@ -98,7 +98,7 @@ public class ColorTellerYCrCb extends AbstractResultCvPipeline<ColorTellerYCrCb.
     @Override
     public void init() {}
 
-    public static class YCrCbResult {
+    public static class ycbcrResult {
         public int cr;
         public int cb;
     }

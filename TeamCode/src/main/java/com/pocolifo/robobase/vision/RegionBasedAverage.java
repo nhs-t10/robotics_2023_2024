@@ -41,13 +41,13 @@ public class RegionBasedAverage extends AbstractResultCvPipeline<Integer> {
             REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
     Mat region1_Cr, region2_Cr, region3_Cr;
-    private final Mat YCrCb = new Mat();
+    private final Mat ycbcr = new Mat();
     private final Mat Cr = new Mat();
     int avg1, avg2, avg3;
     private volatile SpikePosition position = SpikePosition.LEFT;
     void inputToCb(Mat input) {
-        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(YCrCb, Cr, 1);
+        Imgproc.cvtColor(input, ycbcr, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(ycbcr, Cr, 1);
     }
 
     @Override
@@ -83,19 +83,19 @@ public class RegionBasedAverage extends AbstractResultCvPipeline<Integer> {
         /*
          * Overview of what we're doing:
          *
-         * We first convert to YCrCb color space, from RGB color space.
+         * We first convert to ycbcr color space, from RGB color space.
          * Why do we do this? Well, in the RGB color space, chroma and
-         * luma are intertwined. In YCrCb, chroma and luma are separated.
-         * YCrCb is a 3-channel color space, just like RGB. YCrCb's 3 channels
+         * luma are intertwined. In ycbcr, chroma and luma are separated.
+         * ycbcr is a 3-channel color space, just like RGB. ycbcr's 3 channels
          * are Y, the luma channel (which essentially just a B&W image), the
          * Cr channel, which records the difference from red, and the Cb channel,
          * which records the difference from blue. Because chroma and luma are
-         * not related in YCrCb, vision code written to look for certain values
+         * not related in ycbcr, vision code written to look for certain values
          * in the Cr/Cb channels will not be severely affected by differing
          * light intensity, since that difference would most likely just be
          * reflected in the Y channel.
          *
-         * After we've converted to YCrCb, we extract just the 2nd channel, the
+         * After we've converted to ycbcr, we extract just the 2nd channel, the
          * Cb channel. We do this because stones are bright yellow and contrast
          * STRONGLY on the Cb channel against everything else, including SkyStones
          * (because SkyStones have a black label).
@@ -116,7 +116,7 @@ public class RegionBasedAverage extends AbstractResultCvPipeline<Integer> {
          */
 
         /*
-         * Get the Cb channel of the input frame after conversion to YCrCb
+         * Get the Cb channel of the input frame after conversion to ycbcr
          */
         inputToCb(input);
 
