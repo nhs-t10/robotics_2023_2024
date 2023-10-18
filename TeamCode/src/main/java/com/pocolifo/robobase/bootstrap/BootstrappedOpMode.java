@@ -57,7 +57,7 @@ public abstract class BootstrappedOpMode extends OpMode {
 
     /**
      * Waits a desired number of milliseconds.
-     * {@link Thread#sleep(long)} does not work, use this instead!
+     * <strong>{@link Thread#sleep(long)} does not work, use this instead!</strong>
      *
      * @param milliseconds Number of milliseconds to wait
      */

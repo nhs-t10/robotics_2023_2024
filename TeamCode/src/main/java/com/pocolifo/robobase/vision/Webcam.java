@@ -73,7 +73,8 @@ public class Webcam implements AutoCloseable {
 		this.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
 			@Override
 			public void onOpened() {
-				Webcam.this.setPipeline(pipeline);
+				if (pipeline != null) Webcam.this.setPipeline(pipeline);
+
 				ready.set(true);
 			}
 
@@ -108,9 +109,9 @@ public class Webcam implements AutoCloseable {
 	 * @author youngermax
 	 */
 	public void clearPipeline() {
-		this.pipeline = null;
-		this.webcam.setPipeline(null);
 		this.webcam.stopStreaming();
+		this.webcam.setPipeline(null);
+		this.pipeline = null;
 	}
 
 	/**

@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 
 /**
  * An implementation of PrintStream which is used as the implementation of System.out and System.err.
@@ -46,15 +47,100 @@ public class RobotDebugPrintStream extends PrintStream {
 
     @Override
     public final void print(Object obj) {
-        this.telemetry.addData("", JSONify(obj));
+        this.print(obj == null ? "null" : obj.toString());
+    }
+
+    @Override
+    public void print(boolean b) {
+        this.print(Boolean.toString(b));
+    }
+
+    @Override
+    public void print(char c) {
+        this.print(Character.toString(c));
+    }
+
+    @Override
+    public void print(int i) {
+        this.print(Integer.toString(i));
+    }
+
+    @Override
+    public void print(long l) {
+        super.print(Long.toString(l));
+    }
+
+    @Override
+    public void print(float f) {
+        super.print(Float.toString(f));
+    }
+
+    @Override
+    public void print(double d) {
+        super.print(Double.toString(d));
+    }
+
+    @Override
+    public void print(char[] s) {
+        super.print(Arrays.toString(s));
+    }
+
+    @Override
+    public void print(String s) {
+        this.telemetry.addData("", s);
         this.telemetry.update();
     }
 
     @Override
-    public final void println(Object obj) {
+    public void println() {
         this.telemetry.addLine();
-        this.telemetry.addData("", JSONify(obj));
         this.telemetry.update();
+    }
+
+    @Override
+    public void println(boolean b) {
+        this.println(Boolean.toString(b));
+    }
+
+    @Override
+    public void println(char c) {
+        this.println(Character.toString(c));
+    }
+
+    @Override
+    public void println(int i) {
+        this.println(Integer.toString(i));
+    }
+
+    @Override
+    public void println(long l) {
+        super.println(Long.toString(l));
+    }
+
+    @Override
+    public void println(float f) {
+        super.println(Float.toString(f));
+    }
+
+    @Override
+    public void println(double d) {
+        super.println(Double.toString(d));
+    }
+
+    @Override
+    public void println(char[] s) {
+        super.println(Arrays.toString(s));
+    }
+
+    @Override
+    public void println(String s) {
+        this.telemetry.addData("", s);
+        this.println();
+    }
+
+    @Override
+    public final void println(Object obj) {
+        this.println(obj == null ? "null" : obj.toString());
     }
 
     @Override
@@ -64,7 +150,7 @@ public class RobotDebugPrintStream extends PrintStream {
 
     @Override
     public final PrintStream printf(String format, Object... args) {
-        this.print(String.format(format, args)); // IntelliJ shows String.format as a redundant call, this is not true
+        this.print(String.format(format, args)); // IMPORTANT!! IntelliJ shows String.format as a redundant call, this is not true
 
         return this;
     }

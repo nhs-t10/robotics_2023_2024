@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import centerstage.SpikePosition;
 
 public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
-
-
     private final Scalar ycbcrMin;
     private final Scalar ycbcrMax;
 
@@ -26,7 +24,6 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
     private Mat matchedPixels;
     private Mat hierarchy;
     private MatOfPoint biggestContour;
-
 
     public EdgeDetection(Scalar min, Scalar max) {
         this.ycbcrMin = min;
@@ -40,7 +37,6 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
         matchedPixels = new Mat();
         hierarchy = new Mat();
         biggestContour = null;
-
     }
 
     /**
@@ -61,6 +57,7 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
 
         //FeatureManager.logger.log("Contour Count: " + contours.size());
         //only bother continuing if there were any contours found
+        System.out.println("Contours: " + contours.size());
         if (contours.size() == 0) return input;
 
         double biggestArea = -1;
@@ -73,6 +70,7 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
             }
         }
 
+        System.out.println("Biggest Contours");
         if (biggestContour == null) return input;
 
         Rect biggestContourRect = Imgproc.boundingRect(biggestContour);
@@ -83,12 +81,6 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
                 new Point(biggestContourRect.x + biggestContourRect.width, biggestContourRect.y + biggestContourRect.height), // Second point which defines the rectangle
                 new Scalar(0.5, 255, 0), // The color the rectangle is drawn in
                 2); // Thickness of the rectangle lines
-        Imgproc.putText(input,
-                result.toString(),
-                new Point(0, 0),
-                0,
-                10,
-                new Scalar(0, 128, 128));
 
         int largeBlobCenterX = biggestContourRect.x + (biggestContourRect.width / 2);
         int inputWidth = input.width();
@@ -101,6 +93,13 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
         } else {
             result = SpikePosition.RIGHT;
         }
+
+        Imgproc.putText(input,
+                result.name(),
+                new Point(0, 0),
+                0,
+                10,
+                new Scalar(0, 128, 128));
 
         return input;
     }

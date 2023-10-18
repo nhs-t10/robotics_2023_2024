@@ -16,21 +16,26 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Override
     public void initialize() {
         this.webcam = new Webcam(this.hardwareMap, "Webcam");
-        this.webcam.open(this.edgeDetection);
+        this.webcam.open(null);
     }
 
     @Override
     public void run() {
+        this.webcam.setPipeline(this.edgeDetection);
+        System.out.println("Running edge detection");
+
         try {
-            while (this.edgeDetection.getResult() == SpikePosition.NOT_FOUND) {
-                Thread.sleep(500);
+            while (this.edgeDetection.getResult() == SpikePosition.NOT_FOUND || this.edgeDetection.getResult() == null) {
+                this.sleep(500);
                 System.out.println("Finding spikes...");
             }
 
-            this.webcam.close();
-
             System.out.println("Detected");
             System.out.println(this.edgeDetection.getResult());
+
+            System.out.println("Closing!");
+            this.webcam.close();
+
         } catch (InterruptedException ignored) {
 
         } catch (Exception e) {
