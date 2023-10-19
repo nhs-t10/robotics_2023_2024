@@ -27,4 +27,12 @@ public class Constants {
     public static final Scalar BLUE_YCBCR_MAX = new Scalar(128, 255, 128);
 
     public static final double MOTOR_TICK_COUNT = 753.2d;
+
+    // Camera: C270
+    // Units: Pixels
+    // Source: https://horus.readthedocs.io/en/release-0.2/source/scanner-components/camera.html
+    public static final double C270_FOCAL_LENGTH_X = 1430;
+    public static final double C270_FOCAL_LENGTH_Y = 1430;
+    public static final double C270_OPTICAL_CENTER_X = 480;
+    public static final double C270_OPTICAL_CENTER_Y = 620;
 }
