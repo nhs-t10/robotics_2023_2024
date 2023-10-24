@@ -21,6 +21,8 @@
 
 package com.pocolifo.robobase.vision.apriltag;
 
+import centerstage.SpikePosition;
+import com.pocolifo.robobase.Alliance;
 import com.pocolifo.robobase.vision.AbstractResultCvPipeline;
 
 import org.opencv.calib3d.Calib3d;
@@ -317,6 +319,40 @@ public class AprilTagDetectionPipeline extends AbstractResultCvPipeline<ArrayLis
     @Override
     public void init() {
 
+    }
+
+    public AprilTagDetection getTargetAprilTagDetection(Alliance alliance, SpikePosition spikePosition) {
+        int targetId = getTargetAprilTagId(alliance, spikePosition);
+
+        for (AprilTagDetection detection : detections)
+            if (detection.id == targetId)
+                return detection;
+
+        return null;
+    }
+
+    private int getTargetAprilTagId(Alliance alliance, SpikePosition spikePosition) {
+        switch (alliance) {
+            case BLUE:
+                switch (spikePosition) {
+                    case LEFT:
+                        return 1;
+                    case CENTER:
+                        return 2;
+                    case RIGHT:
+                        return 3;
+                }
+            case RED:
+                switch (spikePosition) {
+                    case LEFT:
+                        return 4;
+                    case CENTER:
+                        return 5;
+                    case RIGHT:
+                        return 6;
+                }
+        }
+        return 1;
     }
 
     /*
