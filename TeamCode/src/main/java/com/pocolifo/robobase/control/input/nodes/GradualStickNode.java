@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
 import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
-import com.qualcomm.robotcore.robot.Robot;
 
 
 public class GradualStickNode extends InputManagerInputNode{
