@@ -296,6 +296,21 @@ public class CarWheels implements AutoCloseable, MovementAware {
                 vals.backRight
         );
     }
+    public void driveOmni(float[] power) {
+        // Drive the wheels to match the controller input
+        OmniDriveCoefficients.CoefficientSet vals = this.robot.omniDriveCoefficients.calculateCoefficientsWithPower(
+                power[0],
+                power[1],
+                power[2]
+        );
+
+        this.driveIndividually(
+                vals.frontLeft,
+                vals.frontRight,
+                vals.backLeft,
+                vals.backRight
+        );
+    }
 
     /**
      * Closes the internal motors.
