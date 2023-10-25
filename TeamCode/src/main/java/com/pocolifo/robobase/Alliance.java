@@ -1,6 +1,21 @@
 package com.pocolifo.robobase;
 
+import centerstage.SpikePosition;
+
 public enum Alliance {
     RED,
-    BLUE
+    BLUE;
+
+    public int getAprilTagIDForAlliance(SpikePosition targetPosition) {
+        switch(targetPosition) {
+            case LEFT:
+                return this == Alliance.BLUE ? 1 : 4;
+            case CENTER:
+                return this == Alliance.BLUE ? 2 : 5;
+            case RIGHT:
+                return this == Alliance.BLUE ? 3 : 6;
+            default:
+                throw new RuntimeException("Unexpected spike position");
+        }
+    }
 }
