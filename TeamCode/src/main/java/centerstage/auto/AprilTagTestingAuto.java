@@ -85,9 +85,11 @@ public class AprilTagTestingAuto extends AutonomousOpMode {
 
             while (targetAprilTag.center.x > 320) {
                 this.carWheels.driveOmni(0, 0.5f, 0);
+                targetAprilTag = aprilTagDetectionPipeline.getTargetAprilTagDetection(alliance, spikePosition);
             }
             while (targetAprilTag.center.y < 320) {
                 this.carWheels.driveOmni(0, -0.5f, 0);
+                targetAprilTag = aprilTagDetectionPipeline.getTargetAprilTagDetection(alliance, spikePosition);
             }
             this.carWheels.driveOmni(0,0,0);
             this.carWheels.close();
