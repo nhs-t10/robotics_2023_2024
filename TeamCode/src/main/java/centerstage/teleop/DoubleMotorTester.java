@@ -6,7 +6,7 @@ import com.pocolifo.robobase.control.Toggleable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "MotorTester " + BuildProperties.VERSION)
+@TeleOp(name = "DoubleMotorTester " + BuildProperties.VERSION)
 public class DoubleMotorTester extends TeleOpOpMode {
     private Toggleable RunMotor;
     private DcMotor Motor1;

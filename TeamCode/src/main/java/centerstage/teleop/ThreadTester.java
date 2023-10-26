@@ -24,7 +24,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 
-//@TeleOp(name = "TeleOp " + BuildProperties.VERSION)
+@TeleOp(name = "ThreadTester " + BuildProperties.VERSION)
 public class ThreadTester extends TeleOpOpMode {
     private CarWheels carWheels;
     private GamepadCarWheels gamepadCarWheels;
