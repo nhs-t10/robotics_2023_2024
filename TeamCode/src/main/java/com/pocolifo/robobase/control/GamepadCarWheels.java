@@ -84,7 +84,7 @@ public class GamepadCarWheels implements AutoCloseable {
      * Right tick - rotation: clockwise and counterclockwise</p>
      */
     public void update(boolean useMicroMovement) {
-        int microMovementValue = useMicroMovement ? 1 : 2;
+        float microMovementValue = useMicroMovement ? 1 : 4;
 
         this.wheels.driveOmni(
                 this.gamepad.left_stick_y / microMovementValue,
