@@ -1,6 +1,6 @@
 package com.pocolifo.robobase.control.input.nodeUtils;
 
-public class MathUtils {
+public class ArrayUtils {
     public static String[] concatArrays(String[]... arrs) {
         //get the total length of the new array
         int m = 0;
