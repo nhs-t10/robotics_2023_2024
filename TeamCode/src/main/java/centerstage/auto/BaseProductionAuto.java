@@ -1,12 +1,17 @@
 package centerstage.auto;
 
+import static centerstage.Constants.ROBOT;
+
 import centerstage.SpikePosition;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
+import com.pocolifo.robobase.motor.CarWheels;
 import com.pocolifo.robobase.vision.EdgeDetection;
 import com.pocolifo.robobase.vision.Webcam;
 
 public class BaseProductionAuto extends AutonomousOpMode {
     private final EdgeDetection edgeDetection;
+
+    private CarWheels carWheels;
     private Webcam webcam;
 
     public BaseProductionAuto(EdgeDetection edgeDetection) {
@@ -17,6 +22,18 @@ public class BaseProductionAuto extends AutonomousOpMode {
     public void initialize() {
         this.webcam = new Webcam(this.hardwareMap, "Webcam");
         this.webcam.open(null);
+
+        this.carWheels = new CarWheels(
+            hardwareMap,
+            1120,
+            10d,
+            ROBOT,
+            "FL",
+            "FR",
+            "BL",
+            "BR",
+            "FL"
+        );
     }
 
     @Override
@@ -32,6 +49,9 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
             System.out.println("Detected");
             System.out.println(this.edgeDetection.getResult());
+
+            carWheels.drive(35, false);
+            carWheels.rotateClockwise(90, 0.25);
 
             System.out.println("Closing!");
             this.webcam.close();
