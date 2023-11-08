@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
-import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
+import com.pocolifo.robobase.control.input.nodeUtils.ArrayUtils;
 
 public class MultiplyNode extends InputManagerInputNode {
     private final InputManagerInputNode input;
@@ -63,7 +63,7 @@ public class MultiplyNode extends InputManagerInputNode {
 
     @Override
     public String[] getKeysUsed() {
-        return MathUtils.concatArrays(input.getKeysUsed(), multiplier.getKeysUsed());
+        return ArrayUtils.concatArrays(input.getKeysUsed(), multiplier.getKeysUsed());
     }
 
     @Override

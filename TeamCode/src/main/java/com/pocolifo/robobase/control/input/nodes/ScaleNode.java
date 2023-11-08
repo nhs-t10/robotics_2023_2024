@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
-import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
+import com.pocolifo.robobase.control.input.nodeUtils.ArrayUtils;
 
 public class ScaleNode extends InputManagerInputNode {
     private final InputManagerInputNode node;
@@ -82,7 +82,7 @@ public class ScaleNode extends InputManagerInputNode {
 
     @Override
     public String[] getKeysUsed() {
-        return MathUtils.concatArrays(node.getKeysUsed(), scale.getKeysUsed());
+        return ArrayUtils.concatArrays(node.getKeysUsed(), scale.getKeysUsed());
     }
 
     @Override

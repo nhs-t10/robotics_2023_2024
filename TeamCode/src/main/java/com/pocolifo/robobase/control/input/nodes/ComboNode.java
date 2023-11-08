@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
-import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
+import com.pocolifo.robobase.control.input.nodeUtils.ArrayUtils;
 
 public class ComboNode extends InputManagerInputNode {
     InputManagerInputNode[] conditionals;
@@ -85,7 +85,7 @@ public class ComboNode extends InputManagerInputNode {
         for(int i = 0; i < conditionals.length; i++) {
             keylists[i] = conditionals[i].getKeysUsed();
         }
-        return MathUtils.concatArrays(keylists);
+        return ArrayUtils.concatArrays(keylists);
     }
 
     @Override

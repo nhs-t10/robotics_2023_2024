@@ -10,12 +10,18 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  */
 public class DoubleMotor implements AutoCloseable {
     /**
-     * The {@link DcMotor} associated with this motor.
+     * The {@link DcMotor}s associated with this motor.
      */
     public final Motor motor1;
     public final Motor motor2;
+    /**
+     * The power coefficients of the motors
+     * */
     final double coefficient1;
     final double coefficient2;
+    /**
+     * The signs of the motor coefficients
+     */
     final int signCoefficient1;
     final int signCoefficient2;
 

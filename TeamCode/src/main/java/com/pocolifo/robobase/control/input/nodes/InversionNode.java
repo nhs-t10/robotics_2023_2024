@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
-import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
+import com.pocolifo.robobase.control.input.nodeUtils.ArrayUtils;
 
 public class InversionNode extends InputManagerInputNode {
     private final InputManagerInputNode input;
@@ -53,7 +53,7 @@ public class InversionNode extends InputManagerInputNode {
 
     @Override
     public String[] getKeysUsed() {
-        return MathUtils.concatArrays(input.getKeysUsed(), inverter.getKeysUsed());
+        return ArrayUtils.concatArrays(input.getKeysUsed(), inverter.getKeysUsed());
     }
 
     @Override

@@ -13,6 +13,7 @@ public class Constants {
             null,
             false,
             new OmniDriveCoefficients( //FL, FR, BL, BR
+                    // NOTE: Documentation may be wrong. Tinker at your own peril.
 /*Total for motor*/ new double[] { -1, -1, -1, 1 },
 /*Forward/backward*/new double[] { -1,  1,  1,  1 },
 /*side-to-side*/    new double[] { 1,  1, 1, -1 },

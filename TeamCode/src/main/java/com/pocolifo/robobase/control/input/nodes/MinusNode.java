@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
-import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
+import com.pocolifo.robobase.control.input.nodeUtils.ArrayUtils;
 
 public class MinusNode extends InputManagerInputNode {
     private final InputManagerInputNode input1;
@@ -60,7 +60,7 @@ public class MinusNode extends InputManagerInputNode {
 
     @Override
     public String[] getKeysUsed() {
-        return MathUtils.concatArrays(input1.getKeysUsed(), input2.getKeysUsed());
+        return ArrayUtils.concatArrays(input1.getKeysUsed(), input2.getKeysUsed());
     }
 
     @Override

@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
-import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
+import com.pocolifo.robobase.control.input.nodeUtils.ArrayUtils;
 
 public class MultiInputNode extends InputManagerInputNode {
     private final InputManagerInputNode[] childs;
@@ -49,7 +49,7 @@ public class MultiInputNode extends InputManagerInputNode {
         for(int i = 0; i < childs.length; i++) {
             keylists[i] = childs[i].getKeysUsed();
         }
-        return MathUtils.concatArrays(keylists);
+        return ArrayUtils.concatArrays(keylists);
     }
 
     @Override

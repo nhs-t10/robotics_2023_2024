@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
-import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
+import com.pocolifo.robobase.control.input.nodeUtils.ArrayUtils;
 
 public class DecelerationNode extends InputManagerInputNode{
 
@@ -92,7 +92,7 @@ public class DecelerationNode extends InputManagerInputNode{
 
     @Override
     public String[] getKeysUsed() {
-        return MathUtils.concatArrays(control.getKeysUsed(), startingSpeed.getKeysUsed(), endingSpeed.getKeysUsed(), movementTime.getKeysUsed());
+        return ArrayUtils.concatArrays(control.getKeysUsed(), startingSpeed.getKeysUsed(), endingSpeed.getKeysUsed(), movementTime.getKeysUsed());
     }
 
     @Override

@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 
 import com.pocolifo.robobase.control.input.InputManager;
 import com.pocolifo.robobase.control.input.InputManagerNodeResult;
-import com.pocolifo.robobase.control.input.nodeUtils.MathUtils;
+import com.pocolifo.robobase.control.input.nodeUtils.*;
 
 public class LogicIfNode extends InputManagerInputNode {
     private final InputManagerInputNode node;
@@ -52,7 +52,7 @@ public class LogicIfNode extends InputManagerInputNode {
 
     @Override
     public String[] getKeysUsed() {
-        return MathUtils.concatArrays(node.getKeysUsed(), nodeIfOff.getKeysUsed(), nodeIfOn.getKeysUsed());
+        return ArrayUtils.concatArrays(node.getKeysUsed(), nodeIfOff.getKeysUsed(), nodeIfOn.getKeysUsed());
     }
 
     @Override
