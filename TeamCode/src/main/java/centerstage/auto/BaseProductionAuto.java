@@ -21,7 +21,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Override
     public void initialize() {
         this.webcam = new Webcam(this.hardwareMap, "Webcam");
-        this.webcam.open(null);
+        this.webcam.open(this.edgeDetection);
 
         this.carWheels = new CarWheels(
             hardwareMap,
@@ -38,7 +38,6 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
     @Override
     public void run() {
-        this.webcam.setPipeline(this.edgeDetection);
         System.out.println("Running edge detection");
 
         try {
@@ -50,8 +49,21 @@ public class BaseProductionAuto extends AutonomousOpMode {
             System.out.println("Detected");
             System.out.println(this.edgeDetection.getResult());
 
-            carWheels.drive(35, false);
-            carWheels.rotateClockwise(90, 0.25);
+            switch (this.edgeDetection.getResult()) {
+                case RIGHT:
+                    carWheels.drive(35, false);
+                    carWheels.rotateClockwise(90, 0.25);
+                    break;
+
+                case LEFT:
+                    carWheels.drive(35, false);
+                    carWheels.rotateCounterclockwise(90, 0.25);
+                    break;
+
+                case CENTER:
+                    carWheels.drive(35, false);
+                    break;
+            }
 
             System.out.println("Closing!");
             this.webcam.close();
