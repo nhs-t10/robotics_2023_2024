@@ -94,6 +94,38 @@ public class GamepadCarWheels implements AutoCloseable {
     }
 
     /**
+     * Basically just a copy of {@see update}, but with added d-pad driving capability
+     * @author arlanz
+     */
+    public void updateWithDpadDrive (boolean useMicroMovement) {
+        float microMovementValue = useMicroMovement ? 1 : 4;
+
+        if(gamepad.dpad_up)
+        {
+            wheels.driveOmni(1/microMovementValue, 0,0);
+        }
+        else if(gamepad.dpad_down)
+        {
+            wheels.driveOmni(-1/microMovementValue, 0,0);
+        }
+        else if(gamepad.dpad_right)
+        {
+            wheels.driveOmni(0, 1/microMovementValue,0);
+        }
+        else if(gamepad.dpad_left)
+        {
+            wheels.driveOmni(0, -1/microMovementValue, 0);
+        }
+        else {
+            this.wheels.driveOmni(
+                    this.gamepad.left_stick_y / microMovementValue,
+                    this.gamepad.left_stick_x / microMovementValue,
+                    this.gamepad.right_stick_x / microMovementValue
+            );
+        }
+    }
+
+    /**
      * Cleans up this {@link GamepadCarWheels} instance. <strong>This should be called when this instance is no longer
      * in use!</strong>
      */
