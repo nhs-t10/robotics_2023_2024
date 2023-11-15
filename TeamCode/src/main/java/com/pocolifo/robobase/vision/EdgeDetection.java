@@ -1,11 +1,9 @@
 package com.pocolifo.robobase.vision;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
+import centerstage.Constants;
+import org.checkerframework.checker.units.qual.C;
+import org.firstinspires.ftc.robotcore.external.Const;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -24,6 +22,7 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
     private Mat matchedPixels;
     private Mat hierarchy;
     private MatOfPoint biggestContour;
+    private Mat _tempMask;
 
     public EdgeDetection(Scalar min, Scalar max) {
         this.ycbcrMin = min;
@@ -37,6 +36,7 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
         matchedPixels = new Mat();
         hierarchy = new Mat();
         biggestContour = null;
+        _tempMask = null;
     }
 
     /**
@@ -45,11 +45,14 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
      */
     @Override
     public synchronized Mat processFrame(Mat input) {
+        if(_tempMask == null)
+            _tempMask = Mat.ones(input.size(), CvType.CV_8UC1);
         //convert the input to ycbcr, which is better for analysis than the default bgr.
         Imgproc.cvtColor(input, convertedToycbcr, Imgproc.COLOR_BGR2YCrCb);//Imgproc uses YCrCb, correct naming is YCbCr
 
         //filter the image to ONLY redish pixels
         Core.inRange(convertedToycbcr, ycbcrMin, ycbcrMax, matchedPixels);
+        Core.copyTo(matchedPixels, input, _tempMask);
 
         //Find the biggest blob of reddish pixels.
         //It likes using a list of Matrices of points instead of something more simple, but that's ok.
@@ -82,13 +85,20 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
                 new Scalar(0.5, 255, 0), // The color the rectangle is drawn in
                 2); // Thickness of the rectangle lines
 
+
         int largeBlobCenterX = biggestContourRect.x + (biggestContourRect.width / 2);
         int inputWidth = input.width();
 
+        final int leftCenterX = inputWidth / 3 + Constants.CAMERA_X_EDGE_DETECTION_OFFSET;
+        final int centerRightX = (inputWidth * 2) / 3 + Constants.CAMERA_X_EDGE_DETECTION_OFFSET;
+
+        Imgproc.line(input, new Point(leftCenterX, 0), new Point(leftCenterX, input.rows()), new Scalar(128, 0, 0), 2); //    >|<   |     //
+        Imgproc.line(input, new Point(centerRightX, 0), new Point(centerRightX, input.rows()), new Scalar(128, 0, 0), 2); //     |   >|<    //
+
         //depending on which third the blob's center falls into, report the result position.
-        if (largeBlobCenterX < inputWidth / 3) {
+        if (largeBlobCenterX < leftCenterX) {
             result = SpikePosition.LEFT;
-        } else if (largeBlobCenterX < (inputWidth * 2) / 3) {
+        } else if (largeBlobCenterX < centerRightX) {
             result = SpikePosition.CENTER;
         } else {
             result = SpikePosition.RIGHT;
@@ -98,7 +108,7 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
                 result.name(),
                 new Point(0, 0),
                 0,
-                10,
+                50,
                 new Scalar(0, 128, 128));
 
         return input;
