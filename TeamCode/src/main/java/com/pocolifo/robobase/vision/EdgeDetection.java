@@ -22,7 +22,6 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
     private Mat matchedPixels;
     private Mat hierarchy;
     private MatOfPoint biggestContour;
-    private Mat _tempMask;
 
     public EdgeDetection(Scalar min, Scalar max) {
         this.ycbcrMin = min;
@@ -36,7 +35,6 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
         matchedPixels = new Mat();
         hierarchy = new Mat();
         biggestContour = null;
-        _tempMask = null;
     }
 
     /**
@@ -45,14 +43,14 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
      */
     @Override
     public synchronized Mat processFrame(Mat input) {
-        if(_tempMask == null)
-            _tempMask = Mat.ones(input.size(), CvType.CV_8UC1);
+//        if(_tempMask == null)
+//            _tempMask = Mat.ones(input.size(), CvType.CV_8UC1);
         //convert the input to ycbcr, which is better for analysis than the default bgr.
         Imgproc.cvtColor(input, convertedToycbcr, Imgproc.COLOR_BGR2YCrCb);//Imgproc uses YCrCb, correct naming is YCbCr
 
         //filter the image to ONLY redish pixels
         Core.inRange(convertedToycbcr, ycbcrMin, ycbcrMax, matchedPixels);
-        Core.copyTo(matchedPixels, input, _tempMask);
+//        Core.copyTo(matchedPixels, input, _tempMask);
 
         //Find the biggest blob of reddish pixels.
         //It likes using a list of Matrices of points instead of something more simple, but that's ok.
@@ -111,6 +109,6 @@ public class EdgeDetection extends AbstractResultCvPipeline<SpikePosition> {
                 50,
                 new Scalar(0, 128, 128));
 
-        return input;
+        return matchedPixels;
     }
 }

@@ -21,7 +21,7 @@ public class Motor implements AutoCloseable {
      * The amount of motor ticks that make one full revolution of the motor. <strong> It's different for every motor,
      * you may need to search up what the tick count is for your motor.</strong>
      */
-    public final int tickCount;
+    public final double tickCount;
 
     /**
      * Instantiate a {@link Motor}.
@@ -30,7 +30,7 @@ public class Motor implements AutoCloseable {
      * @param motor     The {@link DcMotor} that is associated with this {@link Motor}.
      * @param tickCount The number of ticks for a full revolution of this motor.
      */
-    public Motor(DcMotor motor, int tickCount) {
+    public Motor(DcMotor motor, double tickCount) {
         this.motor = motor;
         this.tickCount = tickCount;
 

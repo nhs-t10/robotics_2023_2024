@@ -14,9 +14,8 @@ public class RedProductionAuto extends BaseProductionAuto {
     public RedProductionAuto() {
         super(
                 new ColorFilterBoundingBoxPipeline(
-                        new Scalar(100, 0, 0),
-                        new Scalar(255, 0, 0),
-                        Imgproc.COLOR_BGR2RGB
+//                        new Scalar(0, 0, 0),
+                        new Scalar(150, 208, 88)
                 ), Alliance.RED);
     }
 }

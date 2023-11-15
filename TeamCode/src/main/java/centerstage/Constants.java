@@ -13,20 +13,20 @@ public class Constants {
             null,
             false,
             new OmniDriveCoefficients( //FL, FR, BL, BR
-/*Total for motor*/ new double[] { -1, -1, -1,  1 },
-/*Forward/backward*/new double[] { -1,  1,  1,  1 },
-/*side-to-side*/    new double[] {  1,  1,  1, -1 },
-/*rotational*/      new double[] {  1,  1, -1,  1 }
+/*Total for motor*/ new double[] {  1,  1,  1,  1 },
+/*Forward/backward*/new double[] {  1,  -1,  1,  -1 },
+/*side-to-side*/    new double[] {  -1,  -1,  1,  1 },
+/*rotational*/      new double[] {  -1,  -1,  -1,  -1 }
             )
     );
 
-    public static final Scalar RED_YCBCR_MIN = new Scalar(42, 113, 172);
-    public static final Scalar RED_YCBCR_MAX = new Scalar(82, 90, 240);
+    public static final Scalar RED_YCBCR_MIN = new Scalar(0, 113, 172);
+    public static final Scalar RED_YCBCR_MAX = new Scalar(255, 90, 240);
 
-    public static final Scalar BLUE_YCBCR_MIN = new Scalar(26, 172, 121);
-    public static final Scalar BLUE_YCBCR_MAX = new Scalar(41, 240, 110);
+    public static final Scalar BLUE_YCBCR_MIN = new Scalar(0, 172, 121);
+    public static final Scalar BLUE_YCBCR_MAX = new Scalar(255, 240, 110);
 
-    public static final double MOTOR_TICK_COUNT = 753.2d;
+    public static final double MOTOR_TICK_COUNT = 537.6;
 
     // Camera: C270
     // Units: Pixels
@@ -39,4 +39,6 @@ public class Constants {
     public static final double APRIL_TAG_SIZE_METERS = 0.0508;
 
     public static final int CAMERA_X_EDGE_DETECTION_OFFSET = 0;
+    public static final int CAMERA_RES_WIDTH = 640;
+    public static final int CAMERA_RES_HEIGHT = 480;
 }

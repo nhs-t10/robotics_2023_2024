@@ -56,12 +56,12 @@ public class BaseProductionAuto extends AutonomousOpMode {
         System.out.println("Running edge detection");
 
         try {
-            while (this.edgeDetection.getResult() == SpikePosition.NOT_FOUND || this.edgeDetection.getResult() == null) {
+            while (this.edgeDetection.getResult().isEmpty()) {
                 this.sleep(500);
                 System.out.println("Finding spikes...");
             }
 
-            SpikePosition position = this.edgeDetection.getResult();
+            SpikePosition position = SpikePosition.fromXPosition(this.edgeDetection.cameraWidth, this.edgeDetection.getResult().get(0));
             System.out.println("Detected: " + position);
 
 //            this.carWheels.drive(25, 0.25, false);
