@@ -1,19 +1,11 @@
 package centerstage.auto;
 
-import centerstage.Constants;
-import centerstage.SpikePosition;
-import com.pocolifo.robobase.Alliance;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.motor.CarWheels;
-import com.pocolifo.robobase.vision.ColorFilterBoundingBoxPipeline;
-import com.pocolifo.robobase.vision.EdgeDetection;
-import com.pocolifo.robobase.vision.Webcam;
-import com.pocolifo.robobase.vision.apriltag.AprilTagDetectionPipeline;
-import org.openftc.apriltag.AprilTagDetection;
 
 import static centerstage.Constants.ROBOT;
 
-public class ParkingAuto extends AutonomousOpMode {
+public class ParkingAutoNear extends AutonomousOpMode {
     private CarWheels carWheels;
 
     @Override
