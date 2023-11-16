@@ -77,7 +77,7 @@ public class ThreadedScrimmageTeleop extends TeleOpOpMode {
 
 //Gamepad 2
         //Todo: may need to tweak coefficients
-        linearSlides = new DoubleMotor(new Motor(hardwareMap.get(DcMotor.class, "motor1"), 1120), new Motor(hardwareMap.get(DcMotor.class, "motor2"), 1120), 1, 1);
+        linearSlides = new DoubleMotor(new Motor(hardwareMap.get(DcMotor.class, "LeftLinearSide"), 1120), new Motor(hardwareMap.get(DcMotor.class, "RightLinearSlide"), 1120), 1, 1);
         this.dpadUp = new Pressable(() -> this.gamepad2.dpad_up);
         this.dpadDown = new Pressable(() -> this.gamepad2.dpad_down);
 
@@ -127,8 +127,7 @@ public class ThreadedScrimmageTeleop extends TeleOpOpMode {
                 }
             });
             intakeThread.start();
-
-            System.out.println("Gamepad 1 threads initialized");
+            System.out.println("Intake thread initialized");
 
             //Gamepad 2
             linearSlideThread = new Thread(() -> {
@@ -144,6 +143,9 @@ public class ThreadedScrimmageTeleop extends TeleOpOpMode {
                     }
                 }
             });
+            linearSlideThread.start();
+            System.out.println("Linear slide thread initialized");
+
             outtakeThread = new Thread(() -> {
                 while (runThreads)
                 {
@@ -157,37 +159,32 @@ public class ThreadedScrimmageTeleop extends TeleOpOpMode {
                     }
                 }
             });
+            outtakeThread.start();
+            System.out.println("Outtake thread initialized");
+
             midjointThread = new Thread(() -> {
-                if (midjointToTop.get())
-                {
-                    //Todo: while not at top limit switch
-                    rotateMidjointForward();
-                    midjoint.stopMoving();
-                }
-                else if (midjointToBottom.get()) {
-                    //Todo: while not at bottom limit switch
-                    rotateMidjointBackward();
-                    midjoint.stopMoving();
-                }
-                else if (midjointForward.get())
-                {
-                    rotateMidjointForward();
-                }
-                else if (midjointBackward.get())
-                {
-                    rotateMidjointBackward();
-                }
-                else
-                {
-                    midjoint.stopMoving();
+                while(runThreads) {
+                    if (midjointToTop.get()) {
+                        //Todo: while not at top limit switch
+                        rotateMidjointForward();
+                        midjoint.stopMoving();
+                    } else if (midjointToBottom.get()) {
+                        //Todo: while not at bottom limit switch
+                        rotateMidjointBackward();
+                        midjoint.stopMoving();
+                    } else if (midjointForward.get()) {
+                        rotateMidjointForward();
+                    } else if (midjointBackward.get()) {
+                        rotateMidjointBackward();
+                    } else {
+                        midjoint.stopMoving();
+                    }
                 }
             });
-
-            linearSlideThread.start();
-            outtakeThread.start();
             midjointThread.start();
+            System.out.println("Midjoint thread initialized");
 
-            System.out.println("Gamepad 2 threads initialized");
+            System.out.println("All threads initialized!");
 
             threadsInitialized = true;
         }
