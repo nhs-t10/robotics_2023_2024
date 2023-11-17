@@ -5,8 +5,7 @@ import centerstage.SpikePosition;
 import com.pocolifo.robobase.Alliance;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.motor.CarWheels;
-import com.pocolifo.robobase.vision.ColorFilterBoundingBoxPipeline;
-import com.pocolifo.robobase.vision.EdgeDetection;
+import com.pocolifo.robobase.vision.NovelColorBoxDetection;
 import com.pocolifo.robobase.vision.Webcam;
 import com.pocolifo.robobase.vision.apriltag.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
@@ -14,13 +13,13 @@ import org.openftc.apriltag.AprilTagDetection;
 import static centerstage.Constants.ROBOT;
 
 public class BaseProductionAuto extends AutonomousOpMode {
-    private final ColorFilterBoundingBoxPipeline edgeDetection;
+    private final NovelColorBoxDetection edgeDetection;
     private final Alliance alliance;
     private Webcam webcam;
     private AprilTagDetectionPipeline aprilTagDetectionPipeline;
     private CarWheels carWheels;
 
-    public BaseProductionAuto(ColorFilterBoundingBoxPipeline edgeDetection, Alliance alliance) {
+    public BaseProductionAuto(NovelColorBoxDetection edgeDetection, Alliance alliance) {
         this.edgeDetection = edgeDetection;
         this.alliance = alliance;
     }
@@ -56,13 +55,12 @@ public class BaseProductionAuto extends AutonomousOpMode {
         System.out.println("Running edge detection");
 
         try {
-            while (this.edgeDetection.getResult().isEmpty()) {
+            while (this.edgeDetection.getResult() == SpikePosition.NOT_FOUND || this.edgeDetection.getResult() == null) {
                 this.sleep(500);
                 System.out.println("Finding spikes...");
             }
 
-            SpikePosition position = SpikePosition.fromXPosition(this.edgeDetection.cameraWidth, this.edgeDetection.getResult().get(0));
-            System.out.println("Detected: " + position);
+            System.out.println("Detected: " + this.edgeDetection.getResult());
 
 //            this.carWheels.drive(25, 0.25, false);
 //            this.carWheels.rotateClockwise(90, 0.25);

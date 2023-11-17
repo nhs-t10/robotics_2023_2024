@@ -20,12 +20,6 @@ public class Constants {
             )
     );
 
-    public static final Scalar RED_YCBCR_MIN = new Scalar(0, 113, 172);
-    public static final Scalar RED_YCBCR_MAX = new Scalar(255, 90, 240);
-
-    public static final Scalar BLUE_YCBCR_MIN = new Scalar(0, 172, 121);
-    public static final Scalar BLUE_YCBCR_MAX = new Scalar(255, 240, 110);
-
     public static final double MOTOR_TICK_COUNT = 537.6;
 
     // Camera: C270
