@@ -1,5 +1,6 @@
 package centerstage;
 
+import centerstage.auto.RedProductionAuto;
 import com.pocolifo.robobase.Robot;
 import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 import org.opencv.core.Scalar;
@@ -13,17 +14,11 @@ public class Constants {
             null,
             false,
             new OmniDriveCoefficients( //FL, FR, BL, BR
-/* Motor Direction Overrides */ new double[] {  1,  -1,  1,  -1 }
+/*Total for motor*/ new double[] {  1,   1,   1,   1 }
             )
     );
 
-    public static final Scalar RED_YCBCR_MIN = new Scalar(0, 113, 172);
-    public static final Scalar RED_YCBCR_MAX = new Scalar(255, 90, 240);
-
-    public static final Scalar BLUE_YCBCR_MIN = new Scalar(0, 172, 121);
-    public static final Scalar BLUE_YCBCR_MAX = new Scalar(255, 240, 110);
-
-    public static final double MOTOR_TICK_COUNT = 537.6;
+    public static final double MOTOR_TICK_COUNT = 537.7;
 
     // Camera: C270
     // Units: Pixels

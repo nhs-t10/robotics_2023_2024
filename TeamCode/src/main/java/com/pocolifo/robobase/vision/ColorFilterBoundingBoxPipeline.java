@@ -52,29 +52,32 @@ public class ColorFilterBoundingBoxPipeline extends AbstractResultCvPipeline<Lis
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.resize(input, resized, new Size(input.size().width / DIVISOR_CONSTANT, input.size().height / DIVISOR_CONSTANT));
-        Imgproc.cvtColor(resized, colorConverted, Imgproc.COLOR_BGR2YCrCb);
+        Imgproc.cvtColor(resized, colorConverted, Imgproc.COLOR_BGR2RGB);
 
         for (int x = 0; colorConverted.cols() > x; x++) {
             for (int y = 0; colorConverted.rows() > y; y++) {
-                double dist = getColorDistance(colorConverted.get(y, x));
+                double[] clr = colorConverted.get(y, x);
+                double dist = getColorDistance(clr);
                 filteredColor.put(y, x, dist * 255);
             }
         }
 
-//        Core.inRange(colorConverted, minFilterColor, maxFilterColor, filteredColor);
+        Imgproc.Canny(filteredColor, edges, 45, 45.85);
+
 //        Imgproc.findContours(filteredColor, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 //        Imgproc.drawContours(filteredColor, contours, -1, new Scalar(255), 5);
-//
+//        Core.inRange(colorConverted, minFilterColor, maxFilterColor, filteredColor);
+//\
 //        this.result = contours.stream()
 //                .map(Imgproc::boundingRect)
 //                .sorted((r1, r2) -> r2.width * r2.height - r1.width * r2.height)
 //                .collect(Collectors.toList());
 //
-//        this.result.forEach(rect -> Imgproc.rectangle(filteredColor, rect, new Scalar(255, 0, 255), 5));
+//        this.result.forEach(rect -> Imgproc.rectangle(filteredColor, rect, new Scalar(10, 0, 10), 5));
 
         cameraWidth = input.cols();
         cameraHeight = input.rows();
 
-        return filteredColor;
+        return edges;
     }
 }

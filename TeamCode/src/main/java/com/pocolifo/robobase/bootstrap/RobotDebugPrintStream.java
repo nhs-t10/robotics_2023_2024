@@ -44,51 +44,61 @@ public class RobotDebugPrintStream extends PrintStream {
         this.telemetry.setAutoClear(false);
         this.telemetry.update();
     }
+    
+    private void printlnString(String s) {
+        this.telemetry.addLine(s);
+        this.telemetry.update();
+    }
+
+    private void printString(String s) {
+        this.telemetry.addData("", s);
+        this.telemetry.update();
+    }
+    
 
     @Override
     public final void print(Object obj) {
-        this.print(obj == null ? "null" : obj.toString());
+        printString(obj == null ? "null" : obj.toString());
     }
 
     @Override
     public void print(boolean b) {
-        this.print(Boolean.toString(b));
+        printString(Boolean.toString(b));
     }
 
     @Override
     public void print(char c) {
-        this.print(Character.toString(c));
+        printString(Character.toString(c));
     }
 
     @Override
     public void print(int i) {
-        this.print(Integer.toString(i));
+        printString(Integer.toString(i));
     }
 
     @Override
     public void print(long l) {
-        super.print(Long.toString(l));
+        printString(Long.toString(l));
     }
 
     @Override
     public void print(float f) {
-        super.print(Float.toString(f));
+        printString(Float.toString(f));
     }
 
     @Override
     public void print(double d) {
-        super.print(Double.toString(d));
+        printString(Double.toString(d));
     }
 
     @Override
     public void print(char[] s) {
-        super.print(Arrays.toString(s));
+        printString(Arrays.toString(s));
     }
 
     @Override
     public void print(String s) {
-        this.telemetry.addData("", s);
-        this.telemetry.update();
+        printString(s);
     }
 
     @Override
@@ -99,48 +109,47 @@ public class RobotDebugPrintStream extends PrintStream {
 
     @Override
     public void println(boolean b) {
-        this.println(Boolean.toString(b));
+        printlnString(Boolean.toString(b));
     }
 
     @Override
     public void println(char c) {
-        this.println(Character.toString(c));
+        printlnString(Character.toString(c));
     }
 
     @Override
     public void println(int i) {
-        this.println(Integer.toString(i));
+        printlnString(Integer.toString(i));
     }
 
     @Override
     public void println(long l) {
-        super.println(Long.toString(l));
+        printlnString(Long.toString(l));
     }
 
     @Override
     public void println(float f) {
-        super.println(Float.toString(f));
+        printlnString(Float.toString(f));
     }
 
     @Override
     public void println(double d) {
-        super.println(Double.toString(d));
+        printlnString(Double.toString(d));
     }
 
     @Override
     public void println(char[] s) {
-        super.println(Arrays.toString(s));
+        printlnString(Arrays.toString(s));
     }
 
     @Override
     public void println(String s) {
-        this.telemetry.addData("", s);
-        this.println();
+        printlnString(s);
     }
 
     @Override
     public final void println(Object obj) {
-        this.println(obj == null ? "null" : obj.toString());
+        printlnString(obj == null ? "null" : obj.toString());
     }
 
     @Override
@@ -150,7 +159,7 @@ public class RobotDebugPrintStream extends PrintStream {
 
     @Override
     public final PrintStream printf(String format, Object... args) {
-        this.print(String.format(format, args)); // IMPORTANT!! IntelliJ shows String.format as a redundant call, this is not true
+        printString(String.format(format, args)); // IMPORTANT!! IntelliJ shows String.format as a redundant call, this is not true
 
         return this;
     }

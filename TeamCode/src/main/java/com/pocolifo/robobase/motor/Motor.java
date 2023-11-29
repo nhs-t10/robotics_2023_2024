@@ -3,6 +3,7 @@ package com.pocolifo.robobase.motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+// TODO: make this implement MovementAware
 /**
  * Represents a motor.
  * This class is needed because {@link DcMotor} misses some metrics, like the tick count of the motor.
@@ -10,7 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  *
  * @author youngermax
  */
-// TODO: make this implement MovementAware
 public class Motor implements AutoCloseable {
     /**
      * The {@link DcMotor} associated with this motor.
@@ -34,7 +34,7 @@ public class Motor implements AutoCloseable {
         this.motor = motor;
         this.tickCount = tickCount;
 
-        this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.motor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
@@ -68,14 +68,19 @@ public class Motor implements AutoCloseable {
 
     /**
      * Gets the current encoder position
+     *
      * @author arlanz
      */
-    public int getPosition() { return motor.getCurrentPosition(); }
+    public int getPosition() {
+        return this.motor.getCurrentPosition();
+    }
 
     /**
      * gets the number of motor rotations
      */
-    public double getMotorRotations(){ return getPosition() / tickCount;}
+    public double getMotorRotations() {
+        return this.getPosition() / this.tickCount;
+    }
 
     /**
      * Closes the internal {@link DcMotor} device. <strong>THIS SHOULD BE CALLED WHEN MOTORS ARE DONE BEING

@@ -1,9 +1,15 @@
 package com.pocolifo.robobase.bootstrap;
 
 import android.os.SystemClock;
+import com.pocolifo.robobase.motor.Motor;
+import com.pocolifo.robobase.motor.Wheel;
+import com.pocolifo.robobase.vision.Webcam;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import java.lang.reflect.Field;
 
 /**
  * <p>"Bootstrapping" is the preparing another program to initialize.
@@ -30,6 +36,53 @@ public abstract class BootstrappedOpMode extends OpMode {
     private void configureSystemOut() {
         System.setOut(new RobotDebugPrintStream(this.telemetry));
         System.setErr(new RobotDebugPrintStream(this.telemetry));
+    }
+
+    /**
+     * Sets fields marked with @{@link Hardware} to their initialized value based on the {@link OpMode#hardwareMap}.
+     * <p>
+     * Example where a webcam and wheel are auto initialized using @{@link Hardware}. You would be able to use these
+     * variables just like normal. RoboBase does the initialization for you.
+     *
+     * <pre>
+     * {@code
+     * @Hardware(name = "Webcam")
+     * public Webcam webcam;
+     *
+     * @Hardware(name = "Chain", wheelDiameterCm = 9.6, ticksPerRevolution = 500, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT)
+     * public Wheel chainWheel;
+     * }
+     * </pre>
+     *
+     * @throws IllegalAccessException A field has the wrong access. Fields must be {@code public} and not {@code final}.
+     */
+    private void configureHardwareVariables() throws IllegalAccessException {
+        for (Field field : this.getClass().getFields()) {
+            Hardware hardware = field.getAnnotation(Hardware.class);
+
+            if (hardware != null) {
+                String configName = hardware.name();
+                Class<?> type = field.getType();
+                Object o;
+
+                if (type.equals(Webcam.class)) {
+                    o = new Webcam(this.hardwareMap, configName);
+                } else if (type.equals(Wheel.class)) {
+                    // TODO: warn if ticksPerRevolution, wheelDiameterCm is a bad value, but don't assert (if less than 0)
+                    o = new Wheel(this.hardwareMap.get(DcMotor.class, configName), hardware.ticksPerRevolution(), hardware.wheelDiameterCm());
+                    ((Wheel) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
+                } else if (type.equals(Motor.class)) {
+                    // TODO: warn if ticksPerRevolution, wheelDiameterCm is a bad value, but don't assert (if less than 0)
+                    o = new Motor(this.hardwareMap.get(DcMotor.class, configName), hardware.ticksPerRevolution());
+                    ((Motor) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
+                } else {
+                    o = this.hardwareMap.get(field.getType(), configName);
+                }
+
+                field.setAccessible(true);
+                field.set(this, o);
+            }
+        }
     }
 
     /**
@@ -61,12 +114,17 @@ public abstract class BootstrappedOpMode extends OpMode {
      *
      * @param milliseconds Number of milliseconds to wait
      */
-    protected void sleep(long milliseconds) {
+    public void sleep(long milliseconds) {
         SystemClock.sleep(milliseconds);
     }
 
     @Override
     public void init() {
-        this.configureSystemOut();
+        try {
+            this.configureSystemOut();
+            this.configureHardwareVariables();
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

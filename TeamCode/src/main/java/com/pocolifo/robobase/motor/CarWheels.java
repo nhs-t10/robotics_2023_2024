@@ -1,6 +1,10 @@
 package com.pocolifo.robobase.motor;
 
+import android.os.SystemClock;
 import com.pocolifo.robobase.Robot;
+import com.pocolifo.robobase.movement.Displacement;
+import com.pocolifo.robobase.movement.DisplacementSequence;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.LinkedList;
@@ -54,7 +58,8 @@ public class CarWheels implements AutoCloseable, MovementAware {
     /**
      * The {@link Wheel} used for encoder-related calculations.
      */
-    private final Wheel specialWheel;
+    @Deprecated
+    public final Wheel specialWheel;
 
     /**
      * Tracks movement events over time.
@@ -63,6 +68,7 @@ public class CarWheels implements AutoCloseable, MovementAware {
      * @see MovementEvent
      */
     private final List<MovementEvent> pastMovementEvents;
+
 
     /**
      * Instantiate {@link CarWheels}. The {@code specialWheel} is used for encoder-related calculations.
@@ -113,7 +119,7 @@ public class CarWheels implements AutoCloseable, MovementAware {
      * @author youngermax
      * @see CarWheels#CarWheels(Robot, Wheel, Wheel, Wheel, Wheel, Wheel)
      */
-    public CarWheels(HardwareMap hardwareMap, int motorTickCount, double wheelDiameterCm, Robot robot, String frontLeft,
+    public CarWheels(HardwareMap hardwareMap, double motorTickCount, double wheelDiameterCm, Robot robot, String frontLeft,
                      String frontRight, String backLeft, String backRight, String specialWheel) {
         this(
                 robot,
@@ -181,13 +187,10 @@ public class CarWheels implements AutoCloseable, MovementAware {
      * @author youngermax
      */
     public void driveIndividually(double frontLeft, double frontRight, double backLeft, double backRight) {
-        // Validate inputs
-        OmniDriveCoefficients.CoefficientSet set = new OmniDriveCoefficients.CoefficientSet(frontLeft, frontRight, backLeft, backRight);
-
-        this.frontLeft.drive(set.frontLeft);
-        this.frontRight.drive(set.frontRight);
-        this.backLeft.drive(set.backLeft);
-        this.backRight.drive(set.backRight);
+        this.frontLeft.drive(frontLeft);
+        this.frontRight.drive(frontRight);
+        this.backLeft.drive(backLeft);
+        this.backRight.drive(backRight);
     }
 
     /**
@@ -256,6 +259,8 @@ public class CarWheels implements AutoCloseable, MovementAware {
      */
     private void waitForWheelsThenStop() {
         // Wait for the SPECIAL WHEEL to stop moving
+        this.specialWheel.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.specialWheel.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         if (this.specialWheel.targetPosition - this.specialWheel.motor.getCurrentPosition() >= 0) {
             while (this.specialWheel.targetPosition > this.specialWheel.motor.getCurrentPosition()) {
@@ -281,7 +286,7 @@ public class CarWheels implements AutoCloseable, MovementAware {
      * @param rotationalPower The power at which to rotate the robot. Inclusive from -1.0 (rotate counterclockwise) to 1.0
      *                        (clockwise).
      */
-    public void driveOmni(float verticalPower, float horizontalPower, float rotationalPower) {
+    public void driveOmni(double verticalPower, double horizontalPower, double rotationalPower) {
         // Drive the wheels to match the controller input
         OmniDriveCoefficients.CoefficientSet vals = this.robot.omniDriveCoefficients.calculateCoefficientsWithPower(
                 verticalPower,
@@ -296,7 +301,7 @@ public class CarWheels implements AutoCloseable, MovementAware {
                 vals.backRight
         );
     }
-    public void driveOmni(float[] power) {
+    public void driveOmni(double[] power) {
         // Drive the wheels to match the controller input
         OmniDriveCoefficients.CoefficientSet vals = this.robot.omniDriveCoefficients.calculateCoefficientsWithPower(
                 power[0],
@@ -328,5 +333,70 @@ public class CarWheels implements AutoCloseable, MovementAware {
     @Override
     public List<MovementEvent> getPastMovementEvents() {
         return this.pastMovementEvents;
+    }
+
+    public void follow(DisplacementSequence sequence, double power) {
+//        while (true) {
+//            sequence.at()
+//        }
+
+        for (int i = 0; i < sequence.displacements.size(); i++) {
+            Displacement displacement = sequence.displacements.get(i);
+
+            System.out.printf("Displace %d: (%f, %f)%n", i, displacement.xCm, displacement.yCm);
+
+            drive(displacement.yCm, displacement.xCm, power);
+
+            while (!isCloseToTargetPosition(10)) {
+                SystemClock.sleep(10);
+            }
+            this.frontLeft.stopMoving();
+            this.frontRight.stopMoving();
+            this.backLeft.stopMoving();
+            this.backRight.stopMoving();
+            SystemClock.sleep(500);
+        }
+    }
+
+    private boolean isCloseToTargetPosition(int tickThreshold) {
+        // Is each wheel in the target position threshold?
+
+        boolean fl = Math.abs(this.frontLeft.motor.getTargetPosition() - this.frontLeft.motor.getCurrentPosition()) < Math.abs(tickThreshold);
+        if (!fl) return false;
+
+        boolean bl = Math.abs(this.backLeft.motor.getTargetPosition() - this.backLeft.motor.getCurrentPosition()) < Math.abs(tickThreshold);
+        if (!bl) return false;
+
+        boolean fr = Math.abs(this.frontRight.motor.getTargetPosition() - this.frontRight.motor.getCurrentPosition()) < Math.abs(tickThreshold);
+        if (!fr) return false;
+
+        boolean br = Math.abs(this.backRight.motor.getTargetPosition() - this.backRight.motor.getCurrentPosition()) < Math.abs(tickThreshold);
+        if (!br) return false;
+
+        return true;
+    }
+
+    public void drive(double lateralCm, double horizontalCm, double speed) {
+        double distanceCm = Math.hypot(lateralCm, horizontalCm);
+        double powerX = (horizontalCm / distanceCm) * speed; // cos
+        double powerY = (lateralCm / distanceCm) * speed; // sin
+
+        OmniDriveCoefficients.CoefficientSet coefficientSet = this.robot.omniDriveCoefficients.calculateCoefficientsWithPower(powerY, powerX, 0);
+
+        this.frontLeft.setDriveTarget(distanceCm * Math.signum(coefficientSet.frontLeft));
+        this.frontLeft.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.frontLeft.motor.setPower(coefficientSet.frontLeft);
+
+        this.backLeft.setDriveTarget(distanceCm * Math.signum(coefficientSet.backLeft));
+        this.backLeft.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.backLeft.motor.setPower(coefficientSet.backLeft);
+
+        this.frontRight.setDriveTarget(distanceCm * Math.signum(coefficientSet.frontRight));
+        this.frontRight.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.frontRight.motor.setPower(coefficientSet.frontRight);
+
+        this.backRight.setDriveTarget(distanceCm * Math.signum(coefficientSet.backRight));
+        this.backRight.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.backRight.motor.setPower(coefficientSet.backRight);
     }
 }

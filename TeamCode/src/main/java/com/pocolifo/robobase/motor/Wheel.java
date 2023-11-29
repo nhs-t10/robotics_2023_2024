@@ -23,7 +23,7 @@ public class Wheel extends Motor {
     /**
      * The target encoder position
      */
-    public int targetPosition;
+    public double targetPosition;
 
     /**
      * Instantiate a {@link Wheel}.
@@ -32,7 +32,7 @@ public class Wheel extends Motor {
      * @param tickCount       The number of ticks for a full revolution of this motor.
      * @param wheelDiameterCm The diameter of the wheel <strong>in real life</strong>, in centimeters.
      */
-    public Wheel(DcMotor motor, int tickCount, double wheelDiameterCm) {
+    public Wheel(DcMotor motor, double tickCount, double wheelDiameterCm) {
         super(motor, tickCount);
 
         this.wheelDiameterCm = wheelDiameterCm;
@@ -49,8 +49,7 @@ public class Wheel extends Motor {
     public void setDriveTarget(double centimeters) {
         double rotations = centimeters / this.circumferenceCm;
 
-        this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.targetPosition = (int) (rotations * this.tickCount) + this.motor.getCurrentPosition();
+        this.targetPosition = (int) (rotations * this.tickCount);
+        this.motor.setTargetPosition((int) this.targetPosition + this.motor.getCurrentPosition());
     }
 }

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class GamepadCarWheels implements AutoCloseable {
     private final CarWheels wheels;
     private final Gamepad gamepad;
+    public final Toggleable isMicroMovement;
 
     /**
      * Create a {@link GamepadCarWheels}.
@@ -16,63 +17,10 @@ public class GamepadCarWheels implements AutoCloseable {
      * @param wheels  The {@link CarWheels} that the {@link GamepadCarWheels} should use.
      * @param gamepad The {@link Gamepad} that the {@link GamepadCarWheels} should use.
      */
-    public GamepadCarWheels(CarWheels wheels, Gamepad gamepad) {
+    public GamepadCarWheels(CarWheels wheels, Gamepad gamepad, BoolSupplier microMovementCondition) {
         this.wheels = wheels;
         this.gamepad = gamepad;
-    }
-
-    /**
-     * Calculate the power to set the right set of wheel motors.
-     *
-     * @param x The joystick's x value
-     * @param y The joystick's y value
-     * @return The motor power for the right set of wheels
-     * @author Eli
-     */
-    private double calculateRightWheelPower(double x, double y) {
-        if (x == 0 && y == 0) {
-            return 0;
-        }
-
-        double r = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-        double t = Math.toDegrees(Math.asin(y / r));
-
-        if (x >= 0 && y >= 0) {
-            return r;
-        } else if (x <= 0 && y <= 0) {
-            return -r;
-        } else if (x < 0) {
-            return r * (t - 45) / 45;
-        } else {
-            return r * (t + 45) / 45;
-        }
-    }
-
-    /**
-     * Calculate the power to set the left set of wheel motors.
-     *
-     * @param x The joystick's x value
-     * @param y The joystick's y value
-     * @return The motor power for the left set of wheels
-     * @author Eli
-     */
-    private double calculateLeftWheelPower(double x, double y) {
-        if (x == 0 && y == 0) {
-            return 0;
-        }
-
-        double r = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-        double t = Math.toDegrees(Math.asin(y / r));
-
-        if (x <= 0 && y >= 0) {
-            return r;
-        } else if (x >= 0 && y <= 0) {
-            return -r;
-        } else if (x > 0) {
-            return r * (t - 45) / 45;
-        } else {
-            return r * (t + 45) / 45;
-        }
+        this.isMicroMovement = new Toggleable(microMovementCondition);
     }
 
     /**
@@ -83,7 +31,8 @@ public class GamepadCarWheels implements AutoCloseable {
      * Left stick - movement: forward, backward, left and right without turning
      * Right tick - rotation: clockwise and counterclockwise</p>
      */
-    public void update(boolean useMicroMovement) {
+    public void update() {
+        boolean useMicroMovement = this.isMicroMovement.processUpdates().get();
         float microMovementValue = useMicroMovement ? 1 : 4;
 
         this.wheels.driveOmni(
