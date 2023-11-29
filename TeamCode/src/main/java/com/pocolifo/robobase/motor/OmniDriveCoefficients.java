@@ -3,8 +3,8 @@ package com.pocolifo.robobase.motor;
 public class OmniDriveCoefficients {
     public final CoefficientSet totals;
     public final CoefficientSet vertical = new CoefficientSet(1, 1, 1, 1);
-    public final CoefficientSet horizontal = new CoefficientSet(1, -1, -1, 1);
-    public final CoefficientSet rotational = new CoefficientSet(1, -1, 1, -1);
+    public final CoefficientSet horizontal = new CoefficientSet(-1, 1, 1, -1);
+    public final CoefficientSet rotational = new CoefficientSet(-1, 1, -1, 1);
 
     /**
      * Omni driving coefficients are used...

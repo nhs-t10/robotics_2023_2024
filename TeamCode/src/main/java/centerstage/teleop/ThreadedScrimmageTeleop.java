@@ -4,6 +4,7 @@ import static centerstage.Constants.ROBOT;
 
 import com.pocolifo.robobase.BuildProperties;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
+import com.pocolifo.robobase.control.BoolSupplier;
 import com.pocolifo.robobase.control.GamepadCarWheels;
 import com.pocolifo.robobase.control.Pressable;
 import com.pocolifo.robobase.control.Toggleable;
@@ -21,8 +22,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ThreadedScrimmageTeleop extends TeleOpOpMode {
     private CarWheels carWheels;
     private GamepadCarWheels gamepadCarWheels;
-    private Toggleable useMicroMovement;
-
     private Pressable intake;
     private Motor intakeMotor;
     boolean intakeOpen = false;
@@ -66,9 +65,8 @@ public class ThreadedScrimmageTeleop extends TeleOpOpMode {
                 "FL"
         );
 //Gamepad 1
-        this.gamepadCarWheels = new GamepadCarWheels(this.carWheels, this.gamepad1);
 
-        this.useMicroMovement = new Toggleable(() -> this.gamepad1.a);
+        this.gamepadCarWheels = new GamepadCarWheels(this.carWheels, this.gamepad1, () -> this.gamepad1.a);
 
         this.intake = new Pressable(() -> this.gamepad1.right_bumper);
         this.intakeMotor = new Motor(hardwareMap.get(DcMotor.class,"intake"), 1120);
@@ -190,8 +188,8 @@ public class ThreadedScrimmageTeleop extends TeleOpOpMode {
         }
         //Gamepad 1
             //Driving
-                useMicroMovement.processUpdates();
-                this.gamepadCarWheels.updateWithDpadDrive(this.useMicroMovement.get());
+               this.gamepadCarWheels.update();
+        this.gamepadCarWheels.updateWithDpadDrive();
 
             //Launch Plane
                 if (this.LaunchPlane.get()) {

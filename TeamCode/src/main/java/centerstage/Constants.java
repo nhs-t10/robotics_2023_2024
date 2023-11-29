@@ -14,7 +14,7 @@ public class Constants {
             null,
             false,
             new OmniDriveCoefficients( //FL, FR, BL, BR
-/*Total for motor*/ new double[] {  1,   1,   1,   1 }
+/*Total for motor*/ new double[] {  1,   -1,   1,   -1 }
             )
     );
 

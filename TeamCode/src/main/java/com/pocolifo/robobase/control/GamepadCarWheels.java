@@ -46,8 +46,8 @@ public class GamepadCarWheels implements AutoCloseable {
      * Basically just a copy of {@see update}, but with added d-pad driving capability
      * @author arlanz
      */
-    public void updateWithDpadDrive (boolean useMicroMovement) {
-        float microMovementValue = useMicroMovement ? 1 : 4;
+    public void updateWithDpadDrive () {
+        float microMovementValue = this.isMicroMovement.get() ? 1 : 4;
 
         if(gamepad.dpad_up)
         {
