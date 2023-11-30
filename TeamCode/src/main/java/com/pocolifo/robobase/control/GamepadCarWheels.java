@@ -33,7 +33,7 @@ public class GamepadCarWheels implements AutoCloseable {
      */
     public void update() {
         boolean useMicroMovement = this.isMicroMovement.processUpdates().get();
-        float microMovementValue = useMicroMovement ? 1 : 4;
+        double microMovementValue = useMicroMovement ? 1 : 4;
 
         this.wheels.driveOmni(
                 this.gamepad.left_stick_y / microMovementValue,
