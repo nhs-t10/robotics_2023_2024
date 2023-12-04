@@ -1,8 +1,19 @@
 package com.pocolifo.robobase.dashboard.input;
 
+import com.google.gson.annotations.SerializedName;
 import com.pocolifo.robobase.dashboard.range.IntegerRange;
 
 public class IntegerInput extends AbstractInput<Integer> {
+    @SerializedName("value")
+    public int value;
+
+    @SerializedName("min")
+    public int min;
+
+    @SerializedName("max")
+    public int max;
+
+
     public IntegerInput(String name, Integer defaultValue, IntegerRange range) {
         super(name, defaultValue, range);
 

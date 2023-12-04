@@ -2,37 +2,25 @@ package centerstage.teleop;
 
 import centerstage.Constants;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
-import com.pocolifo.robobase.control.GamepadCarWheels;
-import com.pocolifo.robobase.control.Toggleable;
-import com.pocolifo.robobase.motor.CarWheels;
+import com.pocolifo.robobase.control.GamepadMecanumDrive;
+import com.pocolifo.robobase.movement.mecanum.MecanumDrive;
+import com.pocolifo.robobase.movement.mecanum.MecanumWheels;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import static centerstage.Constants.ROBOT;
-
-@TeleOp(name = "Kearing v1")
+@TeleOp(name = "Kearing II")
 public class KearingTeleop extends TeleOpOpMode {
-    private CarWheels carWheels;
-    private GamepadCarWheels gamepadCarWheels;
+    private MecanumDrive driver;
+    private GamepadMecanumDrive gamepadMecanumDrive;
+
 
     @Override
     public void initialize() {
-        this.carWheels = new CarWheels(
-                hardwareMap,
-                Constants.MOTOR_TICK_COUNT,
-                9.6d,
-                ROBOT,
-                "FL",
-                "FR",
-                "BL",
-                "BR",
-                "FL"
-        );
-
-        this.gamepadCarWheels = new GamepadCarWheels(this.carWheels, this.gamepad1, () -> this.gamepad1.x);
+        this.driver = Constants.createDriver(this);
+        this.gamepadMecanumDrive = new GamepadMecanumDrive(this.driver, this.gamepad1);
     }
 
     @Override
     public void loop() {
-        this.gamepadCarWheels.update();
+        this.gamepadMecanumDrive.update();
     }
 }

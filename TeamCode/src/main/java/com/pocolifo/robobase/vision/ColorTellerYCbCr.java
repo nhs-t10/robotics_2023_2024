@@ -13,7 +13,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 public class ColorTellerYCbCr extends AbstractResultCvPipeline<ColorTellerYCbCr.ycbcrResult> {
-    private static final Point TopLeftAnchorPoint = new Point(300, 318); //Base Picture is 600 x 480 when taken on the robot.
+    private static final Point TopLeftAnchorPoint = new Point(300, 318); //Base Picture is 600 horizontalCm 480 when taken on the robot.
     private static final int REGION_WIDTH = 20; //1cm
     private static final int REGION_HEIGHT = 20; //1cm
     private static final Point BottomRightAnchorPoint = new Point(TopLeftAnchorPoint.x + REGION_WIDTH, TopLeftAnchorPoint.y + REGION_HEIGHT);

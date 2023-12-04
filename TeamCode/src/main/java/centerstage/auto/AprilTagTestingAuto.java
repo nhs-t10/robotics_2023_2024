@@ -1,4 +1,4 @@
-package centerstage.auto;
+/*package centerstage.auto;
 
 import com.pocolifo.robobase.Alliance;
 import com.pocolifo.robobase.BuildProperties;
@@ -80,14 +80,14 @@ public class AprilTagTestingAuto extends AutonomousOpMode {
         targetAprilTag = this.aprilTagDetectionPipeline.getTargetAprilTagDetection(alliance, spikePosition);
         if (targetAprilTag != null) {
             System.out.println(targetAprilTag.id);
-            System.out.println(targetAprilTag.center.x);
-            System.out.println(targetAprilTag.center.y);
+            System.out.println(targetAprilTag.center.horizontalCm);
+            System.out.println(targetAprilTag.center.verticalCm);
 
-            while (targetAprilTag.center.x > 320) {
+            while (targetAprilTag.center.horizontalCm > 320) {
                 this.carWheels.driveOmni(0, 0.5f, 0);
                 targetAprilTag = aprilTagDetectionPipeline.getTargetAprilTagDetection(alliance, spikePosition);
             }
-            while (targetAprilTag.center.x < 320) {
+            while (targetAprilTag.center.horizontalCm < 320) {
                 this.carWheels.driveOmni(0, -0.5f, 0);
                 targetAprilTag = aprilTagDetectionPipeline.getTargetAprilTagDetection(alliance, spikePosition);
             }
@@ -96,3 +96,4 @@ public class AprilTagTestingAuto extends AutonomousOpMode {
         }
     }
 }
+*/

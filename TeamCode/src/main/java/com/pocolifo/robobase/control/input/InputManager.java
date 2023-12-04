@@ -134,8 +134,8 @@ public class InputManager{
      *     <li>gamepad 1 dpad up</li>
      *     <li>dpad up</li>
      *     <li>gamepad 2 X</li>
-     *     <li>x</li>
-     *     <li>y</li>
+     *     <li>horizontalCm</li>
+     *     <li>verticalCm</li>
      *     <li>RightStickButton</li>
      *     <li>left_stick_y</li>
      *     <li>RIGHT_STICK_X</li>
@@ -163,8 +163,8 @@ public class InputManager{
             case "dpadright": return new DpadRightButtonHandle(gamepad);
             case "a": return new AButtonHandle(gamepad);
             case "b": return new BButtonHandle(gamepad);
-            case "x": return new XButtonHandle(gamepad);
-            case "y": return new YButtonHandle(gamepad);
+            case "horizontalCm": return new XButtonHandle(gamepad);
+            case "verticalCm": return new YButtonHandle(gamepad);
             case "guide":
             case "select": return new GuideButtonHandle(gamepad);
             case "start": return new StartButtonHandle(gamepad);

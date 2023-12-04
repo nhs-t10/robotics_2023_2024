@@ -1,25 +1,19 @@
 package com.pocolifo.robobase.motor;
 
+/**
+ * Omni driving coefficients are used...
+ * <ul>
+ *     <li>if hardware sets motors up backward</li>
+ *     <li>to adjust motor power</li>
+ *     <li>to correct drift and/or uneven motor power</li>
+ *     <li>to allow for omni driving</li>
+ * </ul>
+ */
 public class OmniDriveCoefficients {
-    public final CoefficientSet totals;
-    public final CoefficientSet vertical = new CoefficientSet(1, 1, 1, 1);
-    public final CoefficientSet horizontal = new CoefficientSet(-1, 1, 1, -1);
-    public final CoefficientSet rotational = new CoefficientSet(-1, 1, -1, 1);
-
-    /**
-     * Omni driving coefficients are used...
-     * <ul>
-     *     <li>if hardware sets motors up backward</li>
-     *     <li>to adjust motor power</li>
-     *     <li>to correct drift and/or uneven motor power</li>
-     *     <li>to allow for omni driving</li>
-     * </ul>
-     *
-     * @param configuredCoefficients     Coefficients applied after the vertical, horizontal, or rotational coefficients are applied.
-     */
-    public OmniDriveCoefficients(double[] configuredCoefficients) {
-        this.totals = new CoefficientSet(configuredCoefficients);
-    }
+    public CoefficientSet totals = new CoefficientSet(1, 1, 1, 1);
+    public CoefficientSet vertical = new CoefficientSet(1, 1, 1, 1);
+    public CoefficientSet horizontal = new CoefficientSet(-1, 1, 1, -1);
+    public CoefficientSet rotational = new CoefficientSet(-1, 1, -1, 1);
 
     /**
      * Calculates the motor coefficients that are then passed to the motors.

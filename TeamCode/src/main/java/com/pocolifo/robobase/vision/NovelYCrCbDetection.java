@@ -32,15 +32,15 @@ public class NovelYCrCbDetection extends AbstractResultCvPipeline<SpikePosition>
 
         Mat left = ycrcb.submat(0, ycrcb.rows(), 0, ycrcb.cols() / 3);
         Core.extractChannel(left, extracted, col);
-        double leftVal = Core.minMaxLoc(extracted).maxVal;
+        double leftVal = Core.mean(extracted).val[0];
 
         Mat center = ycrcb.submat(0, ycrcb.rows(), ycrcb.cols() / 3, (ycrcb.cols() / 3) * 2);
         Core.extractChannel(center, extracted, col);
-        double centerVal = Core.minMaxLoc(extracted).maxVal;
+        double centerVal = Core.mean(extracted).val[0];
 
         Mat right = ycrcb.submat(0, ycrcb.rows(),  (ycrcb.cols() / 3) * 2, ycrcb.cols());
         Core.extractChannel(right, extracted, col);
-        double rightVal = Core.minMaxLoc(extracted).maxVal;
+        double rightVal = Core.mean(extracted).val[0];
 
         if (leftVal > centerVal && leftVal > rightVal) {
             result = SpikePosition.LEFT;

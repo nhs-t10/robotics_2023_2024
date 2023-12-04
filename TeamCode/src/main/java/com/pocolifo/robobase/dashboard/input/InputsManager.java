@@ -1,16 +1,21 @@
 package com.pocolifo.robobase.dashboard.input;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class InputsManager {
-    private static Map<String, Input> values = new HashMap<String, Input>();
+    private static final Map<String, Input<?>> values = new HashMap<>();
 
-    public static synchronized void addValue(Input value) {
+    public static synchronized void addValue(Input<?> value) {
         if (values.containsKey(value.getName())) {
             throw new IllegalArgumentException("Input: \"" + value.getName() + "\" already registered");
         }
+
         values.put(value.getName(), value);
     }
 
@@ -33,35 +38,17 @@ public class InputsManager {
      * }
      *
      * @return A string in the format of JSON where each KVP is in the format {nameOfDebugValue: {value: number, }}
-     * @throws IOException
      */
     public static synchronized String getValuesAsJSON() {
-        StringBuilder builder = new StringBuilder();
+        JsonObject object = new JsonObject();
+        Gson gson = new Gson();
 
-        builder.append("{");
+        values.forEach((label, input) -> object.add(label, gson.toJsonTree(input)));
 
-        boolean first = true;
-        for (Map.Entry<String, Input> entry : values.entrySet()) {
-
-            if (!first) {
-                builder.append(",");
-            }
-            first = false;
-
-            builder.append("\"" + entry.getKey() + "\"");
-            builder.append(":{");
-            builder.append("\"value\":" + entry.getValue().getValue() + ",");
-            builder.append("\"min\":" + entry.getValue().getRange().getMin() + ",");
-            builder.append("\"max\":" + entry.getValue().getRange().getMax() + "");
-            builder.append("}");
-        }
-
-        builder.append("}");
-
-        return builder.toString();
+        return gson.toJson(object);
     }
 
     public static synchronized void clear() {
-        values = new HashMap<String, Input>();
+        values.clear();
     }
 }

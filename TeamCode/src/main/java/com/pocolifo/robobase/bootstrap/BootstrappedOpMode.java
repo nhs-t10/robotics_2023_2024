@@ -1,14 +1,22 @@
 package com.pocolifo.robobase.bootstrap;
 
 import android.os.SystemClock;
+import com.pocolifo.robobase.dashboard.DashboardHTTPServer;
 import com.pocolifo.robobase.motor.Motor;
 import com.pocolifo.robobase.motor.Wheel;
 import com.pocolifo.robobase.vision.Webcam;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 /**
@@ -25,6 +33,19 @@ import java.lang.reflect.Field;
  * @see System#err
  */
 public abstract class BootstrappedOpMode extends OpMode {
+    /**
+     * The dashboard HTTP server.
+     */
+    protected DashboardHTTPServer dashboardHTTPServer;
+
+    /**
+     * The {@link BNO055IMU} if it is registered as {@code imu} in the {@link BootstrappedOpMode#hardwareMap}.
+     * <p>
+     * It is autoconfigured to use m/s/s and radians.
+     */
+    @Hardware(name = "imu")
+    public BNO055IMU imu;
+
     /**
      * Sets {@link System#out} and {@link System#err} to an instance of {@link RobotDebugPrintStream}.
      * This allows {@link System#out} and {@link System#err} to be used for printing debug messages.
@@ -86,6 +107,38 @@ public abstract class BootstrappedOpMode extends OpMode {
     }
 
     /**
+     * Starts the dashboard.
+     */
+    private void configureDashboard() throws IOException {
+        this.dashboardHTTPServer = new DashboardHTTPServer();
+        this.dashboardHTTPServer.start();
+
+        System.out.println("[bootstrap] [dashboard] running on http://" + this.dashboardHTTPServer.getHostname() + ":" + this.dashboardHTTPServer.getListeningPort());
+    }
+
+    private void configureIMU() {
+        if (this.imu == null) {
+            System.out.println("[bootstrap] BNO055IMU not found in hardware map as `imu`, so it cannot be autoconfigured");
+            return;
+        }
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        this.imu.initialize(parameters);
+        this.imu.startAccelerationIntegration(
+                new Position(DistanceUnit.CM, 0, 0, 0, 0),
+                new Velocity(DistanceUnit.CM, 0, 0, 0, 0),
+                10
+        );
+    }
+
+    /**
      * Debug method that detects all devices and the runtime environment in general.
      *
      * @author youngermax
@@ -123,7 +176,11 @@ public abstract class BootstrappedOpMode extends OpMode {
         try {
             this.configureSystemOut();
             this.configureHardwareVariables();
-        } catch (IllegalAccessException e) {
+            this.configureDashboard();
+            this.configureIMU();
+
+            System.out.println("[bootstrap] Initialization complete");
+        } catch (IllegalAccessException | IOException e) {
             throw new RuntimeException(e);
         }
     }

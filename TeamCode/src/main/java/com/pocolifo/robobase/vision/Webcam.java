@@ -148,8 +148,8 @@ public class Webcam implements AutoCloseable {
         Point BottomRightThing = new Point(width,0);
         for (int currentHeight = 0; currentHeight < height; currentHeight += 20)
         {
-            TopLeftThing.y = currentHeight;
-            BottomRightThing.y = currentHeight;
+            TopLeftThing.verticalCm = currentHeight;
+            BottomRightThing.verticalCm = currentHeight;
             if (currentHeight % 100 == 0)
             {
                 COLOR = RED;
@@ -167,14 +167,14 @@ public class Webcam implements AutoCloseable {
                     1); // Thickness of the rectangle lines
 
         }
-        TopLeftThing.x = 0;
-        TopLeftThing.y = 0;
-        BottomRightThing.x = 0;
-        BottomRightThing.y = height;
+        TopLeftThing.horizontalCm = 0;
+        TopLeftThing.verticalCm = 0;
+        BottomRightThing.horizontalCm = 0;
+        BottomRightThing.verticalCm = height;
         for (int currentWidth = 0; currentWidth < width; currentWidth += 20)
         {
-            TopLeftThing.x = currentWidth;
-            BottomRightThing.x = currentWidth;
+            TopLeftThing.horizontalCm = currentWidth;
+            BottomRightThing.horizontalCm = currentWidth;
 
             if (currentWidth % 100 == 0)
             {

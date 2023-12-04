@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Represents a single wheel on the robot.
  *
  * @author youngermax
- * @see CarWheels
  */
 // TODO: Make this implement MovementAware
 public class Wheel extends Motor {
