@@ -22,8 +22,8 @@ import roadrunner.trajectorysequence.sequencesegment.SequenceSegment;
 import roadrunner.trajectorysequence.sequencesegment.TrajectorySegment;
 import roadrunner.trajectorysequence.sequencesegment.TurnSegment;
 import roadrunner.trajectorysequence.sequencesegment.WaitSegment;
-import org.firstinspires.ftc.teamcode.util.DashboardUtil;
-import org.firstinspires.ftc.teamcode.util.LogFiles;
+import roadrunner.util.DashboardUtil;
+import roadrunner.util.LogFiles;
 
 import java.util.ArrayList;
 import java.util.Collections;
