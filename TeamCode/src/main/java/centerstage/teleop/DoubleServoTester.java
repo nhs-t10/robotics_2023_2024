@@ -30,12 +30,15 @@ public class DoubleServoTester extends TeleOpOpMode {
     @Override
     public void loop() {
         boolean runServoState = RunServo.processUpdates().get();
-        if (runServoState) {
-            Servo1.setPower(0.5);
-            Servo2.setPower(0.5);
-        } else {
+        if (runServoState && !running) {
+            Servo1.setPower(1);
+            Servo2.setPower(1);
+            running = true;
+        } else if (!runServoState && running)
+        {
             Servo1.setPower(0);
             Servo2.setPower(0);
+            running = false;
         }
         /*
         if (RunServo.get()) {
