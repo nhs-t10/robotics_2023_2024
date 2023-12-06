@@ -67,7 +67,7 @@ public class RRInterface extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotorEx fl, bl, br, fr;
     private List<DcMotorEx> motors;
 
     private IMU imu;
@@ -95,12 +95,12 @@ public class RRInterface extends MecanumDrive {
                 DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "FL");
-        leftRear = hardwareMap.get(DcMotorEx.class, "BL");
-        rightRear = hardwareMap.get(DcMotorEx.class, "BR");
-        rightFront = hardwareMap.get(DcMotorEx.class, "FR");
+        fl = hardwareMap.get(DcMotorEx.class, "FL");
+        bl = hardwareMap.get(DcMotorEx.class, "BL");
+        br = hardwareMap.get(DcMotorEx.class, "BR");
+        fr = hardwareMap.get(DcMotorEx.class, "FR");
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        motors = Arrays.asList(fl, bl, br, fr);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -118,16 +118,16 @@ public class RRInterface extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        leftFront.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.frontLeft > 0
+        fl.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.frontLeft > 0
                 ? DcMotorSimple.Direction.FORWARD
                 : DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.backLeft > 0
+        bl.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.backLeft > 0
                 ? DcMotorSimple.Direction.FORWARD
                 : DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.frontRight > 0
+        fr.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.frontRight > 0
                 ? DcMotorSimple.Direction.FORWARD
                 : DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.backRight > 0
+        br.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.backRight > 0
                 ? DcMotorSimple.Direction.FORWARD
                 : DcMotorSimple.Direction.REVERSE);
 
@@ -289,10 +289,10 @@ public class RRInterface extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+        fl.setPower(v);
+        bl.setPower(v1);
+        br.setPower(v2);
+        fr.setPower(v3);
     }
 
     @Override
