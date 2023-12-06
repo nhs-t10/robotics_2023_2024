@@ -4,7 +4,6 @@ import static centerstage.Constants.ROBOT;
 
 import com.pocolifo.robobase.BuildProperties;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
-import com.pocolifo.robobase.control.BoolSupplier;
 import com.pocolifo.robobase.control.GamepadCarWheels;
 import com.pocolifo.robobase.control.Pressable;
 import com.pocolifo.robobase.control.Toggleable;
@@ -18,10 +17,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "ScrimmageTeleOp " + BuildProperties.VERSION)
-public class ThreadedScrimmageTeleop extends TeleOpOpMode {
+@TeleOp(name = "ThreadedTeleOp " + BuildProperties.VERSION)
+public class TestingTeleOpThreaded extends TeleOpOpMode {
     private CarWheels carWheels;
     private GamepadCarWheels gamepadCarWheels;
+    private Toggleable useMicroMovement;
+
     private Pressable intake;
     private Motor intakeMotor;
     boolean intakeOpen = false;
@@ -65,21 +66,23 @@ public class ThreadedScrimmageTeleop extends TeleOpOpMode {
                 "FL"
         );
 //Gamepad 1
+        this.gamepadCarWheels = new GamepadCarWheels(this.carWheels, this.gamepad1, () -> this.gamepad1.x);
 
-        this.gamepadCarWheels = new GamepadCarWheels(this.carWheels, this.gamepad1, () -> this.gamepad1.a);
+
+        this.useMicroMovement = new Toggleable(() -> this.gamepad1.a);
 
         this.intake = new Pressable(() -> this.gamepad1.right_bumper);
-        this.intakeMotor = new Motor(hardwareMap.get(DcMotor.class,"SpinningIntake"), 1120);
+        this.intakeMotor = new Motor(hardwareMap.get(DcMotor.class,"intake"), 1120);
 
         this.LaunchPlane = new Pressable(() -> this.gamepad1.b);
 
 //Gamepad 2
         //Todo: may need to tweak coefficients
-        linearSlides = new DoubleMotor(new Motor(hardwareMap.get(DcMotor.class, "LeftLinearSlide"), 1120), new Motor(hardwareMap.get(DcMotor.class, "RightLinearSlide"), 1120), 1, -1);
+        linearSlides = new DoubleMotor(new Motor(hardwareMap.get(DcMotor.class, "motor1"), 1120), new Motor(hardwareMap.get(DcMotor.class, "motor2"), 1120), 1, 1);
         this.dpadUp = new Pressable(() -> this.gamepad2.dpad_up);
         this.dpadDown = new Pressable(() -> this.gamepad2.dpad_down);
 
-        this.midjoint = new DoubleCRServo(hardwareMap.get(CRServo.class,"rotationLeftServo"), hardwareMap.get(CRServo.class,"rotationRightServo"), 0.5);
+        this.midjoint = new DoubleCRServo(hardwareMap.get(CRServo.class,"servo1"), hardwareMap.get(CRServo.class,"servo2"), 0.5);
         this.midjointToTop = new Pressable(() -> this.gamepad2.x);
         this.midjointToBottom = new Pressable(() -> this.gamepad2.b);
         this.midjointForward = new Pressable(() -> (this.gamepad2.right_trigger > 0.5));
@@ -87,7 +90,7 @@ public class ThreadedScrimmageTeleop extends TeleOpOpMode {
 
 
         this.outtake = new Pressable(() -> this.gamepad2.right_bumper);
-        this.outtakeServo = hardwareMap.get(Servo.class, "Outtake");
+        this.outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         System.out.println("Done Initializing");
     }
@@ -125,25 +128,23 @@ public class ThreadedScrimmageTeleop extends TeleOpOpMode {
                 }
             });
             intakeThread.start();
-            System.out.println("Intake thread initialized");
+
+            System.out.println("Gamepad 1 threads initialized");
 
             //Gamepad 2
             linearSlideThread = new Thread(() -> {
                 while(runThreads) {
-                    linearSlides.spin(gamepad2.left_stick_y); //4 is arbitrary, but full power seems like a lot
+                    linearSlides.spin(gamepad2.left_stick_y / 4); //4 is arbitrary, but full power seems like a lot
                     //Or it might use the D-pad:
                     if (dpadUp.get()) {
-                        linearSlides.spin(0.75);
+                        linearSlides.spin(0.25);
                     } else if (dpadDown.get()) {
-                        linearSlides.spin(-0.75);
+                        linearSlides.spin(0.25);
                     } else {
                         linearSlides.stopMoving();
                     }
                 }
             });
-            linearSlideThread.start();
-            System.out.println("Linear slide thread initialized");
-
             outtakeThread = new Thread(() -> {
                 while (runThreads)
                 {
@@ -157,39 +158,44 @@ public class ThreadedScrimmageTeleop extends TeleOpOpMode {
                     }
                 }
             });
-            outtakeThread.start();
-            System.out.println("Outtake thread initialized");
-
             midjointThread = new Thread(() -> {
-                while(runThreads) {
-                    if (midjointToTop.get()) {
-                        //Todo: while not at top limit switch
-                        rotateMidjointForward();
-                        midjoint.stopMoving();
-                    } else if (midjointToBottom.get()) {
-                        //Todo: while not at bottom limit switch
-                        rotateMidjointBackward();
-                        midjoint.stopMoving();
-                    } else if (midjointForward.get()) {
-                        rotateMidjointForward();
-                    } else if (midjointBackward.get()) {
-                        rotateMidjointBackward();
-                    } else {
-                        midjoint.stopMoving();
-                    }
+                if (midjointToTop.get())
+                {
+                    //Todo: while not at top limit switch
+                    rotateMidjointForward();
+                    midjoint.stopMoving();
+                }
+                else if (midjointToBottom.get()) {
+                    //Todo: while not at bottom limit switch
+                    rotateMidjointBackward();
+                    midjoint.stopMoving();
+                }
+                else if (midjointForward.get())
+                {
+                    rotateMidjointForward();
+                }
+                else if (midjointBackward.get())
+                {
+                    rotateMidjointBackward();
+                }
+                else
+                {
+                    midjoint.stopMoving();
                 }
             });
-            midjointThread.start();
-            System.out.println("Midjoint thread initialized");
 
-            System.out.println("All threads initialized!");
+            linearSlideThread.start();
+            outtakeThread.start();
+            midjointThread.start();
+
+            System.out.println("Gamepad 2 threads initialized");
 
             threadsInitialized = true;
         }
         //Gamepad 1
             //Driving
-               this.gamepadCarWheels.update();
-        this.gamepadCarWheels.updateWithDpadDrive();
+                useMicroMovement.processUpdates();
+                this.gamepadCarWheels.updateWithDpadDrive();
 
             //Launch Plane
                 if (this.LaunchPlane.get()) {
