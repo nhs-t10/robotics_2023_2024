@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import roadrunner.drive.RRInterface;
 import roadrunner.drive.SampleMecanumDrive;
 
 /*
@@ -15,7 +16,7 @@ import roadrunner.drive.SampleMecanumDrive;
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        RRInterface drive = new RRInterface(hardwareMap);
 
         waitForStart();
 
