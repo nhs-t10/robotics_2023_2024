@@ -16,7 +16,7 @@ import org.openftc.apriltag.AprilTagDetection;
 import centerstage.Constants;
 import centerstage.SpikePosition;
 
-@Autonomous(name = "AprilTagTesting " + BuildProperties.VERSION)
+@Autonomous(name = "MotorTester " + BuildProperties.VERSION)
 public class MotorTestingAuto extends AutonomousOpMode {
 
 DcMotor fl;
