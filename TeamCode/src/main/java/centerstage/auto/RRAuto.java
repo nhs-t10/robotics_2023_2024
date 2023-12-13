@@ -5,6 +5,8 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import roadrunner.drive.RRInterface;
+import roadrunner.trajectorysequence.TrajectorySequence;
+import roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 @Autonomous
 public class RRAuto extends AutonomousOpMode {
@@ -19,7 +21,15 @@ public class RRAuto extends AutonomousOpMode {
 
     @Override
     public void run() {
-        Trajectory trajectory = rrInterface.trajectoryBuilder(startPose).forward(5).build();
-        rrInterface.followTrajectory(trajectory);
+        TrajectorySequenceBuilder trajectorySequenceBuilder = rrInterface.trajectorySequenceBuilder(startPose);
+        trajectorySequenceBuilder = trajectorySequenceBuilder.forward(24);
+        trajectorySequenceBuilder = trajectorySequenceBuilder.turn(Math.PI/2);
+        trajectorySequenceBuilder = trajectorySequenceBuilder.forward(24);
+        trajectorySequenceBuilder = trajectorySequenceBuilder.turn(Math.PI/2);
+        trajectorySequenceBuilder = trajectorySequenceBuilder.forward(24);
+        trajectorySequenceBuilder = trajectorySequenceBuilder.turn(Math.PI/2);
+        trajectorySequenceBuilder = trajectorySequenceBuilder.forward(24);
+        trajectorySequenceBuilder = trajectorySequenceBuilder.turn(Math.PI/2);
+        rrInterface.followTrajectorySequence(trajectorySequenceBuilder.build());
     }
 }

@@ -3,6 +3,7 @@ package centerstage.auto;
 import centerstage.Constants;
 import centerstage.SpikePosition;
 import com.pocolifo.robobase.Alliance;
+import com.pocolifo.robobase.StartSide;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.motor.CarWheels;
 import com.pocolifo.robobase.motor.Motor;
@@ -19,12 +20,14 @@ public class BaseProductionAuto extends AutonomousOpMode {
     private final NovelYCrCbDetection edgeDetection;
     private final Alliance alliance;
     private Webcam webcam;
-    private AprilTagDetectionPipeline aprilTagDetectionPipeline;
+//    private AprilTagDetectionPipeline aprilTagDetectionPipeline;
     private CarWheels carWheels;
+    private final StartSide startSide;
 
-    public BaseProductionAuto(NovelYCrCbDetection edgeDetection, Alliance alliance) {
+    public BaseProductionAuto(NovelYCrCbDetection edgeDetection, Alliance alliance, StartSide startSide) {
         this.edgeDetection = edgeDetection;
         this.alliance = alliance;
+        this.startSide = startSide;
     }
 
     @Override
@@ -32,13 +35,13 @@ public class BaseProductionAuto extends AutonomousOpMode {
         this.webcam = new Webcam(this.hardwareMap, "Webcam");
         this.webcam.open(this.edgeDetection);
 
-        this.aprilTagDetectionPipeline = new AprilTagDetectionPipeline(
-                Constants.APRIL_TAG_SIZE_METERS,
-                Constants.C270_FOCAL_LENGTH_X,
-                Constants.C270_FOCAL_LENGTH_Y,
-                Constants.C270_OPTICAL_CENTER_X,
-                Constants.C270_OPTICAL_CENTER_Y
-        );
+//        this.aprilTagDetectionPipeline = new AprilTagDetectionPipeline(
+//                Constants.APRIL_TAG_SIZE_METERS,
+//                Constants.C270_FOCAL_LENGTH_X,
+//                Constants.C270_FOCAL_LENGTH_Y,
+//                Constants.C270_OPTICAL_CENTER_X,
+//                Constants.C270_OPTICAL_CENTER_Y
+//        );
 
         this.carWheels = new CarWheels(
                 hardwareMap,
@@ -64,6 +67,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Override
     public void run() {
         System.out.println("Beginning Movement");
+        moveToTargetPosition(edgeDetection.getResult());
 //        carWheels.driveOmni(1,0,0);
 //        sleep(2000);
 //        carWheels.driveOmni(0,0,0);
@@ -76,23 +80,26 @@ public class BaseProductionAuto extends AutonomousOpMode {
     }
 
     public void moveToTargetPosition(SpikePosition spikePosition) {
-        AprilTagDetection targetAprilTag = this.aprilTagDetectionPipeline.getTargetAprilTagDetection(alliance, spikePosition);
+        carWheels.drive(50, false);
+        switch (spikePosition) {
+            case RIGHT:
+                carWheels.rotateClockwise(90, 0.5);
+                break;
+            case LEFT:
+                carWheels.rotateCounterclockwise(90, 0.5);
+                break;
+        }
+        //TODO: Drop Pixel Here
 
-        if (targetAprilTag != null) {
-            System.out.println(targetAprilTag.id);
-            System.out.println(targetAprilTag.center.x);
-            System.out.println(targetAprilTag.center.y);
-
-            while (targetAprilTag.center.x > 320) {
-                this.carWheels.driveOmni(0, 0.5f, 0);
-                targetAprilTag = aprilTagDetectionPipeline.getTargetAprilTagDetection(alliance, spikePosition);
+        if (this.startSide == StartSide.NEAR) {
+            switch (alliance) {
+                case RED:
+                    carWheels.drive(50, true);
+                    break;
+                case BLUE:
+                    carWheels.drive(-50, true);
+                    break;
             }
-            while (targetAprilTag.center.x < 320) {
-                this.carWheels.driveOmni(0, -0.5f, 0);
-                targetAprilTag = aprilTagDetectionPipeline.getTargetAprilTagDetection(alliance, spikePosition);
-            }
-            this.carWheels.driveOmni(0,0,0);
-            this.carWheels.close();
         }
     }
 }
