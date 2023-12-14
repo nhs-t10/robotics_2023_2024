@@ -15,8 +15,7 @@ public class RRAuto extends AutonomousOpMode {
 
     @Override
     public void initialize() {
-        rrInterface = new RRInterface(hardwareMap);
-        startPose = new Pose2d(0,0);
+
     }
 
     @Override
