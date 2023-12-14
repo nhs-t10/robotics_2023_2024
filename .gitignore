@@ -81,3 +81,5 @@ lint/tmp/
 # lint/reports/
 
 BuildProperties.java
+
+TeamCode/javadocs-*

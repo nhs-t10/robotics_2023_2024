@@ -51,11 +51,11 @@ version "3.${getGitCommitCount()}, Build ${getTime()} (Commit ${getLatestGitHash
 android.applicationVariants.configureEach { v ->
     tasks.create("javadoc${v.name.capitalize()}", Javadoc) {
         group 'javadoc'
-        title "RoboBase"
+
         destinationDir = file("javadocs-${v.name}")
 
         source = v.javaCompile.source.findAll {
-            it.getAbsolutePath().contains("robobase")
+            it.getAbsolutePath().contains("robobase") || it.getAbsolutePath().contains("centerstage") || it.getAbsolutePath().contains("roadrunner")
         }
 
         afterEvaluate {
