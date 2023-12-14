@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - run: mkdir build
-      - uses: mattnotmitt/doxygen-action@edge
+      - uses: mattnotmitt/doxygen-action@1.9.5
       - name: Deploy Docs
         uses: peaceiris/actions-gh-pages@v3
         with:
