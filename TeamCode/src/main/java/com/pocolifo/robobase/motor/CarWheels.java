@@ -301,6 +301,16 @@ public class CarWheels implements AutoCloseable, MovementAware {
                 vals.backRight
         );
     }
+
+    /**
+     * Drives the robot using omni-wheel control based on the provided power values for each direction.
+     *
+     * @param power An array of power values representing the desired speed and direction for each wheel.
+     *              The array should have three elements: [powerX, powerY, powerRotation].
+     *              - powerX: The lateral movement power.
+     *              - powerY: The horizontal movement power.
+     *              - powerRotation: The rotational movement power.
+     */
     public void driveOmni(double[] power) {
         // Drive the wheels to match the controller input
         OmniDriveCoefficients.CoefficientSet vals = this.robot.omniDriveCoefficients.calculateCoefficientsWithPower(
@@ -335,10 +345,15 @@ public class CarWheels implements AutoCloseable, MovementAware {
         return this.pastMovementEvents;
     }
 
+    /**
+     * Executes a sequence of displacements, driving the robot to each target position with a specified power.
+     *
+     * @param sequence The sequence of displacements to follow, containing the target positions in both lateral (yCm) and
+     *                 horizontal (xCm) directions.
+     * @param power    The power at which the robot should move during each displacement, ranging from -1.0 (full reverse)
+     *                 to 1.0 (full forward). A power of 0.0 indicates no motion.
+     */
     public void follow(DisplacementSequence sequence, double power) {
-//        while (true) {
-//            sequence.at()
-//        }
 
         for (int i = 0; i < sequence.displacements.size(); i++) {
             Displacement displacement = sequence.displacements.get(i);
@@ -358,6 +373,14 @@ public class CarWheels implements AutoCloseable, MovementAware {
         }
     }
 
+    /**
+     * Checks whether each wheel motor is close to its target position within a specified threshold.
+     *
+     * @param tickThreshold The acceptable difference (in ticks) between the current position and the target position
+     *                      for each wheel motor to be considered close to the target.
+     * @return {@code true} if all wheel motors are close to their target positions within the specified threshold;
+     *         {@code false} otherwise.
+     */
     private boolean isCloseToTargetPosition(int tickThreshold) {
         // Is each wheel in the target position threshold?
 
@@ -376,6 +399,14 @@ public class CarWheels implements AutoCloseable, MovementAware {
         return true;
     }
 
+    /**
+     * Drives the robot in a specified lateral and horizontal direction at a given speed using omni-wheel drive.
+     *
+     * @param lateralCm      The lateral distance to drive in centimeters.
+     * @param horizontalCm   The horizontal distance to drive in centimeters.
+     * @param speed          The speed at which the robot should move, ranging from -1.0 (full reverse) to 1.0 (full forward).
+     *                       A speed of 0.0 indicates no motion.
+     */
     public void drive(double lateralCm, double horizontalCm, double speed) {
         double distanceCm = Math.hypot(lateralCm, horizontalCm);
         double powerX = (horizontalCm / distanceCm) * speed; // cos
