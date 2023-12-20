@@ -7,6 +7,7 @@ com.pocolifo.robobase.bootstrap
 com.pocolifo.robobase.control
 com.pocolifo.robobase.motor
 com.pocolifo.robobase.movement
+com.pocolifo.robobase.novel
 com.pocolifo.robobase.reconstructor
 com.pocolifo.robobase.utils
 com.pocolifo.robobase.vision
