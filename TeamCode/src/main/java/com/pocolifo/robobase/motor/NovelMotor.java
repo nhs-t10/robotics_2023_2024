@@ -55,4 +55,8 @@ public class NovelMotor {
     public void setVelocity(double angularRate, AngleUnit unit) {
         this.motor.setVelocity(angularRate, unit);
     }
+
+    public double getEncoderInches() {
+        return encoderTicksToCm(motor.getCurrentPosition()) / 2.54;
+    }
 }

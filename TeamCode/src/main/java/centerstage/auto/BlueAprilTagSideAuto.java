@@ -6,6 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous
 public class BlueAprilTagSideAuto extends BlueProductionAuto {
     public BlueAprilTagSideAuto() {
-        super(StartSide.APRIL_TAG_SIDE);
+        super(StartSide.FRONT_SIDE);
     }
 }

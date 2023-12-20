@@ -1,9 +1,7 @@
 package centerstage;
 
-import centerstage.auto.RedProductionAuto;
 import com.pocolifo.robobase.Robot;
 import com.pocolifo.robobase.motor.OmniDriveCoefficients;
-import org.opencv.core.Scalar;
 
 public class Constants {
     public static final Robot ROBOT = new Robot(
@@ -15,8 +13,7 @@ public class Constants {
             false,
             new OmniDriveCoefficients( //FL, FR, BL, BR
 /*Total for motor*/ new double[] {  1,   -1,   1,   -1 }
-            )
-    );
+            ));
 
     public static final double MOTOR_TICK_COUNT = 537.7;
 
