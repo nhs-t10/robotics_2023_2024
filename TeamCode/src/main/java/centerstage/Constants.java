@@ -12,7 +12,7 @@ public class Constants {
             null,
             false,
             new OmniDriveCoefficients( //FL, FR, BL, BR
-/*Total for motor*/ new double[] {  1,   -1,   1,   -1 }
+/*Total for motor*/ new double[] {  1,   1,   -1,   1 }
             ));
 
     public static final double MOTOR_TICK_COUNT = 537.7;
