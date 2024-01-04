@@ -38,11 +38,19 @@ public class BaseProductionAuto extends AutonomousOpMode {
     private final Alliance alliance;
     private final StartSide startSide;
     private NovelMecanumDrive driver;
+    private final int allianceMultConstant;
 
     public BaseProductionAuto(NovelYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide) {
         this.spikeDetector = spikeDetector;
         this.alliance = alliance;
         this.startSide = startSide;
+        if(alliance == Alliance.RED)
+        {
+            allianceMultConstant = 1;
+        }
+        else {
+            allianceMultConstant = -1;
+        }
     }
 
     @Override
@@ -79,6 +87,33 @@ public class BaseProductionAuto extends AutonomousOpMode {
         spikeDropper.setPower(1);
         sleep(1000);
         spikeDropper.setPower(-1);
+        //todo: check this is properly aligned after going back
+        switch(spikePosition) {
+            case LEFT:
+                driveHorizontal(16,1);
+                break;
+
+            case RIGHT:
+                driveHorizontal(-16,1);
+                break;
+            case CENTER:
+                driveVertical(7,1);
+                break;
+        }
+        sleep(500);
+        rotate(90*allianceMultConstant,1);
+        sleep(500);
+        if(startSide == StartSide.BACKDROP_SIDE) {
+            driveVertical(80, 6);
+        }
+        else {
+            driveVertical(40, 3);
+        }
+        //todo: place pixels!
+        if(startSide == StartSide.BACKDROP_SIDE)
+        {
+            driveHorizontal(24*allianceMultConstant, 2);
+        }
 
     }
 
@@ -95,6 +130,12 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
         sleep((long) (time * 1000L));
 
+        this.driver.stop();
+    }
+    public void rotate(double degrees, double time) {
+        //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
+        this.driver.setVelocity(new Vector3D(0,0,(Math.toRadians(degrees)*(Constants.ROBOT_DIAMETER_IN/2))/time));
+        sleep((long)time*1000);
         this.driver.stop();
     }
 }
