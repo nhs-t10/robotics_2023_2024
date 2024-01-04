@@ -35,8 +35,8 @@ public class OneTimeControl {
         boolean current = this.currentState.get();
         this.toggledLastUpdate = current && !this.lastState;
 
-        if (this.toggledLastUpdate && !this.state) {
-            this.state = true;
+        if (this.toggledLastUpdate) {
+            this.state = !this.state;
         }
 
         this.lastState = current;
@@ -51,7 +51,7 @@ public class OneTimeControl {
      * @return This {@link OneTimeControl} instance.
      */
     public OneTimeControl onToggleOn(Runnable runnable) {
-        if (this.toggledLastUpdate && this.state && !this.done) {
+        if (this.state && !this.done) {
             runnable.run();
             this.done = true;
         }
