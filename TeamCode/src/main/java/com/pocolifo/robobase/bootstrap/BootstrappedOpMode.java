@@ -2,10 +2,12 @@ package com.pocolifo.robobase.bootstrap;
 
 import android.os.SystemClock;
 import com.pocolifo.robobase.motor.Motor;
+import com.pocolifo.robobase.motor.NovelMotor;
 import com.pocolifo.robobase.motor.Wheel;
 import com.pocolifo.robobase.vision.Webcam;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -69,12 +71,16 @@ public abstract class BootstrappedOpMode extends OpMode {
                     o = new Webcam(this.hardwareMap, configName);
                 } else if (type.equals(Wheel.class)) {
                     // TODO: warn if ticksPerRevolution, wheelDiameterCm is a bad value, but don't assert (if less than 0)
-                    o = new Wheel(this.hardwareMap.get(DcMotor.class, configName), hardware.ticksPerRevolution(), hardware.wheelDiameterCm());
+                    o = new Wheel(this.hardwareMap.get(DcMotor.class, configName), hardware.ticksPerRevolution(), hardware.wheelDiameterIn());
                     ((Wheel) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
                 } else if (type.equals(Motor.class)) {
                     // TODO: warn if ticksPerRevolution, wheelDiameterCm is a bad value, but don't assert (if less than 0)
                     o = new Motor(this.hardwareMap.get(DcMotor.class, configName), hardware.ticksPerRevolution());
                     ((Motor) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
+                } else if (type.equals(NovelMotor.class)) {
+                    // TODO: warn if ticksPerRevolution, wheelDiameterCm is a bad value, but don't assert (if less than 0)
+                    o = new NovelMotor(this.hardwareMap.get(DcMotorEx.class, configName), hardware.ticksPerRevolution(), hardware.wheelDiameterIn(), hardware.gearRatio());
+                    ((NovelMotor) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
                 } else {
                     o = this.hardwareMap.get(field.getType(), configName);
                 }

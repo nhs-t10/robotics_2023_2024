@@ -30,6 +30,8 @@ public class NovelYCrCbDetection extends AbstractResultCvPipeline<SpikePosition>
     public synchronized Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_BGR2YCrCb);
 
+        ycrcb = ycrcb.submat(ycrcb.rows() / 3, (ycrcb.rows() / 3) * 2, 0, ycrcb.cols());
+
         Mat left = ycrcb.submat(0, ycrcb.rows(), 0, ycrcb.cols() / 3);
         Core.extractChannel(left, extracted, col);
         double leftVal = Core.minMaxLoc(extracted).maxVal;

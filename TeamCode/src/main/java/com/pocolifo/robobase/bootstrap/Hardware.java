@@ -14,6 +14,8 @@ public @interface Hardware {
 
     // Optional parameters just for certain types of hardware
     double ticksPerRevolution() default -1;
-    double wheelDiameterCm() default -1;
+    double wheelDiameterIn() default -1;
     DcMotor.ZeroPowerBehavior zeroPowerBehavior() default DcMotor.ZeroPowerBehavior.BRAKE;
+
+    int gearRatio() default 1;
 }
