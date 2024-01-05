@@ -8,4 +8,8 @@ public class UnitUtils {
     public static double inchesToMeters(double inches) {
         return inches * 0.0254;
     }
+
+    public static double cmToInches(double cm) {
+        return cm / 2.54;
+    }
 }

@@ -17,7 +17,7 @@ import roadrunner.trajectorysequence.TrajectorySequence;
 import roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 @Autonomous
-public class RRAuto extends AutonomousOpMode {
+public class RyRAuto extends AutonomousOpMode {
     MecanumDrive mecanumDrive;
 
     @Override
