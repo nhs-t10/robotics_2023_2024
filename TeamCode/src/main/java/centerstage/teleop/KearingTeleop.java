@@ -4,16 +4,12 @@ import centerstage.Constants;
 import com.pocolifo.robobase.bootstrap.Hardware;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
 import com.pocolifo.robobase.control.GamepadCarWheels;
-import com.pocolifo.robobase.control.OneTimeControl;
-import com.pocolifo.robobase.control.Pressable;
 import com.pocolifo.robobase.control.Toggleable;
 import com.pocolifo.robobase.motor.CarWheels;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.CRServoImpl;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import static centerstage.Constants.ROBOT;
 
@@ -48,11 +44,8 @@ public class KearingTeleop extends TeleOpOpMode {
         );
 
         this.gamepadCarWheels = new GamepadCarWheels(this.carWheels, this.gamepad1, () -> this.gamepad1.x);
-
         this.isClawOpen = new Toggleable(() -> this.gamepad1.a);
-
         this.isClawUp = new Toggleable(() -> this.gamepad1.b);
-
         this.isAirplaneLaunched = new Toggleable(() -> this.gamepad1.y);
     }
 
@@ -95,14 +88,8 @@ public class KearingTeleop extends TeleOpOpMode {
                 .processUpdates();*/
 
         if (gamepad1.dpad_up) {
-            telemetry.addData("Up", 0);
-            telemetry.log();
-            this.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             liftMotor.setPower(0.5);
         } else if (gamepad1.dpad_down) {
-            telemetry.addData("Down", 0);
-            telemetry.log();
-            this.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             liftMotor.setPower(-0.5);
         } else {
             liftMotor.setPower(0);
