@@ -7,12 +7,6 @@ import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 import com.pocolifo.robobase.novel.MecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorImplEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Const;
-import roadrunner.drive.RRInterface;
-import roadrunner.trajectorysequence.TrajectorySequence;
-import roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 @Autonomous
 public class RRAuto extends AutonomousOpMode {
