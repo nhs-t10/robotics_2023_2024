@@ -1,11 +1,15 @@
 package centerstage.teleop;
 
 import centerstage.Constants;
+import centerstage.RobotCapabilities;
+import com.pocolifo.robobase.Robot;
 import com.pocolifo.robobase.bootstrap.Hardware;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
 import com.pocolifo.robobase.control.GamepadCarWheels;
+import com.pocolifo.robobase.control.Pressable;
 import com.pocolifo.robobase.control.Toggleable;
 import com.pocolifo.robobase.motor.CarWheels;
+import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,17 +21,29 @@ import static centerstage.Constants.ROBOT;
 public class KearingTeleop extends TeleOpOpMode {
     private CarWheels carWheels;
     private GamepadCarWheels gamepadCarWheels;
-    @Hardware(name = "ClawOpening")
-    public CRServo clawOpening;
-    @Hardware(name = "ClawRotation")
-    public CRServo clawRotation;
+
     @Hardware(name = "Lift", ticksPerRevolution = Constants.MOTOR_TICK_COUNT)
     public DcMotorEx liftMotor;
-    @Hardware(name = "Airplane")
+
+    @Hardware(name = "AirplaneLauncher")
     public CRServo airplaneLauncher;
-    private Toggleable isClawOpen;
-    private Toggleable isClawUp;
-    private Toggleable isAirplaneLaunched;
+
+    @Hardware(name = "PixelDropper")
+    public CRServo pixelDropper;
+
+    @Hardware(name = "ClawGrip")
+    public CRServo clawGrip;
+
+    @Hardware(name = "ClawRotation")
+    public CRServo clawRotation;
+    private RobotCapabilities capabilities;
+    private Toggleable isGripping;
+    private Pressable launchAirplane;
+    private Pressable moveToDropPosition;
+    private Pressable moveToCollectPosition;
+    private Toggleable isMicroMovement;
+    private boolean lastPressingTrigger;
+    private boolean lastPressingBumper;
 
     @Override
     public void initialize() {
@@ -43,68 +59,62 @@ public class KearingTeleop extends TeleOpOpMode {
                 "FL"
         );
 
-        this.gamepadCarWheels = new GamepadCarWheels(this.carWheels, this.gamepad1, () -> this.gamepad1.x);
-        this.isClawOpen = new Toggleable(() -> this.gamepad1.a);
-        this.isClawUp = new Toggleable(() -> this.gamepad1.b);
-        this.isAirplaneLaunched = new Toggleable(() -> this.gamepad1.y);
+        this.isMicroMovement = new Toggleable(() -> this.gamepad1.x);
+        this.capabilities = new RobotCapabilities(clawGrip, clawRotation, airplaneLauncher, liftMotor);
+        this.isGripping = new Toggleable(() -> this.gamepad1.y, true);
+        this.launchAirplane = new Pressable(() -> this.gamepad1.b);
+        this.moveToDropPosition = new Pressable(() -> this.gamepad1.right_stick_button);
+        this.moveToCollectPosition = new Pressable(() -> this.gamepad1.left_stick_button);
     }
 
     @Override
     public void loop() {
-        this.gamepadCarWheels.update();
-
-        this.isClawOpen
-                .onToggleOn(() -> {
-                    this.clawOpening.getController().pwmEnable();
-                    this.clawOpening.setDirection(DcMotorSimple.Direction.FORWARD);
-                    this.clawOpening.setPower(0.01);
-                    sleep(1);
-                    this.clawOpening.setPower(0);
-                })
-                .onToggleOff(() -> {
-                    this.clawOpening.setDirection(DcMotorSimple.Direction.REVERSE);
-                    this.clawOpening.setPower(0.01);
-                    sleep(1);
-                    this.clawOpening.setPower(0);
-                    this.clawOpening.getController().pwmDisable();
-                })
-                .processUpdates();
-
-        /*this.isClawUp
-                .onToggleOn(() -> {
-                    this.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-                    this.liftMotor.setVelocity(0.25 * Constants.LIFT_MOTOR_TICK_COUNT);
-                    sleep(2000);
-                    this.liftMotor.setPower(0);
-                    //TODO Add claw rotation
-                })
-                .onToggleOff(() -> {
-                    //TODO Add claw rotation
-                    this.liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-                    this.liftMotor.setVelocity(0.25 * Constants.LIFT_MOTOR_TICK_COUNT);
-                    sleep(2500);
-                    this.liftMotor.setPower(0);
-                })
-                .processUpdates();*/
-
-        if (gamepad1.dpad_up) {
-            liftMotor.setPower(0.5);
-        } else if (gamepad1.dpad_down) {
-            liftMotor.setPower(-0.5);
-        } else {
-            liftMotor.setPower(0);
+        if (this.gamepad1.right_trigger > 0) {
+            this.capabilities.upLift(this.gamepad1.right_trigger);
+            this.lastPressingTrigger = true;
+        } else if (this.gamepad1.left_trigger > 0) {
+            this.capabilities.downLift(this.gamepad1.left_trigger);
+            this.lastPressingTrigger = true;
+        } else if (this.lastPressingTrigger) {
+            this.capabilities.stopLift();
+            this.lastPressingTrigger = false;
         }
 
-        this.isAirplaneLaunched
-                .onToggleOn(() -> {
-                    //this.airplaneLauncher.getController().pwmEnable();
-                    //this.airplaneLauncher.setDirection(DcMotorSimple.Direction.FORWARD);
-                    this.airplaneLauncher.setPower(1);
-                    System.out.println(this.airplaneLauncher.getPower());
-                    sleep(1000);
-                    this.airplaneLauncher.setPower(-1);
-                    //this.airplaneLauncher.getController().pwmDisable();
-                })
+        if (this.gamepad1.right_bumper) {
+            this.capabilities.rotateForward();
+            this.lastPressingBumper = true;
+        } else if (this.gamepad1.left_bumper) {
+            this.capabilities.rotateBackward();
+            this.lastPressingBumper = true;
+        } else if (this.lastPressingBumper) {
+            this.capabilities.stopRotating();
+            this.lastPressingBumper = false;
+        }
+
+        this.isGripping
+                .onToggleOff(() -> this.capabilities.openGrip())
+                .onToggleOn(() -> this.capabilities.closeGrip())
                 .processUpdates();
+
+        if (this.launchAirplane.get()) {
+            this.capabilities.launchAirplane();
+        }
+
+        if (this.moveToCollectPosition.get()) {
+            this.capabilities.moveToCollectPosition();
+        }
+
+        if (this.moveToDropPosition.get()) {
+            this.capabilities.moveToDropPosition();
+        }
+
+        boolean useMicroMovement = this.isMicroMovement.processUpdates().get();
+        float microMovementValue = useMicroMovement ? 1 : 4;
+
+        this.carWheels.driveOmni(
+                this.gamepad1.left_stick_y / microMovementValue * -1,
+                this.gamepad1.left_stick_x / microMovementValue * -1,
+                this.gamepad1.right_stick_x / microMovementValue * -1
+        );
     }
 }
