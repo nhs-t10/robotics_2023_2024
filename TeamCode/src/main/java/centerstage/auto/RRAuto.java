@@ -1,8 +1,6 @@
 package centerstage.auto;
 
 import centerstage.Constants;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.motor.NovelMotor;
 import com.pocolifo.robobase.motor.OmniDriveCoefficients;
@@ -17,7 +15,7 @@ import roadrunner.trajectorysequence.TrajectorySequence;
 import roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 @Autonomous
-public class RyRAuto extends AutonomousOpMode {
+public class RRAuto extends AutonomousOpMode {
     MecanumDrive mecanumDrive;
 
     @Override
