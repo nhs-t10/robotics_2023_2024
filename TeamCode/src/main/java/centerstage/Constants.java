@@ -33,4 +33,6 @@ public class Constants {
     public static final double LIFT_MOTOR_TICK_COUNT = 5281.1;
 
     public static final double ROBOT_DIAMETER_IN = 17.341;
+
+    public static final double WHEEL_DIAMETER_IN = 11.8737360135;
 }
