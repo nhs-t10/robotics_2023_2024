@@ -1,5 +1,7 @@
 package centerstage.auto;
 
+import static centerstage.SpikePosition.CENTER;
+
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;
@@ -100,29 +102,32 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
             this.capabilities.dropAutoPixel();
 
-//            switch (spikePosition) {
-//                case LEFT:
-//                    driveHorizontal(16, 1);
-//                    sleep(500);
-//                    driveVertical(-6, 0.25);
-//                    break;
-//
-//                case RIGHT:
-//                    driveHorizontal(-16, 1);
-//                    sleep(500);
-//                    driveVertical(-6, 0.25);
-//                    break;
-//            }
-//
-//            driveVertical(-20, 1.5);
-//            sleep(500);
-//
-//            if (this.startSide == StartSide.FRONT_SIDE) {
-//                driveHorizontal(110, 9);
-//            } else if (this.startSide == StartSide.BACKDROP_SIDE) {
-//                driveHorizontal(60, 6);
-//            }
+            switch (spikePosition) {
+                case LEFT:
+                    driveHorizontal(16, 1);
+                    break;
 
+                case RIGHT:
+                    driveHorizontal(-16, 1);
+                    break;
+
+                case CENTER:
+                    driveVertical(8, 0.5);
+                    break;
+            }
+
+            sleep(500);
+
+            driveHorizontal((10 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5+(startSide.getSideSwapConstantIn()/16));
+            sleep(500);
+
+            rotate(90* alliance.getAllianceSwapConstant(),2);
+
+            //todo: scan!!!
+
+            rotate(180,4);
+
+            //todo: place!!!
 
 //            if (this.startSide == StartSide.BACKDROP_SIDE) {
 //                driveHorizontal();
@@ -178,7 +183,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
     }
     public void rotate(double degrees, double time) throws InterruptedException {
         //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
-        this.driver.setVelocity(new Vector3D(0,0,(Math.toRadians(degrees)*(Constants.ROBOT_DIAMETER_IN/2))/time));
+        this.driver.setVelocity(new Vector3D(0,0,
+                (Math.toRadians(degrees) * (Constants.ROBOT_DIAMETER_IN)/time)));
         sleep((long)time*1000);
         this.driver.stop();
     }
