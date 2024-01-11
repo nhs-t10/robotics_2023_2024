@@ -36,7 +36,7 @@ public class Constants {
 
     public static final double WHEEL_DIAMETER_IN = 11.8737360135;
 
-    public static final double ODOMETRY_LATERAL_WHEEL_DISTANCE = 0;
+    public static final double ODOMETRY_LATERAL_WHEEL_DISTANCE = -1;
 
     public static final double ODOMETRY_ROTATIONAL_WHEEL_OFFSET = 0;
 }

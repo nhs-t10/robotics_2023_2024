@@ -3,6 +3,7 @@ package com.pocolifo.robobase.novel;
 import centerstage.Constants;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Odometry {
     private final Pose2d robotPosition;
@@ -23,6 +24,13 @@ public class Odometry {
         this.leftWheelPos = leftWheel.getCurrentPosition();
         this.rightWheelPos = rightWheel.getCurrentPosition();
         this.perpendicularWheelPos = perpendicularWheel.getCurrentPosition();
+    }
+
+    public Odometry(HardwareMap hardwareMap, Pose2d robotPosition, String rightWheel, String leftWheel, String perpendicularWheel) {
+        this(robotPosition,
+                hardwareMap.dcMotor.get(rightWheel),
+                hardwareMap.dcMotor.get(leftWheel),
+                hardwareMap.dcMotor.get(perpendicularWheel));
     }
 
     public void update() {
