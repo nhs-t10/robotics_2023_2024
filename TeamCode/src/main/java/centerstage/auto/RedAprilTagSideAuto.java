@@ -8,6 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Config
 public class RedAprilTagSideAuto extends RedProductionAuto {
     public RedAprilTagSideAuto() {
-        super(StartSide.FRONT_SIDE);
+        super(StartSide.APRIL_TAG_SIDE);
     }
 }

@@ -27,6 +27,8 @@ import java.lang.reflect.Field;
  * @see System#err
  */
 public abstract class BootstrappedOpMode extends OpMode {
+    public volatile boolean stopped = false;
+
     /**
      * Sets {@link System#out} and {@link System#err} to an instance of {@link RobotDebugPrintStream}.
      * This allows {@link System#out} and {@link System#err} to be used for printing debug messages.
@@ -120,8 +122,8 @@ public abstract class BootstrappedOpMode extends OpMode {
      *
      * @param milliseconds Number of milliseconds to wait
      */
-    public void sleep(long milliseconds) {
-        SystemClock.sleep(milliseconds);
+    public void sleep(long milliseconds) throws InterruptedException {
+        Thread.sleep(milliseconds);
     }
 
     @Override

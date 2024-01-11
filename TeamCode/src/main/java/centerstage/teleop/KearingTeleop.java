@@ -2,18 +2,15 @@ package centerstage.teleop;
 
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
-import com.pocolifo.robobase.Robot;
 import com.pocolifo.robobase.bootstrap.Hardware;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
 import com.pocolifo.robobase.control.GamepadCarWheels;
 import com.pocolifo.robobase.control.Pressable;
 import com.pocolifo.robobase.control.Toggleable;
 import com.pocolifo.robobase.motor.CarWheels;
-import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import static centerstage.Constants.ROBOT;
 
@@ -44,6 +41,7 @@ public class KearingTeleop extends TeleOpOpMode {
     private Toggleable isMicroMovement;
     private boolean lastPressingTrigger;
     private boolean lastPressingBumper;
+    private Pressable dropAutoPixel;
 
     @Override
     public void initialize() {
@@ -60,11 +58,12 @@ public class KearingTeleop extends TeleOpOpMode {
         );
 
         this.isMicroMovement = new Toggleable(() -> this.gamepad1.x);
-        this.capabilities = new RobotCapabilities(clawGrip, clawRotation, airplaneLauncher, liftMotor);
+        this.capabilities = new RobotCapabilities(clawGrip, clawRotation, airplaneLauncher, liftMotor, pixelDropper);
         this.isGripping = new Toggleable(() -> this.gamepad1.y, true);
         this.launchAirplane = new Pressable(() -> this.gamepad1.b);
         this.moveToDropPosition = new Pressable(() -> this.gamepad1.right_stick_button);
         this.moveToCollectPosition = new Pressable(() -> this.gamepad1.left_stick_button);
+        this.dropAutoPixel = new Pressable(() -> this.gamepad1.a);
     }
 
     @Override
@@ -106,6 +105,10 @@ public class KearingTeleop extends TeleOpOpMode {
 
         if (this.moveToDropPosition.get()) {
             this.capabilities.moveToDropPosition();
+        }
+
+        if (this.dropAutoPixel.get()) {
+            this.capabilities.dropAutoPixel();
         }
 
         boolean useMicroMovement = this.isMicroMovement.processUpdates().get();

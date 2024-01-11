@@ -1,6 +1,7 @@
 package centerstage;
 
 import android.os.SystemClock;
+import com.pocolifo.robobase.motor.NovelMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -10,12 +11,14 @@ public class RobotCapabilities {
     public final CRServo clawRotation;
     public final CRServo airplaneLauncher;
     public final DcMotorEx lift;
+    public final CRServo pixelDropper;
 
-    public RobotCapabilities(CRServo clawGrip, CRServo clawRotation, CRServo airplaneLauncher, DcMotorEx lift) {
+    public RobotCapabilities(CRServo clawGrip, CRServo clawRotation, CRServo airplaneLauncher, DcMotorEx lift, CRServo pixelDropper) {
         this.clawGrip = clawGrip;
         this.clawRotation = clawRotation;
         this.airplaneLauncher = airplaneLauncher;
         this.lift = lift;
+        this.pixelDropper = pixelDropper;
         this.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.airplaneLauncher.setPower(1);
     }
@@ -95,5 +98,13 @@ public class RobotCapabilities {
             SystemClock.sleep(1000);
             this.airplaneLauncher.setPower(1);
         }).start();
+    }
+
+    public void dropAutoPixel() {
+        this.pixelDropper.setPower(0);
+        SystemClock.sleep(1000);
+        this.pixelDropper.setPower(-1);
+        SystemClock.sleep(1000);
+        this.pixelDropper.setPower(0);
     }
 }

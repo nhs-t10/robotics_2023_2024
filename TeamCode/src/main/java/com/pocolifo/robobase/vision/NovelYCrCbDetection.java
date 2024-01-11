@@ -118,7 +118,7 @@ public class NovelYCrCbDetection extends AbstractResultCvPipeline<SpikePosition>
                     255, 255, 255
             ), 3);
         } else {
-            result = SpikePosition.NOT_FOUND;
+            result = null;
         }
 
         return input;
