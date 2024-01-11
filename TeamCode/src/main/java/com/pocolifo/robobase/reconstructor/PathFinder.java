@@ -15,14 +15,15 @@ public class PathFinder {
     }
 
     private void readPointsFromFile(String filePath) throws IOException {
-        URL resource = this.getClass().getResource("/raw/" + filePath);
+        URL resource = this.getClass().getResource("/" + filePath);
         if (resource == null) {
-            throw new FileNotFoundException("File " + filePath + " is not found in /raw/" + filePath);
+            throw new FileNotFoundException("File " + filePath + " is not found in /" + filePath);
         }
         try (Scanner sc = new Scanner(resource.openStream(), "UTF-8").useDelimiter("\n")) {
             //        BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
-            while ((line = sc.nextLine()) != null) {
+            while (sc.hasNextLine()) {
+                line = sc.nextLine();
                 String[] parts = line.split(" ");
                 int x = Integer.parseInt(parts[0]);
                 int y = Integer.parseInt(parts[1]);
