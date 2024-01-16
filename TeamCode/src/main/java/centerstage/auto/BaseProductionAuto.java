@@ -1,5 +1,6 @@
 package centerstage.auto;
 
+import centerstage.BackdropAprilTagAligner;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;
@@ -53,6 +54,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     private final Alliance alliance;
     private final StartSide startSide;
     private NovelMecanumDrive driver;
+    private BackdropAprilTagAligner aprilTagAligner;
 
     public BaseProductionAuto(NovelYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide) {
         this.spikeDetector = spikeDetector;
@@ -65,40 +67,47 @@ public class BaseProductionAuto extends AutonomousOpMode {
         this.webcam.open(this.spikeDetector);
         this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{1, 1, -1, 1}));
         this.capabilities = new RobotCapabilities(this.clawGrip, this.clawRotation, this.airplaneLauncher, this.liftMotor, this.pixelDropper);
+        this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
     }
 
     @Override
     public void run() {
         try {
-            NovelYCrCbDetection pipeline = (NovelYCrCbDetection) this.webcam.getPipeline();
-            SpikePosition spikePosition;
+//            NovelYCrCbDetection pipeline = (NovelYCrCbDetection) this.webcam.getPipeline();
+//            SpikePosition spikePosition = SpikePosition.RIGHT;
 
-            do {
-                spikePosition = pipeline.getResult();
-                sleep(100);
-            } while (spikePosition == null);
+//            do {
+//                spikePosition = pipeline.getResult();
+//                sleep(100);
+//            } while (spikePosition == null);
+//
+//            switch (spikePosition) {
+//                case LEFT:
+//                    driveVertical(-26, 2);
+//                    sleep(500);
+//                    driveHorizontal(-16, 1);
+//                    break;
+//
+//                case RIGHT:
+//                    driveVertical(-26, 2);
+//                    sleep(500);
+//                    driveHorizontal(16, 1);
+//                    break;
+//
+//                case CENTER:
+//                    driveVertical(-34, 2.5);
+//                    break;
+//            }
+//
+//            this.capabilities.dropAutoPixel();
 
-            this.webcam.close();
+            // TODO: move
 
-            switch (spikePosition) {
-                case LEFT:
-                    driveVertical(-26, 2);
-                    sleep(500);
-                    driveHorizontal(-16, 1);
-                    break;
 
-                case RIGHT:
-                    driveVertical(-26, 2);
-                    sleep(500);
-                    driveHorizontal(16, 1);
-                    break;
-
-                case CENTER:
-                    driveVertical(-34, 2.5);
-                    break;
+            while (this.aprilTagAligner.getStatus() != BackdropAprilTagAligner.AlignmentStatus.ALIGNMENT_COMPLETE) {
+                this.aprilTagAligner.updateAlignment();
+                sleep(1000);
             }
-
-            this.capabilities.dropAutoPixel();
 
 //            switch (spikePosition) {
 //                case LEFT:
@@ -127,6 +136,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
 //            if (this.startSide == StartSide.BACKDROP_SIDE) {
 //                driveHorizontal();
 //            }
+
+
 
         } catch (Throwable e) {
             System.out.println("Stopped");
@@ -159,6 +170,13 @@ public class BaseProductionAuto extends AutonomousOpMode {
 //        {
 //            driveHorizontal(24*allianceMultConstant, 2);
 //        }
+    }
+
+    @Override
+    public void stop() {
+        try {
+            this.webcam.close();
+        } catch (Exception ignored) {}
     }
 
     public void driveVertical(double inches, double time) throws InterruptedException {
