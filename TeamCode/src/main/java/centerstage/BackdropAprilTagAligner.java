@@ -80,6 +80,10 @@ public class BackdropAprilTagAligner implements AutoCloseable {
         return status;
     }
 
+    public boolean isNotAligned() {
+        return status != AlignmentStatus.ALIGNMENT_COMPLETE;
+    }
+
     public enum AlignmentStatus {
         TAGS_NOT_FOUND,
         ALIGNING,

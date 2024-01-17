@@ -13,6 +13,7 @@ import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 import com.pocolifo.robobase.novel.NovelMecanumDrive;
 import com.pocolifo.robobase.vision.NovelYCrCbDetection;
 import com.pocolifo.robobase.vision.Webcam;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -73,103 +74,63 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Override
     public void run() {
         try {
-//            NovelYCrCbDetection pipeline = (NovelYCrCbDetection) this.webcam.getPipeline();
-//            SpikePosition spikePosition = SpikePosition.RIGHT;
+            NovelYCrCbDetection pipeline = (NovelYCrCbDetection) this.webcam.getPipeline();
+            SpikePosition spikePosition;
 
-//            do {
-//                spikePosition = pipeline.getResult();
-//                sleep(100);
-//            } while (spikePosition == null);
-//
-//            switch (spikePosition) {
-//                case LEFT:
-//                    driveVertical(-26, 2);
-//                    sleep(500);
-//                    driveHorizontal(-16, 1);
-//                    break;
-//
-//                case RIGHT:
-//                    driveVertical(-26, 2);
-//                    sleep(500);
-//                    driveHorizontal(16, 1);
-//                    break;
-//
-//                case CENTER:
-//                    driveVertical(-34, 2.5);
-//                    break;
-//            }
-//
-//            this.capabilities.dropAutoPixel();
+            do {
+                spikePosition = pipeline.getResult();
+                sleep(100);
+            } while (spikePosition == null);
 
-            // TODO: move
+            switch (spikePosition) {
+                case LEFT:
+                    driveVertical(-26, 2);
+                    sleep(500);
+                    driveHorizontal(-16, 1);
+                    break;
 
+                case RIGHT:
+                    driveVertical(-26, 2);
+                    sleep(500);
+                    driveHorizontal(16, 1);
+                    break;
 
-            while (this.aprilTagAligner.getStatus() != BackdropAprilTagAligner.AlignmentStatus.ALIGNMENT_COMPLETE) {
-                this.aprilTagAligner.updateAlignment();
-                sleep(1000);
+                case CENTER:
+                    driveVertical(-34, 2.5);
+                    break;
             }
 
-//            switch (spikePosition) {
-//                case LEFT:
-//                    driveHorizontal(16, 1);
-//                    sleep(500);
-//                    driveVertical(-6, 0.25);
-//                    break;
-//
-//                case RIGHT:
-//                    driveHorizontal(-16, 1);
-//                    sleep(500);
-//                    driveVertical(-6, 0.25);
-//                    break;
-//            }
-//
-//            driveVertical(-20, 1.5);
-//            sleep(500);
-//
-//            if (this.startSide == StartSide.FRONT_SIDE) {
-//                driveHorizontal(110, 9);
-//            } else if (this.startSide == StartSide.BACKDROP_SIDE) {
-//                driveHorizontal(60, 6);
-//            }
+            this.capabilities.dropAutoPixel();
 
+            switch (spikePosition) {
+                case LEFT:
+                    driveHorizontal(16, 1);
+                    break;
 
-//            if (this.startSide == StartSide.BACKDROP_SIDE) {
-//                driveHorizontal();
-//            }
+                case RIGHT:
+                    driveHorizontal(-16, 1);
+                    break;
 
+                case CENTER:
+                    driveVertical(8, 0.5);
+                    break;
+            }
 
+            sleep(500);
 
+            driveHorizontal((10 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5+(startSide.getSideSwapConstantIn()/16));
+            sleep(500);
+
+            rotate(90* alliance.getAllianceSwapConstant(),2);
+
+            alignWithAprilTag();
+
+            rotate(180,4);
+
+            //todo: place!!!
         } catch (Throwable e) {
             System.out.println("Stopped");
         }
-
-//        //todo: check this is properly aligned after going back
-//        switch(spikePosition) {
-//            case LEFT:
-//                driveHorizontal(16,1);
-//                break;
-//
-//            case RIGHT:
-//                driveHorizontal(-16,1);
-//                break;
-//            case CENTER:
-//                driveVertical(7,1);
-//                break;
-//        }
-//        sleep(500);
-//        rotate(90*allianceMultConstant,1);
-//        sleep(500);
-//        if(startSide == StartSide.BACKDROP_SIDE) {
-//            driveVertical(80, 6);
-//        }
-//        else {
-//            driveVertical(40, 3);
-//        }
-//        //todo: place pixels!
-//        if(startSide == StartSide.BACKDROP_SIDE)
-//        {
-//            driveHorizontal(24*allianceMultConstant, 2);
-//        }
     }
 
     @Override
@@ -196,8 +157,16 @@ public class BaseProductionAuto extends AutonomousOpMode {
     }
     public void rotate(double degrees, double time) throws InterruptedException {
         //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
-        this.driver.setVelocity(new Vector3D(0,0,(Math.toRadians(degrees)*(Constants.ROBOT_DIAMETER_IN/2))/time));
+        this.driver.setVelocity(new Vector3D(0,0,
+                (Math.toRadians(degrees) * (Constants.ROBOT_DIAMETER_IN)/time)));
         sleep((long)time*1000);
         this.driver.stop();
+    }
+
+    public void alignWithAprilTag() throws InterruptedException {
+        while (this.aprilTagAligner.getStatus() != BackdropAprilTagAligner.AlignmentStatus.ALIGNMENT_COMPLETE) {
+            this.aprilTagAligner.updateAlignment();
+            sleep(1000);
+        }
     }
 }
