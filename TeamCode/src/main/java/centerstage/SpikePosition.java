@@ -3,7 +3,6 @@ package centerstage;
 import org.opencv.core.Rect;
 
 public enum SpikePosition {
-    NOT_FOUND,
     LEFT,
     CENTER,
     RIGHT;
@@ -12,7 +11,7 @@ public enum SpikePosition {
         final int thirdOfCameraWidth = cameraWidth / 3;
 
         if (largestBoundingBox == null) {
-            return NOT_FOUND;
+            return null;
         }
 
         int x = largestBoundingBox.x + largestBoundingBox.width / 2;

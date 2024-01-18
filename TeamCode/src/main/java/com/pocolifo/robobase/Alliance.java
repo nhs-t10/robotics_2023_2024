@@ -18,4 +18,8 @@ public enum Alliance {
                 throw new RuntimeException("Unexpected spike position");
         }
     }
+
+    public double getAllianceSwapConstant() {
+        return this == Alliance.RED ? 1 : -1;
+    }
 }

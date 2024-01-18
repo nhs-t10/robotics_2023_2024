@@ -7,22 +7,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class NovelMotor {
     public final DcMotorEx motor;
     public final double ticksPerRevolution;
-    public final double wheelDiameterCm;
+    public final double wheelDiameterInches;
     public final int gearRatio;
 
-    public NovelMotor(DcMotorEx motor, double ticksPerRevolution, double wheelDiameterCm, int gearRatio) {
+    public NovelMotor(DcMotorEx motor, double ticksPerRevolution, double wheelDiameterInches, int gearRatio) {
         this.motor = motor;
         this.ticksPerRevolution = ticksPerRevolution;
-        this.wheelDiameterCm = wheelDiameterCm;
+        this.wheelDiameterInches = wheelDiameterInches;
         this.gearRatio = gearRatio;
     }
 
-    public double encoderTicksToCm(double ticks) {
-        return this.wheelDiameterCm * Math.PI * this.gearRatio * ticks / this.ticksPerRevolution;
+    public double encoderTicksToInches(double ticks) {
+        return this.wheelDiameterInches * Math.PI * this.gearRatio * ticks / this.ticksPerRevolution;
     }
 
-    public double cmToEncoderTicks(double cm) {
-        return (cm * this.ticksPerRevolution) * (Math.PI * this.wheelDiameterCm * this.gearRatio);
+    public double inchesToEncoderTicks(double inches) {
+        return (inches / this.wheelDiameterInches) * Math.PI * this.ticksPerRevolution;
+        //return (inches * this.ticksPerRevolution) * (Math.PI * this.wheelDiameterInches * this.gearRatio);
     }
 
     /**
@@ -39,8 +40,8 @@ public class NovelMotor {
      *                    positive values move the wheel forward.
      * @author youngermax
      */
-    public void setTargetPositionCm(double centimeters) {
-        this.motor.setTargetPosition((int) (this.motor.getCurrentPosition() + cmToEncoderTicks(centimeters)));
+    public void setTargetPositionInches(double centimeters) {
+        this.motor.setTargetPosition((int) (this.motor.getCurrentPosition() + inchesToEncoderTicks(centimeters)));
     }
 
     // Some frequently used methods wrapped for terseness
@@ -52,11 +53,32 @@ public class NovelMotor {
         this.motor.setZeroPowerBehavior(behavior);
     }
 
-    public void setVelocity(double angularRate, AngleUnit unit) {
-        this.motor.setVelocity(angularRate, unit);
+    public static double inchesPerSecondToEncoderTicksPerSecond(double diameterIn, double ticksPerRevolution, double inchesPerSecond) {
+        return ((inchesPerSecond / Math.PI) * ticksPerRevolution) / diameterIn;
+    }
+
+    public static double encoderTicksPerSecondToInchesPerSecond(double diameterIn, double ticksPerRevolution, double encoderTicksPerSecond) {
+        return (diameterIn * encoderTicksPerSecond * Math.PI) / ticksPerRevolution;
+    }
+
+    public void setVelocity(double inchesPerSecond) {
+        this.motor.setVelocity(
+                inchesPerSecondToEncoderTicksPerSecond(
+                        this.wheelDiameterInches,
+                        this.ticksPerRevolution,
+                        inchesPerSecond
+                )
+        );
     }
 
     public double getEncoderInches() {
-        return encoderTicksToCm(motor.getCurrentPosition()) / 2.54;
+        return encoderTicksToInches(motor.getCurrentPosition());
+    }
+
+    /**
+     * @return The linear velocity in inches/second.
+     */
+    public double getVelocity() {
+        return encoderTicksPerSecondToInchesPerSecond(this.wheelDiameterInches, this.ticksPerRevolution, this.motor.getVelocity());
     }
 }
