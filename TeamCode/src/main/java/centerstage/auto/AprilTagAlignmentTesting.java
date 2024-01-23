@@ -32,6 +32,7 @@ public class AprilTagAlignmentTesting extends AutonomousOpMode {
 
     @Hardware(name = "BR", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
     public NovelMotor br;
+
     private RobotCapabilities capabilities;
     private NovelMecanumDrive driver;
     private BackdropAprilTagAligner aprilTagAligner;
