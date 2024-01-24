@@ -35,21 +35,6 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Hardware(name = "BR", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
     public NovelMotor br;
 
-    @Hardware(name = "Lift", ticksPerRevolution = Constants.MOTOR_TICK_COUNT)
-    public DcMotorEx liftMotor;
-
-    @Hardware(name = "AirplaneLauncher")
-    public CRServo airplaneLauncher;
-
-    @Hardware(name = "PixelDropper")
-    public CRServo pixelDropper;
-
-    @Hardware(name = "ClawGrip")
-    public CRServo clawGrip;
-
-    @Hardware(name = "ClawRotation")
-    public CRServo clawRotation;
-    private RobotCapabilities capabilities;
 
     private final NovelYCrCbDetection spikeDetector;
     private final Alliance alliance;
@@ -66,8 +51,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Override
     public void initialize() {
         this.webcam.open(this.spikeDetector);
-        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{1, 1, -1, 1}));
-        this.capabilities = new RobotCapabilities(this.clawGrip, this.clawRotation, this.airplaneLauncher, this.liftMotor, this.pixelDropper);
+        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{-1, 1, 1, 1})); //TESTBOT
         this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
     }
 
@@ -76,12 +60,18 @@ public class BaseProductionAuto extends AutonomousOpMode {
         try {
             NovelYCrCbDetection pipeline = (NovelYCrCbDetection) this.webcam.getPipeline();
             SpikePosition spikePosition;
-
+            int i = 0;
             do {
                 spikePosition = pipeline.getResult();
                 sleep(100);
+                i++;
+                if(i>=10)
+                {
+                    spikePosition = SpikePosition.CENTER;
+                }
             } while (spikePosition == null);
 
+            //go to spike to drop - WORKS
             switch (spikePosition) {
                 case LEFT:
                     driveVertical(-26, 2);
@@ -100,8 +90,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
                     break;
             }
 
-            this.capabilities.dropAutoPixel();
 
+            //Reset to neutral position - GOOD
             switch (spikePosition) {
                 case LEFT:
                     driveHorizontal(16, 1);
@@ -116,12 +106,13 @@ public class BaseProductionAuto extends AutonomousOpMode {
                     break;
             }
 
-            sleep(500);
+            sleep(5000);
 
-            driveHorizontal((10 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5+(startSide.getSideSwapConstantIn()/16));
-            sleep(500);
+            driveHorizontal((42 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5+(startSide.getSideSwapConstantIn()/16));
+            sleep(1000);
 
             rotate(90* alliance.getAllianceSwapConstant(),2);
+            sleep(1000);
 
             alignWithAprilTag();
 

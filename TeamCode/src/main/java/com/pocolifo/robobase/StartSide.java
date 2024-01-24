@@ -5,7 +5,7 @@ public enum StartSide {
     BACKDROP_SIDE;
 
 
-    public int getSideSwapConstantIn() {
+    public double getSideSwapConstantIn() {
         return this == StartSide.APRIL_TAG_SIDE ? 48 : 0;
     }
 }
