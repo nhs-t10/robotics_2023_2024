@@ -74,18 +74,21 @@ public class BaseProductionAuto extends AutonomousOpMode {
             //go to spike to drop - WORKS
             switch (spikePosition) {
                 case LEFT:
-                    driveVertical(-26, 2);
-                    sleep(500);
-                    driveHorizontal(-16, 1);
-                    break;
-
-                case RIGHT:
+                    System.out.println("left");
                     driveVertical(-26, 2);
                     sleep(500);
                     driveHorizontal(16, 1);
                     break;
 
+                case RIGHT:
+                    System.out.println("right");
+                    driveVertical(-26, 2);
+                    sleep(500);
+                    driveHorizontal(-16, 1);
+                    break;
+
                 case CENTER:
+                    System.out.println("center");
                     driveVertical(-34, 2.5);
                     break;
             }
