@@ -1,7 +1,5 @@
 package centerstage.auto;
 
-import static centerstage.SpikePosition.CENTER;
-
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;

@@ -123,7 +123,7 @@ public abstract class BootstrappedOpMode extends OpMode {
      * @param milliseconds Number of milliseconds to wait
      */
     public void sleep(long milliseconds) throws InterruptedException {
-        Thread.sleep(milliseconds);
+        SystemClock.sleep(milliseconds);
     }
 
     @Override
