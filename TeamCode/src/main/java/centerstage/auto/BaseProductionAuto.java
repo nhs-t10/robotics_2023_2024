@@ -4,6 +4,7 @@ import centerstage.BackdropAprilTagAligner;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.Alliance;
 import com.pocolifo.robobase.StartSide;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
@@ -11,6 +12,7 @@ import com.pocolifo.robobase.bootstrap.Hardware;
 import com.pocolifo.robobase.motor.NovelMotor;
 import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 import com.pocolifo.robobase.novel.NovelMecanumDrive;
+import com.pocolifo.robobase.novel.Odometry;
 import com.pocolifo.robobase.vision.NovelYCrCbDetection;
 import com.pocolifo.robobase.vision.Webcam;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -41,11 +43,16 @@ public class BaseProductionAuto extends AutonomousOpMode {
     private final StartSide startSide;
     private NovelMecanumDrive driver;
     private BackdropAprilTagAligner aprilTagAligner;
+    private Odometry odometry;
 
-    public BaseProductionAuto(NovelYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide) {
+    public BaseProductionAuto(NovelYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
         this.spikeDetector = spikeDetector;
         this.alliance = alliance;
         this.startSide = startSide;
+        this.odometry = new Odometry(hardwareMap, startPosition,
+                "OR",
+                "OL",
+                "OP");
     }
 
     @Override

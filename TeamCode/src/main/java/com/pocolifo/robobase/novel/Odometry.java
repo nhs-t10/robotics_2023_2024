@@ -56,7 +56,9 @@ public class Odometry {
 
         // Apply positional changes
         Pose2d positionChange = new Pose2d(xPosChange, yPosChange, rotationChange);
-        robotPosition = robotPosition.plus(positionChange);
+        robotPosition = new Pose2d(robotPosition.getX() + xPosChange,
+                robotPosition.getY() + yPosChange,
+                (robotPosition.getHeading() + rotationChange) % 360);
 
         // Update encoder wheel position
         leftWheelPos = newLeftWheelPos;
