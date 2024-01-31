@@ -55,7 +55,7 @@ public class RotateTest extends AutonomousOpMode {
     @Override
     public void initialize() {
         imu = hardwareMap.get(IMU.class,"imu");
-        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{-1, -1, 1, 1}));
+        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{1, -1, -1, -1}));
         parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
     }
@@ -63,13 +63,8 @@ public class RotateTest extends AutonomousOpMode {
     @Override
     public void run() {
         try {
-            rotate(90, 2);
-            SystemClock.sleep(2000);
+            //rotateCompare(90,2);
             rotateIMU(90);
-            SystemClock.sleep(5000);
-            rotate(-90,2);
-            SystemClock.sleep(2000);
-            rotateIMU(-90);
         }
         catch (Throwable e)
         {
@@ -107,11 +102,37 @@ public class RotateTest extends AutonomousOpMode {
         }
         imu.resetYaw();
         //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
-        this.driver.setIndividualVelocity(direction,-direction,direction,-direction);
+        this.driver.setVelocity(new Vector3D(0,0, 15*direction));
+
         while(Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) < 90)
         {
-            //do nothing
+            System.out.println(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         }
+        System.out.println("correcting..." + (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - 90));
+        this.driver.setVelocity(new Vector3D(0,0,-3*direction));
+        while(Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) > 90)
+        {
+            System.out.println(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        }
+        this.driver.stop();
+    }
+
+    public void rotateCompare(double degrees, double time)
+    {
+        imu.resetYaw();
+        this.driver.setVelocity(new Vector3D(0,0, (Math.toRadians(degrees) * (Constants.ROBOT_DIAMETER_IN)/time)));
+        SystemClock.sleep((long)time*1000/3);
+        System.out.println("Turned 30 degrees");
+        System.out.println("Imu: " + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        SystemClock.sleep((long)time*1000/6);
+        System.out.println("Turned 45 degrees");
+        System.out.println("Imu: " + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        SystemClock.sleep((long)time*1000/6);
+        System.out.println("Turned 60 degrees");
+        System.out.println("Imu: " + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        SystemClock.sleep((long)time*1000/3);
+        System.out.println("Turned 90 degrees");
+        System.out.println("Imu: " + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         this.driver.stop();
     }
 }
