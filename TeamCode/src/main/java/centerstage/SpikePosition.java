@@ -24,4 +24,23 @@ public enum SpikePosition {
             return LEFT;
         }
     }
+    public String toString()
+    {
+        if(this == RIGHT)
+        {
+            return "right";
+        }
+        else if(this == LEFT)
+        {
+            return "left";
+        }
+        else if(this == CENTER)
+        {
+            return "center";
+        }
+        else
+        {
+            return "null";
+        }
+    }
 }

@@ -43,4 +43,6 @@ public class Constants {
     public static final double TICKS_PER_ODOMETRY_REVOLUTION = 8192;
 
     public static final double ODOMETRY_WHEEL_DIAMETER_IN = 2.0;
+
+    public double[] UP_ROBOT_COEFFICIENTS = {-1,-1,1,1};
 }
