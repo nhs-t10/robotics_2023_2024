@@ -45,15 +45,21 @@ public class PathfinderTest extends AutonomousOpMode {
 
     @Override
     public void initialize() {
-        this.driver = new NovelMecanumDrive(fl, fr, bl, br, new OmniDriveCoefficients(new double[]{-1, 1, 1, 1}));
+        this.driver = new NovelMecanumDrive(fl, fr, bl, br, new OmniDriveCoefficients(new double[]{ 1, -1, 1, -1 }));
     }
 
     @Override
     public void run() {
         try {
             PathFinder pathFinder = new PathFinder("points.txt");
-            List<PathFinder.Point> points = pathFinder.findPath(new PathFinder.Point(-52, -52), new PathFinder.Point(52, 52));
+            List<PathFinder.Point> points = pathFinder.findPath(new PathFinder.Point(-52, -52), new PathFinder.Point(52, -52));
+            points.addAll(pathFinder.findPath(new PathFinder.Point(52, -52), new PathFinder.Point(-52, 46)));
             PathFinder.Point currentPos = new PathFinder.Point(-52, -52);
+            System.out.println("eee");
+            for (PathFinder.Point point : points) {
+                System.out.println(point);
+            }
+            System.out.println("eee");
             for (PathFinder.Point point : points) {
                 int vertical = point.getY() - currentPos.getY();
                 int horizontal = point.getX() - currentPos.getX();
