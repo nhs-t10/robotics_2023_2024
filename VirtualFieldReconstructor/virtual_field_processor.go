@@ -1,14 +1,14 @@
 package main
 
 import (
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"slices"
 	"sort"
 )
+
+const METERS_TO_INCHES = 39.37007874015748
 
 type Vertex struct {
 	X float64 `json:"x"`
@@ -39,9 +39,9 @@ func (v Vertices) Less(i, j int) bool {
 }
 
 const (
-	ROBOT_WIDTH_CM  = 38 + 4
+	ROBOT_WIDTH_CM  = 44 + 4
 	ROBOT_HEIGHT_CM = 30 + 2
-	ROBOT_DEPTH_CM  = 37.5 + 4
+	ROBOT_DEPTH_CM  = 44 + 4
 )
 
 func main() {
@@ -63,35 +63,35 @@ func main() {
 
 	fmt.Println("Done reading files, processing now")
 
-	vfFile, _ := os.Create("field.vf")
-	defer vfFile.Close()
+	pointsFile, _ := os.Create("points.txt")
+	defer pointsFile.Close()
 
 	objFile, _ := os.Create("field.obj")
 	defer objFile.Close()
 
-	distinctXVals := make([]float64, 0)
-	distinctYVals := make([]float64, 0)
+	// distinctXVals := make([]float64, 0)
+	// distinctYVals := make([]float64, 0)
 
 	sort.Sort(gridVertices)
 
 	// Find vertices in grid.json within the specified box range
 	// var safeVertices []Vertex
-	for _, gridVertex := range gridVertices {
-		if !slices.Contains[[]float64](distinctXVals, gridVertex.X) {
-			distinctXVals = append(distinctXVals, gridVertex.X)
-		}
+	// for _, gridVertex := range gridVertices {
+	// 	if !slices.Contains[[]float64](distinctXVals, gridVertex.X) {
+	// 		distinctXVals = append(distinctXVals, gridVertex.X)
+	// 	}
 
-		if !slices.Contains[[]float64](distinctYVals, gridVertex.Y) {
-			distinctYVals = append(distinctYVals, gridVertex.Y)
-		}
-	}
+	// 	if !slices.Contains[[]float64](distinctYVals, gridVertex.Y) {
+	// 		distinctYVals = append(distinctYVals, gridVertex.Y)
+	// 	}
+	// }
 
-	dXN := uint32(len(distinctXVals))
-	dYN := uint32(len(distinctYVals))
-	println("Distinct X/Y: ", dXN, dYN)
+	// dXN := uint32(len(distinctXVals))
+	// dYN := uint32(len(distinctYVals))
+	// println("Distinct X/Y: ", dXN, dYN)
 
-	binary.Write(vfFile, binary.BigEndian, dXN)
-	binary.Write(vfFile, binary.BigEndian, dYN)
+	// binary.Write(vfFile, binary.BigEndian, dXN)
+	// binary.Write(vfFile, binary.BigEndian, dYN)
 
 	for _, gridVertex := range gridVertices {
 		var robotObstructed uint8 = 0
@@ -103,11 +103,8 @@ func main() {
 			}
 		}
 
-		binary.Write(vfFile, binary.BigEndian, robotObstructed)
-		binary.Write(vfFile, binary.BigEndian, gridVertex.X)
-		binary.Write(vfFile, binary.BigEndian, gridVertex.Y)
-
 		if robotObstructed == uint8(0) {
+			pointsFile.WriteString(fmt.Sprintf("%d %d\n", int(gridVertex.X*METERS_TO_INCHES), int(gridVertex.Y*METERS_TO_INCHES)))
 			fmt.Fprintf(objFile, "v %f %f %f\n", gridVertex.X, gridVertex.Y, gridVertex.Z)
 		}
 	}
