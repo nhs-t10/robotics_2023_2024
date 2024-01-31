@@ -107,7 +107,7 @@ public class RotateTest extends AutonomousOpMode {
         }
         imu.resetYaw();
         //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
-        this.driver.setIndividualVelocity(direction,direction,-direction,-direction);
+        this.driver.setIndividualVelocity(direction,-direction,direction,-direction);
         while(Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) < 90)
         {
             //do nothing
