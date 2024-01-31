@@ -1,56 +1,113 @@
 package centerstage.auto;
 
 import centerstage.Constants;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.bootstrap.Hardware;
-import com.pocolifo.robobase.motor.CarWheels;
-import com.pocolifo.robobase.movement.DisplacementSequence;
+import com.pocolifo.robobase.motor.NovelMotor;
+import com.pocolifo.robobase.motor.OmniDriveCoefficients;
+import com.pocolifo.robobase.novel.NovelMecanumDrive;
 import com.pocolifo.robobase.reconstructor.PathFinder;
 import com.pocolifo.robobase.vision.Webcam;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-import static centerstage.Constants.ROBOT;
-import static com.pocolifo.robobase.utils.UnitUtils.inchesToCm;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import java.io.IOException;
 import java.util.List;
 
+@Config
 @Autonomous(name = "Pathfinder")
 public class PathfinderTest extends AutonomousOpMode {
     @Hardware(name = "Webcam")
     public Webcam webcam;
 
-    private CarWheels carWheels;
+//    private CarWheels carWheels;
+
+    @Hardware(name = "FL", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
+    public NovelMotor fl;
+
+    @Hardware(name = "FR", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
+    public NovelMotor fr;
+
+    @Hardware(name = "BL", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
+    public NovelMotor bl;
+
+    @Hardware(name = "BR", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
+    public NovelMotor br;
+
+    private NovelMecanumDrive driver;
+
+    private static final double MAX_SPEED = 8.0;
+
 
     @Override
     public void initialize() {
-        this.carWheels = new CarWheels(
-                hardwareMap,
-                Constants.MOTOR_TICK_COUNT,
-                9.6,
-                ROBOT,
-                "FL",
-                "FR",
-                "BL",
-                "BR",
-                "FL"
-        );
+        this.driver = new NovelMecanumDrive(fl, fr, bl, br, new OmniDriveCoefficients(new double[]{ 1, -1, 1, -1 }));
     }
 
     @Override
     public void run() {
-        DisplacementSequence displacementSequence = new DisplacementSequence();
         try {
             PathFinder pathFinder = new PathFinder("points.txt");
-            List<PathFinder.Point> points = pathFinder.findPath(new PathFinder.Point(20, 20), new PathFinder.Point(100, 100));
+            List<PathFinder.Point> points = pathFinder.findPath(new PathFinder.Point(-52, -52), new PathFinder.Point(52, -52));
+            points.addAll(pathFinder.findPath(new PathFinder.Point(52, -52), new PathFinder.Point(-52, 46)));
+            PathFinder.Point currentPos = new PathFinder.Point(-52, -52);
+            System.out.println("eee");
             for (PathFinder.Point point : points) {
-                displacementSequence.add(point.getX(), point.getY());
+                System.out.println(point);
             }
-
-            this.carWheels.follow(displacementSequence, 0.5);
-            this.carWheels.follow(displacementSequence.reverse(), 0.5);
-        } catch (IOException e) {
+            System.out.println("eee");
+            for (PathFinder.Point point : points) {
+                int vertical = point.getY() - currentPos.getY();
+                int horizontal = point.getX() - currentPos.getX();
+                Movement movement = getMovement(vertical, horizontal);
+                System.out.println("moving x: " + movement.getXSpeed() + " by y: " + movement.getYSpeed() + "\nfor: " + ((long)(movement.getTime() * 1000)) + " ms");
+                driver.setVelocity(new Vector3D(movement.getYSpeed(), movement.getXSpeed(), 0));
+                sleep((long)(movement.getTime() * 1000));
+                currentPos = point;
+            }
+            driver.setVelocity(new Vector3D(0, 0, 0));
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * @param xDist the horizontal distance to move in inches (can be negative)
+     * @param yDist the vertical distance to move in inches (can be negative)
+     * @return a movement object containing the speeds and time
+     */
+    private Movement getMovement(double xDist, double yDist) {
+        double maxTime = Math.max(Math.abs(xDist), Math.abs(yDist)) / MAX_SPEED;
+        double xSpeed = xDist / maxTime;
+        double ySpeed = yDist / maxTime;
+        return new Movement(xSpeed, ySpeed, maxTime);
+    }
+}
+
+class Movement {
+    private double xSpeed;
+    private double ySpeed;
+    private double time;
+
+    public Movement(double xSpeed, double ySpeed, double time) {
+        this.xSpeed = xSpeed;
+        this.ySpeed = ySpeed;
+        this.time = time;
+    }
+
+    public double getXSpeed() {
+        return xSpeed;
+    }
+
+    public double getYSpeed() {
+        return ySpeed;
+    }
+
+    public double getTime() {
+        return time;
     }
 }

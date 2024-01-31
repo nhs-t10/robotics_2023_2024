@@ -17,6 +17,16 @@ public class Toggleable {
     }
 
     /**
+     * Creates a {@link Toggleable}.
+     *
+     * @param currentState A method to get the current state of something (like whether a gamepad button is pressed)
+     */
+    public Toggleable(BoolSupplier currentState, boolean initialState) {
+        this(currentState);
+        this.state = initialState;
+    }
+
+    /**
      * Get the current toggled state.
      *
      * @return The toggled state of this {@link Toggleable}

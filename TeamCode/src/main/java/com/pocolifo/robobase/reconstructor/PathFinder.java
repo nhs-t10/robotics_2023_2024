@@ -33,6 +33,12 @@ public class PathFinder {
     }
 
     public List<Point> findPath(Point start, Point goal) {
+        if (!points.contains(start)) {
+            throw new IllegalArgumentException("Start point " + start + " is not an open point.");
+        }
+        if (!points.contains(goal)) {
+            throw new IllegalArgumentException("Goal point " + goal + " is not an open point.");
+        }
         PriorityQueue<Node> openSet = new PriorityQueue<>();
         Map<Point, Point> cameFrom = new HashMap<>();
         Map<Point, Double> gScore = new HashMap<>();
