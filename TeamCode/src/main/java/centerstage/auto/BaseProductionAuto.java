@@ -60,7 +60,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     public void initialize() {
         System.out.println("init start");
         this.webcam.open(this.spikeDetector);
-        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{-1, -1, 1, 1})); //REAL BOT
+        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{-1, 1, -1, 1})); //REAL BOT
         this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
         System.out.println("init finished");
         parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
