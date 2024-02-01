@@ -1,5 +1,7 @@
 package centerstage.auto;
 
+import android.os.SystemClock;
+
 import centerstage.BackdropAprilTagAligner;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
@@ -25,6 +27,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class BaseProductionAuto extends AutonomousOpMode {
@@ -57,19 +60,19 @@ public class BaseProductionAuto extends AutonomousOpMode {
         this.spikeDetector = spikeDetector;
         this.alliance = alliance;
         this.startSide = startSide;
-        this.odometry = new Odometry(hardwareMap, startPosition,
-                "OR",
-                "OL",
-                "OP");
+//        this.odometry = new Odometry(hardwareMap, startPosition,
+//                "OR",
+//                "OL",
+//                "OP");
     }
 
     @Override
     public void initialize() {
         System.out.println("init start");
         this.webcam.open(this.spikeDetector);
-        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{-1, 1, -1, 1})); //REAL BOT
-        this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
-        System.out.println("init finished");
+        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{-1, 1, 1, 1})); //Test BOT
+        System.out.println("init finished but for IMU");
+        imu = hardwareMap.get(IMU.class,"imu");
         parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
     }
@@ -77,6 +80,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Override
     public void run() {
         try {
+            System.out.println("StartingAuto");
             NovelYCrCbDetection pipeline = (NovelYCrCbDetection) this.webcam.getPipeline();
             SpikePosition spikePosition;
             int i = 0;
@@ -84,29 +88,31 @@ public class BaseProductionAuto extends AutonomousOpMode {
                 spikePosition = pipeline.getResult();
                 sleep(100);
             } while (spikePosition == null);
+            System.out.println(spikePosition.toString());
 
             //go to spike to drop - WORKS
             switch (spikePosition) {
                 case LEFT:
                     System.out.println("left");
-                    driveVertical(-26, 2);
+                    driveVertical(-27, 2);
                     sleep(500);
                     driveHorizontal(16, 1);
                     break;
 
                 case RIGHT:
                     System.out.println("right");
-                    driveVertical(-26, 2);
+                    driveVertical(-27, 2);
                     sleep(500);
                     driveHorizontal(-16, 1);
                     break;
 
                 case CENTER:
                     System.out.println("center");
-                    driveVertical(-34, 2.5);
+                    driveVertical(-35, 2.5);
                     break;
             }
 
+            SystemClock.sleep(500);
 
             //Reset to neutral position - GOOD
             switch (spikePosition) {
@@ -128,12 +134,27 @@ public class BaseProductionAuto extends AutonomousOpMode {
             driveHorizontal((42 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5+(startSide.getSideSwapConstantIn()/16));
             sleep(1000);
 
-            rotate(90* alliance.getAllianceSwapConstant(),2);
+            rotateIMU(90* alliance.getAllianceSwapConstant());
             sleep(1000);
 
-            alignWithAprilTag();
+            //this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
+            //alignWithAprilTag();
+            switch (spikePosition) {
+                case LEFT:
+                    driveHorizontal(8, 0.5);
+                    break;
 
-            rotate(180,4);
+                case RIGHT:
+                    driveHorizontal(-8, 0.5);
+                    break;
+
+                case CENTER:
+                    break;
+            }
+
+            SystemClock.sleep(500);
+            rotateIMU(90);
+            rotateIMU(90);
 
             //todo: place!!!
         } catch (Throwable e) {
@@ -170,6 +191,29 @@ public class BaseProductionAuto extends AutonomousOpMode {
         sleep((long)time*1000);
         this.driver.stop();
     }
+    public void rotateIMU(double degrees) throws InterruptedException {
+        int direction = 1;
+        if(degrees < 0)
+        {
+            direction = -1;
+        }
+        imu.resetYaw();
+        //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
+        this.driver.setVelocity(new Vector3D(0,0, 15*direction));
+
+        while(Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) < 90)
+        {
+            System.out.println(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        }
+        System.out.println("correcting..." + (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - 90));
+        this.driver.setVelocity(new Vector3D(0,0,-3*direction));
+        while(Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) > degrees*direction)
+        {
+            System.out.println(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        }
+        this.driver.stop();
+    }
+
 
     public void alignWithAprilTag() throws InterruptedException {
         while (this.aprilTagAligner.getStatus() != BackdropAprilTagAligner.AlignmentStatus.ALIGNMENT_COMPLETE) {
