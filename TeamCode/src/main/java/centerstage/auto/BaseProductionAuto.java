@@ -15,11 +15,17 @@ import com.pocolifo.robobase.novel.NovelMecanumDrive;
 import com.pocolifo.robobase.novel.Odometry;
 import com.pocolifo.robobase.vision.NovelYCrCbDetection;
 import com.pocolifo.robobase.vision.Webcam;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
+
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class BaseProductionAuto extends AutonomousOpMode {
     @Hardware(name = "Webcam")
@@ -43,6 +49,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
     private final StartSide startSide;
     private NovelMecanumDrive driver;
     private BackdropAprilTagAligner aprilTagAligner;
+    private IMU imu;
+    private IMU.Parameters parameters;
     private Odometry odometry;
 
     public BaseProductionAuto(NovelYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
@@ -57,9 +65,13 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
     @Override
     public void initialize() {
+        System.out.println("init start");
         this.webcam.open(this.spikeDetector);
-        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{-1, 1, 1, 1})); //TESTBOT
+        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{-1, 1, -1, 1})); //REAL BOT
         this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
+        System.out.println("init finished");
+        parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
+        imu.initialize(parameters);
     }
 
     @Override
@@ -71,28 +83,26 @@ public class BaseProductionAuto extends AutonomousOpMode {
             do {
                 spikePosition = pipeline.getResult();
                 sleep(100);
-                i++;
-                if(i>=10)
-                {
-                    spikePosition = SpikePosition.CENTER;
-                }
             } while (spikePosition == null);
 
             //go to spike to drop - WORKS
             switch (spikePosition) {
                 case LEFT:
-                    driveVertical(-26, 2);
-                    sleep(500);
-                    driveHorizontal(-16, 1);
-                    break;
-
-                case RIGHT:
+                    System.out.println("left");
                     driveVertical(-26, 2);
                     sleep(500);
                     driveHorizontal(16, 1);
                     break;
 
+                case RIGHT:
+                    System.out.println("right");
+                    driveVertical(-26, 2);
+                    sleep(500);
+                    driveHorizontal(-16, 1);
+                    break;
+
                 case CENTER:
+                    System.out.println("center");
                     driveVertical(-34, 2.5);
                     break;
             }
@@ -101,11 +111,11 @@ public class BaseProductionAuto extends AutonomousOpMode {
             //Reset to neutral position - GOOD
             switch (spikePosition) {
                 case LEFT:
-                    driveHorizontal(16, 1);
+                    driveHorizontal(-16, 1);
                     break;
 
                 case RIGHT:
-                    driveHorizontal(-16, 1);
+                    driveHorizontal(16, 1);
                     break;
 
                 case CENTER:

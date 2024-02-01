@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class DriveTeleop extends TeleOpOpMode {
     private CarWheels carWheels;
     private GamepadCarWheels g;
-    public static double fl = -1, fr = 1, bl = 1, br = 1;
+    public static double fl = -1, fr = 1, bl = -1, br = 1;
 
     @Override
     public void initialize() {

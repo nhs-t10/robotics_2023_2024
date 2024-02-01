@@ -52,4 +52,6 @@ public class Constants {
     public static Pose2d START_POSE_BLUE_BACKDROP_SIDE = new Pose2d(-60,12,-90); //TODO Configure starting positions
 
     public static Pose2d START_POSE_BLUE_APRIL_TAG_SIDE = new Pose2d(-60,-36,-90); //TODO Configure starting positions
+
+    public double[] UP_ROBOT_COEFFICIENTS = {-1,-1,1,1};
 }
