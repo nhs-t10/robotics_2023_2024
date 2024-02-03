@@ -172,12 +172,13 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
             switch (spikePosition){
                 case LEFT:
-                    driveHorizontal(16,1);
+                    driveHorizontal(-8,0.5);
                 case RIGHT:
-                    driveHorizontal(-16,1);
+                    driveHorizontal(8,0.5);
                 case CENTER:
-                    driveHorizontal(24*startSide.getSideSign()*alliance.getAllianceSwapConstant(),1.5);
+                    //do nothing
             }
+            driveHorizontal(24*alliance.getAllianceSwapConstant(),1.5);
         } catch (Throwable e) {
             System.out.println("Stopped");
         }
