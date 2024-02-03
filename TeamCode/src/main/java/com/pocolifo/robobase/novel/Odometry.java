@@ -41,8 +41,8 @@ public class Odometry {
         double newPerpendicularWheelPos = this.getPerpendicularWheelPosIn();
 
         // Get changes in odometer wheel positions since last update
-        double flWheelPosChange = newLeftWheelPos - leftWheelPos;
-        double frWheelPosChange = newRightWheelPos - rightWheelPos;
+        double flWheelPosChange = -(newLeftWheelPos - leftWheelPos);
+        double frWheelPosChange = (newRightWheelPos - rightWheelPos); //Manual adjustment for inverted odometry wheel
         double perpendicularWheelPosChange = newPerpendicularWheelPos - perpendicularWheelPos;
 
         // Calculate rotational and positional changes relative to last update
