@@ -1,18 +1,12 @@
 package centerstage.auto;
 
-import centerstage.Constants;
-
+import centerstage.CenterStageRobotConfiguration;
 import com.acmerobotics.dashboard.config.Config;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
-import com.pocolifo.robobase.bootstrap.Hardware;
-import com.pocolifo.robobase.motor.NovelMotor;
 import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 import com.pocolifo.robobase.novel.NovelMecanumDrive;
 import com.pocolifo.robobase.reconstructor.PathFinder;
-import com.pocolifo.robobase.vision.Webcam;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import java.io.IOException;
@@ -21,31 +15,16 @@ import java.util.List;
 @Config
 @Autonomous(name = "Pathfinder")
 public class PathfinderTest extends AutonomousOpMode {
-    @Hardware(name = "Webcam")
-    public Webcam webcam;
-
-//    private CarWheels carWheels;
-
-    @Hardware(name = "FL", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor fl;
-
-    @Hardware(name = "FR", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor fr;
-
-    @Hardware(name = "BL", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor bl;
-
-    @Hardware(name = "BR", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor br;
-
     private NovelMecanumDrive driver;
 
     private static final double MAX_SPEED = 8.0;
+    private CenterStageRobotConfiguration c;
 
 
     @Override
     public void initialize() {
-        this.driver = new NovelMecanumDrive(fl, fr, bl, br, new OmniDriveCoefficients(new double[]{ 1, -1, 1, -1 }));
+        this.c = new CenterStageRobotConfiguration(this.hardwareMap);
+        this.driver = new NovelMecanumDrive(c.fl, c.fr, c.bl, c.br, new OmniDriveCoefficients(new double[]{ 1, -1, 1, -1 }));
     }
 
     @Override

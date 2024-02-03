@@ -1,13 +1,9 @@
 package com.pocolifo.robobase.novel;
 
-import centerstage.Constants;
 import com.pocolifo.robobase.motor.NovelMotor;
 import com.pocolifo.robobase.motor.OmniDriveCoefficients;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import org.apache.commons.math3.geometry.Vector;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-
-import static com.pocolifo.robobase.motor.NovelMotor.inchesPerSecondToEncoderTicksPerSecond;
 
 public class NovelMecanumDrive {
     private final NovelMotor frontLeft;
@@ -49,6 +45,19 @@ public class NovelMecanumDrive {
 
     public void stop() {
         this.setIndividualVelocity(0, 0, 0, 0);
+    }
+
+    public void useGamepad(Gamepad gamepad, double microMovementValue) {
+        OmniDriveCoefficients.CoefficientSet coefficientSet = this.omniDriveCoefficients.calculateCoefficientsWithPower(
+                gamepad.left_stick_y / microMovementValue,
+                gamepad.left_stick_x / microMovementValue,
+                gamepad.right_stick_x / microMovementValue
+        );
+
+        this.frontLeft.setPower(coefficientSet.frontLeft);
+        this.frontRight.setPower(coefficientSet.frontRight);
+        this.backLeft.setPower(coefficientSet.backLeft);
+        this.backRight.setPower(coefficientSet.backRight);
     }
 
     public double getEncoderInches() {

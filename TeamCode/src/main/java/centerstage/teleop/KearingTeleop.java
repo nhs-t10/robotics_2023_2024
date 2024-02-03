@@ -1,123 +1,46 @@
 package centerstage.teleop;
 
+import centerstage.CenterStageRobotConfiguration;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
-import com.pocolifo.robobase.bootstrap.Hardware;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
-import com.pocolifo.robobase.control.GamepadCarWheels;
-import com.pocolifo.robobase.control.Pressable;
-import com.pocolifo.robobase.control.Toggleable;
-import com.pocolifo.robobase.motor.CarWheels;
+import com.pocolifo.robobase.control.*;
+import com.pocolifo.robobase.novel.NovelMecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import static centerstage.Constants.ROBOT;
-
-@TeleOp(name = "Kearing v2")
+@TeleOp(name = "Kearing 3")
 public class KearingTeleop extends TeleOpOpMode {
-    private CarWheels carWheels;
-    private GamepadCarWheels gamepadCarWheels;
-
-    @Hardware(name = "Lift", ticksPerRevolution = Constants.MOTOR_TICK_COUNT)
-    public DcMotorEx liftMotor;
-
-    @Hardware(name = "AirplaneLauncher")
-    public CRServo airplaneLauncher;
-
-    @Hardware(name = "PixelDropper")
-    public CRServo pixelDropper;
-
-    @Hardware(name = "ClawGrip")
-    public CRServo clawGrip;
-
-    @Hardware(name = "ClawRotation")
-    public CRServo clawRotation;
     private RobotCapabilities capabilities;
-    private Toggleable isGripping;
-    private Pressable launchAirplane;
-    private Pressable moveToDropPosition;
-    private Pressable moveToCollectPosition;
-    private Toggleable isMicroMovement;
-    private boolean lastPressingTrigger;
-    private boolean lastPressingBumper;
-    private Pressable dropAutoPixel;
+    private NovelMecanumDrive driver;
+    private GamepadController gamepadController;
+    private Telemetry.Item telemetryItem;
+    private CenterStageRobotConfiguration c;
 
     @Override
     public void initialize() {
-        this.carWheels = new CarWheels(
-                hardwareMap,
-                Constants.MOTOR_TICK_COUNT,
-                9.6d,
-                ROBOT,
-                "FL",
-                "FR",
-                "BL",
-                "BR",
-                "FL"
-        );
+        this.c = new CenterStageRobotConfiguration(this.hardwareMap);
+        this.capabilities = new RobotCapabilities(c);
+        this.driver = new NovelMecanumDrive(c.fl, c.fr, c.bl, c.br, Constants.PRODUCTION_COEFFICIENTS);
 
-        this.isMicroMovement = new Toggleable(() -> this.gamepad1.x);
-        this.capabilities = new RobotCapabilities(clawGrip, clawRotation, airplaneLauncher, liftMotor, pixelDropper);
-        this.isGripping = new Toggleable(() -> this.gamepad1.y, true);
-        this.launchAirplane = new Pressable(() -> this.gamepad1.b);
-        this.moveToDropPosition = new Pressable(() -> this.gamepad1.right_stick_button);
-        this.moveToCollectPosition = new Pressable(() -> this.gamepad1.left_stick_button);
-        this.dropAutoPixel = new Pressable(() -> this.gamepad1.a);
+        this.gamepadController = new GamepadController(this.gamepad1)
+                .x(new NToggleable()) // micro-movement
+                .y(new NPressable().onPress(this.capabilities::launchAirplane))
+                .a(new NToggleable().onToggleOn(this.capabilities::gripPixels).onToggleOff(this.capabilities::releasePixelGrip))
+                .rightTrigger(new NTrigger().duringPress(this.capabilities::upLift).onRelease(this.capabilities::stopLift))
+                .leftTrigger(new NTrigger().duringPress(this.capabilities::downLift).onRelease(this.capabilities::stopLift))
+                .rightBumper(new NPressable().onPress(() -> this.capabilities.rotateContainer(0.95)))
+                .leftBumper(new NPressable().onPress(() -> this.capabilities.rotateContainer(-0.748)))
+                .up(new NDownable().onDown(this.capabilities::runIntake).onRelease(this.capabilities::stopIntakeOuttake))
+                .down(new NDownable().onDown(this.capabilities::runOuttake).onRelease(this.capabilities::stopIntakeOuttake));
+        this.telemetryItem = this.telemetry.addData("position ", 0);
     }
 
     @Override
     public void loop() {
-        if (this.gamepad1.right_trigger > 0) {
-            this.capabilities.upLift(this.gamepad1.right_trigger);
-            this.lastPressingTrigger = true;
-        } else if (this.gamepad1.left_trigger > 0) {
-            this.capabilities.downLift(this.gamepad1.left_trigger);
-            this.lastPressingTrigger = true;
-        } else if (this.lastPressingTrigger) {
-            this.capabilities.stopLift();
-            this.lastPressingTrigger = false;
-        }
-
-        if (this.gamepad1.right_bumper) {
-            this.capabilities.rotateForward();
-            this.lastPressingBumper = true;
-        } else if (this.gamepad1.left_bumper) {
-            this.capabilities.rotateBackward();
-            this.lastPressingBumper = true;
-        } else if (this.lastPressingBumper) {
-            this.capabilities.stopRotating();
-            this.lastPressingBumper = false;
-        }
-
-        this.isGripping
-                .onToggleOff(() -> this.capabilities.openGrip())
-                .onToggleOn(() -> this.capabilities.closeGrip())
-                .processUpdates();
-
-        if (this.launchAirplane.get()) {
-            this.capabilities.launchAirplane();
-        }
-
-        if (this.moveToCollectPosition.get()) {
-            this.capabilities.moveToCollectPosition();
-        }
-
-        if (this.moveToDropPosition.get()) {
-            this.capabilities.moveToDropPosition();
-        }
-
-        if (this.dropAutoPixel.get()) {
-            this.capabilities.dropAutoPixel();
-        }
-
-        boolean useMicroMovement = this.isMicroMovement.processUpdates().get();
-        float microMovementValue = useMicroMovement ? 1 : 4;
-
-        this.carWheels.driveOmni(
-                this.gamepad1.left_stick_y / microMovementValue * -1,
-                this.gamepad1.left_stick_x / microMovementValue * -1,
-                this.gamepad1.right_stick_x / microMovementValue * -1
-        );
+        this.telemetryItem.setValue(this.c.linearSlideRight.motor.getCurrentPosition());
+        this.capabilities.update();
+        this.gamepadController.update();
+        this.driver.useGamepad(this.gamepad1, this.gamepadController.x() ? 4 : 1);
     }
 }

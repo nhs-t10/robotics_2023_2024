@@ -61,36 +61,7 @@ public abstract class BootstrappedOpMode extends OpMode {
      * @throws IllegalAccessException A field has the wrong access. Fields must be {@code public} and not {@code final}.
      */
     private void configureHardwareVariables() throws IllegalAccessException {
-        for (Field field : this.getClass().getFields()) {
-            Hardware hardware = field.getAnnotation(Hardware.class);
 
-            if (hardware != null) {
-                String configName = hardware.name();
-                Class<?> type = field.getType();
-                Object o;
-
-                if (type.equals(Webcam.class)) {
-                    o = new Webcam(this.hardwareMap, configName);
-                } else if (type.equals(Wheel.class)) {
-                    // TODO: warn if ticksPerRevolution, wheelDiameterCm is a bad value, but don't assert (if less than 0)
-                    o = new Wheel(this.hardwareMap.get(DcMotor.class, configName), hardware.ticksPerRevolution(), hardware.wheelDiameterIn());
-                    ((Wheel) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
-                } else if (type.equals(Motor.class)) {
-                    // TODO: warn if ticksPerRevolution, wheelDiameterCm is a bad value, but don't assert (if less than 0)
-                    o = new Motor(this.hardwareMap.get(DcMotor.class, configName), hardware.ticksPerRevolution());
-                    ((Motor) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
-                } else if (type.equals(NovelMotor.class)) {
-                    // TODO: warn if ticksPerRevolution, wheelDiameterCm is a bad value, but don't assert (if less than 0)
-                    o = new NovelMotor(this.hardwareMap.get(DcMotorEx.class, configName), hardware.ticksPerRevolution(), hardware.wheelDiameterIn(), hardware.gearRatio());
-                    ((NovelMotor) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
-                } else {
-                    o = this.hardwareMap.get(field.getType(), configName);
-                }
-
-                field.setAccessible(true);
-                field.set(this, o);
-            }
-        }
     }
 
     /**

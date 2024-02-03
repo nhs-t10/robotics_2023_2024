@@ -1,5 +1,6 @@
 package centerstage.auto;
 
+import centerstage.CenterStageRobotConfiguration;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;
@@ -18,37 +19,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class BaseProductionAuto extends AutonomousOpMode {
-    @Hardware(name = "Webcam")
-    public Webcam webcam;
-
-    @Hardware(name = "FL", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor fl;
-
-    @Hardware(name = "FR", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor fr;
-
-    @Hardware(name = "BL", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor bl;
-
-    @Hardware(name = "BR", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor br;
-
-    @Hardware(name = "Lift", ticksPerRevolution = Constants.MOTOR_TICK_COUNT)
-    public DcMotorEx liftMotor;
-
-    @Hardware(name = "AirplaneLauncher")
-    public CRServo airplaneLauncher;
-
-    @Hardware(name = "PixelDropper")
-    public CRServo pixelDropper;
-
-    @Hardware(name = "ClawGrip")
-    public CRServo clawGrip;
-
-    @Hardware(name = "ClawRotation")
-    public CRServo clawRotation;
+    private final CenterStageRobotConfiguration c;
     private RobotCapabilities capabilities;
-
     private final NovelYCrCbDetection spikeDetector;
     private final Alliance alliance;
     private final StartSide startSide;
@@ -58,19 +30,19 @@ public class BaseProductionAuto extends AutonomousOpMode {
         this.spikeDetector = spikeDetector;
         this.alliance = alliance;
         this.startSide = startSide;
+        this.c = new CenterStageRobotConfiguration(this.hardwareMap);
     }
 
     @Override
     public void initialize() {
-        this.webcam.open(this.spikeDetector);
-        this.driver = new NovelMecanumDrive(this.fl, this.fr, this.bl, this.br, new OmniDriveCoefficients(new double[]{1, 1, -1, 1}));
-        this.capabilities = new RobotCapabilities(this.clawGrip, this.clawRotation, this.airplaneLauncher, this.liftMotor, this.pixelDropper);
+        this.c.webcam.open(this.spikeDetector);
+        this.driver = new NovelMecanumDrive(this.c.fl, this.c.fr, this.c.bl, this.c.br, new OmniDriveCoefficients(new double[]{1, 1, -1, 1}));
     }
 
     @Override
     public void run() {
         try {
-            NovelYCrCbDetection pipeline = (NovelYCrCbDetection) this.webcam.getPipeline();
+            NovelYCrCbDetection pipeline = (NovelYCrCbDetection) this.c.webcam.getPipeline();
             SpikePosition spikePosition;
 
             do {
@@ -78,7 +50,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
                 sleep(100);
             } while (spikePosition == null);
 
-            this.webcam.close();
+            this.c.webcam.close();
 
             switch (spikePosition) {
                 case LEFT:
@@ -98,7 +70,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
                     break;
             }
 
-            this.capabilities.dropAutoPixel();
+//            this.capabilities.dropAutoPixel();
 
             switch (spikePosition) {
                 case LEFT:

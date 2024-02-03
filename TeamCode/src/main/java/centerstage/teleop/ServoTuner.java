@@ -1,30 +1,25 @@
 package centerstage.teleop;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pocolifo.robobase.bootstrap.Hardware;
+import centerstage.CenterStageRobotConfiguration;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp
-@Config
 public class ServoTuner extends TeleOpOpMode {
-    @Hardware(name = "Airplane")
-    public CRServo ap;
-
-    public static double multi = 5;
+    private CenterStageRobotConfiguration c;
+    Telemetry.Item line;
 
     @Override
     public void initialize() {
-        this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        this.c = new CenterStageRobotConfiguration(this.hardwareMap);
+        line = this.telemetry.addData("val", 0);
     }
 
     @Override
     public void loop() {
-        ap.setPower(this.gamepad1.right_trigger * multi - multi / 2);
-        this.telemetry.addData("ap ", ap.getPower());
+        this.c.containerPixelHolder.setPosition(this.gamepad1.right_trigger * 2 - 1);
+        line.setValue(this.c.containerPixelHolder.getPosition());
         this.telemetry.update();
     }
 }
