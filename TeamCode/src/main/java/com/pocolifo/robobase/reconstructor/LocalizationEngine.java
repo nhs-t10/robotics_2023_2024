@@ -48,8 +48,8 @@ public class LocalizationEngine {
             double realPosY = detection.metadata.fieldPosition.get(1);
             double facingRobotRadians = Math.toRadians(detection.ftcPose.bearing + 180); // flip 180 degrees to get the way the april tag is facing the robot
 
-            robotPosEstimateXAvg += realPosX + Math.cos(facingRobotRadians) * detection.ftcPose.range;
-            robotPosEstimateYAvg += realPosY + Math.sin(facingRobotRadians) * detection.ftcPose.range;
+            robotPosEstimateXAvg += realPosX + Math.sin(facingRobotRadians) * detection.ftcPose.range;
+            robotPosEstimateYAvg += realPosY + Math.cos(facingRobotRadians) * detection.ftcPose.range;
         }
 
         return new Position(
