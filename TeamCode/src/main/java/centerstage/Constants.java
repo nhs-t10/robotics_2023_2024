@@ -35,8 +35,14 @@ public class Constants {
     public static final double ROBOT_DIAMETER_IN = 17.341;
 
     public static final double WHEEL_DIAMETER_IN = 11.8737360135;
-
     public static final OmniDriveCoefficients PRODUCTION_COEFFICIENTS = new OmniDriveCoefficients(new double[] {
             1, -1, 1, -1
     });
+    public static final double ODOMETRY_LATERAL_WHEEL_DISTANCE = 12;
+
+    public static final double ODOMETRY_ROTATIONAL_WHEEL_OFFSET = 7;
+
+    public static final double TICKS_PER_ODOMETRY_REVOLUTION = 8192;
+
+    public static final double ODOMETRY_WHEEL_DIAMETER_IN = 2.0;
 }
