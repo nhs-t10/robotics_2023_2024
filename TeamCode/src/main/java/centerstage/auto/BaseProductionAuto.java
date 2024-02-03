@@ -146,7 +146,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
             driveHorizontal((42 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5 + (startSide.getSideSwapConstantIn() / 16));
             SystemClock.sleep(500);
 
-            rotateIMU(90 * alliance.getAllianceSwapConstant());
+            rotateIMU(-90 * alliance.getAllianceSwapConstant());
             SystemClock.sleep(500);
 
             //this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
@@ -165,8 +165,6 @@ public class BaseProductionAuto extends AutonomousOpMode {
             }
 
             SystemClock.sleep(500);
-            rotateIMU(90);
-            rotateIMU(90);
 
             //todo: place!!!
 
@@ -179,6 +177,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
                     //do nothing
             }
             driveHorizontal(24*alliance.getAllianceSwapConstant(),1.5);
+            imu.resetYaw();
         } catch (Throwable e) {
             System.out.println("Stopped");
         }
@@ -249,5 +248,15 @@ public class BaseProductionAuto extends AutonomousOpMode {
         spintake.setPower(-0.1);
         SystemClock.sleep(1000);
         spintake.setPower(0);
+    }
+    public void align(boolean imu_button) throws InterruptedException {
+        double imu_init;
+        double turnTo;
+        if(imu_button) {
+            imu_init = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) % 360;
+            imu.resetYaw();
+            turnTo = 360 - imu_init;
+            rotateIMU(turnTo);
+        }
     }
 }
