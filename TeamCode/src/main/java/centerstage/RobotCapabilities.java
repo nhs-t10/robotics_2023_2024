@@ -8,37 +8,34 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class RobotCapabilities {
     public static final double INTAKE_OUTTAKE_SPEED = 0.95;
-    public static final int LIFT_FULLY_EXTENDED_ENCODER_POS = 5100;
+    public static final int LIFT_FULLY_EXTENDED_ENCODER_POS = 1500;
     public final CenterStageRobotConfiguration c;
 
     public RobotCapabilities(CenterStageRobotConfiguration c) {
         this.c = c;
-        this.c.linearSlideLeft.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void downLift(double power) {
-        this.c.linearSlideLeft.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        if (this.c.linearSlideRight.motor.getCurrentPosition() > 0) {
-            this.c.linearSlideLeft.setPower(-Math.abs(power));
-            this.c.linearSlideRight.setPower(-Math.abs(power));
-        } else {
-            this.stopLift();
-        }
+        this.c.linearSlideLeft.setPower(Math.abs(power));
+        this.c.linearSlideRight.setPower(Math.abs(power));
+//        if (Math.abs(this.c.linearSlideRight.motor.getCurrentPosition()) > 0) {
+//        } else {
+//            this.stopLift();
+//        }
     }
 
     public void upLift(double power) {
-        this.c.linearSlideLeft.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        if (this.c.linearSlideRight.motor.getCurrentPosition() < LIFT_FULLY_EXTENDED_ENCODER_POS) {
-            this.c.linearSlideLeft.setPower(Math.abs(power));
-            this.c.linearSlideRight.setPower(Math.abs(power));
-        } else {
-            this.stopLift();
-        }
+        this.c.linearSlideLeft.setPower(-Math.abs(power));
+        this.c.linearSlideRight.setPower(-Math.abs(power));
+//        if (Math.abs(this.c.linearSlideRight.motor.getCurrentPosition()) < LIFT_FULLY_EXTENDED_ENCODER_POS) {
+//        } else {
+//            this.stopLift();
+//        }
     }
 
     public void stopLift() {
@@ -61,10 +58,12 @@ public class RobotCapabilities {
     }
 
     public void gripPixels() {
-        this.c.containerPixelHolder.setPosition(0);
+        System.out.println("grip");
+        this.c.containerPixelHolder.setPosition(-1);
     }
 
     public void releasePixelGrip() {
+        System.out.println("release");
         this.c.containerPixelHolder.setPosition(1);
     }
 

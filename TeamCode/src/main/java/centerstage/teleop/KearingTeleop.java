@@ -16,6 +16,8 @@ public class KearingTeleop extends TeleOpOpMode {
     private GamepadController gamepadController;
     private Telemetry.Item telemetryItem;
     private CenterStageRobotConfiguration c;
+    private int position = 0;
+    private static final double[] positions = {0.95, -0.748, -1};
 
     @Override
     public void initialize() {
@@ -29,8 +31,14 @@ public class KearingTeleop extends TeleOpOpMode {
                 .a(new NToggleable().onToggleOn(this.capabilities::gripPixels).onToggleOff(this.capabilities::releasePixelGrip))
                 .rightTrigger(new NTrigger().duringPress(this.capabilities::upLift).onRelease(this.capabilities::stopLift))
                 .leftTrigger(new NTrigger().duringPress(this.capabilities::downLift).onRelease(this.capabilities::stopLift))
-                .rightBumper(new NPressable().onPress(() -> this.capabilities.rotateContainer(0.95)))
-                .leftBumper(new NPressable().onPress(() -> this.capabilities.rotateContainer(-0.748)))
+                .rightBumper(new NPressable().onPress(() -> position = (position + 1) % 3))
+                .leftBumper(new NPressable().onPress(() -> {
+                    position--;
+
+                    if (position < 0) {
+                        position = positions.length-1;
+                    }
+                }))
                 .up(new NDownable().onDown(this.capabilities::runIntake).onRelease(this.capabilities::stopIntakeOuttake))
                 .down(new NDownable().onDown(this.capabilities::runOuttake).onRelease(this.capabilities::stopIntakeOuttake));
         this.telemetryItem = this.telemetry.addData("position ", 0);
@@ -38,6 +46,7 @@ public class KearingTeleop extends TeleOpOpMode {
 
     @Override
     public void loop() {
+        this.capabilities.rotateContainer(positions[position]);
         this.telemetryItem.setValue(this.c.linearSlideRight.motor.getCurrentPosition());
         this.capabilities.update();
         this.gamepadController.update();
