@@ -29,9 +29,9 @@ public class OdometryTester extends TeleOpOpMode {
         );
 
         this.odometry = new Odometry(hardwareMap, new  Pose2d(0, 0,0),
-                "OR",
-                "OL",
-                "OP");
+                "SpinningIntake",
+                "Roller",
+                "LinearSlideLeft");
     }
 
     @Override
