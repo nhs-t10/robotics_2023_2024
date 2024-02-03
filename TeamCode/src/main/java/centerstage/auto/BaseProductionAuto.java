@@ -59,7 +59,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
 //    private Odometry odometry;
 
 
-    public BaseProductionAuto(NovelYCrCbDetection spikeDetector, Alliance alliance, Startside startSide, Pose2d startPosition) {
+    public BaseProductionAuto(NovelYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
         this.spikeDetector = spikeDetector;
         this.alliance = alliance;
         this.startSide = startSide;
