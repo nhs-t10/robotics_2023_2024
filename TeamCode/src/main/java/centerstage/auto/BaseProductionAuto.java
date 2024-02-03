@@ -1,39 +1,34 @@
 package centerstage.auto;
 
+import android.os.SystemClock;
 import centerstage.CenterStageRobotConfiguration;
-import centerstage.BackdropAprilTagAligner;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.Alliance;
 import com.pocolifo.robobase.StartSide;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
-import com.pocolifo.robobase.bootstrap.Hardware;
-import com.pocolifo.robobase.motor.NovelMotor;
-import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 import com.pocolifo.robobase.novel.NovelMecanumDrive;
-import com.pocolifo.robobase.vision.NovelYCrCbDetection;
-import com.pocolifo.robobase.vision.Webcam;
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.pocolifo.robobase.vision.DynamicYCrCbDetection;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class BaseProductionAuto extends AutonomousOpMode {
     private final CenterStageRobotConfiguration c;
     private RobotCapabilities capabilities;
-    private final NovelYCrCbDetection spikeDetector;
+    private final DynamicYCrCbDetection spikeDetector;
     private final Alliance alliance;
     private final StartSide startSide;
     private NovelMecanumDrive driver;
-    private BackdropAprilTagAligner aprilTagAligner;
 
-    public BaseProductionAuto(NovelYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide) {
+
+    public BaseProductionAuto(DynamicYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
         this.spikeDetector = spikeDetector;
         this.alliance = alliance;
         this.startSide = startSide;
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
+        this.capabilities = new RobotCapabilities(this.c);
     }
 
     @Override
@@ -45,70 +40,101 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Override
     public void run() {
         try {
-            NovelYCrCbDetection pipeline = (NovelYCrCbDetection) this.c.webcam.getPipeline();
+            DynamicYCrCbDetection pipeline = (DynamicYCrCbDetection) this.c.webcam.getPipeline();
             SpikePosition spikePosition;
-            int i = 0;
             do {
                 spikePosition = pipeline.getResult();
                 sleep(100);
-                i++;
-                if(i>=10)
-                {
-                    spikePosition = SpikePosition.CENTER;
-                }
             } while (spikePosition == null);
+            System.out.println(spikePosition.toString());
 
-            //go to spike to drop - WORKS
             switch (spikePosition) {
                 case LEFT:
                     System.out.println("left");
-                    driveVertical(-26, 2);
+                    driveVertical(-27, 2);
                     sleep(500);
-                    driveHorizontal(16, 1);
+                    rotateIMU(90);
+                    driveVertical(2, 0.5);
+                    dropPixel();
+                    driveVertical(-2, 0.5);
+                    rotateIMU(-90);
+                    //driveHorizontal(16, 1);
                     break;
 
                 case RIGHT:
                     System.out.println("right");
-                    driveVertical(-26, 2);
+                    driveVertical(-27, 2);
                     sleep(500);
-                    driveHorizontal(-16, 1);
+                    rotateIMU(-90);
+                    driveVertical(2, 0.5);
+                    dropPixel();
+                    driveVertical(-2, 0.5);
+                    rotateIMU(90);
+                    //driveHorizontal(-16, 1);
                     break;
 
                 case CENTER:
                     System.out.println("center");
-                    driveVertical(-34, 2.5);
+                    driveVertical(-51, 3);
+                    dropPixel();
                     break;
             }
-//            this.capabilities.dropAutoPixel();
+
+            // TODO: drop the auto pixel
+            SystemClock.sleep(500);
 
             //Reset to neutral position - GOOD
             switch (spikePosition) {
                 case LEFT:
-                    driveHorizontal(16, 1);
+                    //driveHorizontal(-16, 1);
                     break;
 
                 case RIGHT:
-                    driveHorizontal(-16, 1);
+                    //driveHorizontal(16, 1);
                     break;
 
                 case CENTER:
-                    driveVertical(8, 0.5);
+                    driveVertical(24, 1.25);
                     break;
             }
 
-            sleep(5000);
+            SystemClock.sleep(500);
 
-            driveHorizontal((42 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5+(startSide.getSideSwapConstantIn()/16));
-            sleep(1000);
+            driveHorizontal((42 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5 + (startSide.getSideSwapConstantIn() / 16));
+            SystemClock.sleep(500);
 
-            rotate(90* alliance.getAllianceSwapConstant(),2);
-            sleep(1000);
+            rotateIMU(-90 * alliance.getAllianceSwapConstant());
+            SystemClock.sleep(500);
 
-            alignWithAprilTag();
+            //this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
+            //alignWithAprilTag();
+            switch (spikePosition) {
+                case LEFT:
+                    driveHorizontal(8, 0.5);
+                    break;
 
-            rotate(180,4);
+                case RIGHT:
+                    driveHorizontal(-8, 0.5);
+                    break;
+
+                case CENTER:
+                    break;
+            }
+
+            SystemClock.sleep(500);
 
             //todo: place!!!
+
+            switch (spikePosition){
+                case LEFT:
+                    driveHorizontal(-8,0.5);
+                case RIGHT:
+                    driveHorizontal(8,0.5);
+                case CENTER:
+                    //do nothing
+            }
+            driveHorizontal(24*alliance.getAllianceSwapConstant(),1.5);
+            c.imu.resetYaw();
         } catch (Throwable e) {
             System.out.println("Stopped");
         }
@@ -136,11 +162,44 @@ public class BaseProductionAuto extends AutonomousOpMode {
         sleep((long)time*1000);
         this.driver.stop();
     }
+    public void rotateIMU(double degrees) throws InterruptedException {
+        int direction = 1;
+        if(degrees < 0) {
+            direction = -1;
+        }
+        c.imu.resetYaw();
+        //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
+        this.driver.setVelocity(new Vector3D(0,0, 20*direction));
 
-    public void alignWithAprilTag() throws InterruptedException {
-        while (this.aprilTagAligner.getStatus() != BackdropAprilTagAligner.AlignmentStatus.ALIGNMENT_COMPLETE) {
-            this.aprilTagAligner.updateAlignment();
-            sleep(1000);
+        while(Math.abs(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) < 90)
+        {
+            System.out.println(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        }
+        System.out.println("correcting..." + (c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - 90));
+        this.driver.setVelocity(new Vector3D(0,0,-4*direction));
+        while(Math.abs(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) > degrees*direction)
+        {
+            System.out.println(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        }
+        this.driver.stop();
+    }
+
+
+    public void dropPixel()
+    {
+        //todo: fix power
+        this.capabilities.runOuttake();
+        SystemClock.sleep(1000);
+        this.capabilities.stopIntakeOuttake();
+    }
+    public void align(boolean imu_button) throws InterruptedException {
+        double imu_init;
+        double turnTo;
+        if(imu_button) {
+            imu_init = c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) % 360;
+            c.imu.resetYaw();
+            turnTo = 360 - imu_init;
+            rotateIMU(turnTo);
         }
     }
 }

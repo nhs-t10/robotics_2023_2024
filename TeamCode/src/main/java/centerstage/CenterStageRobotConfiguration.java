@@ -4,6 +4,7 @@ import com.pocolifo.robobase.RobotConfiguration;
 import com.pocolifo.robobase.bootstrap.Hardware;
 import com.pocolifo.robobase.motor.NovelMotor;
 import com.pocolifo.robobase.vision.Webcam;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.*;
 
 public class CenterStageRobotConfiguration extends RobotConfiguration {
@@ -11,8 +12,8 @@ public class CenterStageRobotConfiguration extends RobotConfiguration {
     public Webcam webcam;
 
     /***************\
-    |* CONTROL HUB *|
-    \***************/
+     |* CONTROL HUB *|
+     \***************/
 
     // Wheels
     // NOTE: LinearSlideLeft has the perpendicular  odometer encoder
@@ -35,8 +36,8 @@ public class CenterStageRobotConfiguration extends RobotConfiguration {
     public Servo airplaneLauncher;
 
     /*****************\
-    |* EXPANSION HUB *|
-    \*****************/
+     |* EXPANSION HUB *|
+     \*****************/
 
     // Wheels
     @Hardware(name = "FL", wheelDiameterIn = 3.7795275590551185, ticksPerRevolution = Constants.MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
@@ -68,5 +69,11 @@ public class CenterStageRobotConfiguration extends RobotConfiguration {
 
     public CenterStageRobotConfiguration(HardwareMap hardwareMap) {
         super(hardwareMap);
+        imu.initialize(
+                new IMU.Parameters(new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                ))
+        );
     }
 }

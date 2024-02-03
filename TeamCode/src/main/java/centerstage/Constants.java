@@ -1,5 +1,6 @@
 package centerstage;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.Robot;
 import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 
@@ -12,7 +13,7 @@ public class Constants {
             null,
             false,
             new OmniDriveCoefficients( //FL, FR, BL, BR
-/*Total for motor*/ new double[] {  -1,   1,   1,   1 }
+/*Total for motor*/ new double[] {  -1,   1,   -1,   1 }
             ));
 
     public static final double MOTOR_TICK_COUNT = ((((1+(46d/17d))) * (1+(46d/11d))) * 28);  // This equation is pulled straight from https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
@@ -45,4 +46,14 @@ public class Constants {
     public static final double TICKS_PER_ODOMETRY_REVOLUTION = 8192;
 
     public static final double ODOMETRY_WHEEL_DIAMETER_IN = 2.0;
+
+    public static Pose2d START_POSE_RED_BACKDROP_SIDE = new Pose2d(60,12,90); //TODO Configure starting positions
+
+    public static Pose2d START_POSE_RED_APRIL_TAG_SIDE = new Pose2d(60,-36,90); //TODO Configure starting positions
+
+    public static Pose2d START_POSE_BLUE_BACKDROP_SIDE = new Pose2d(-60,12,-90); //TODO Configure starting positions
+
+    public static Pose2d START_POSE_BLUE_APRIL_TAG_SIDE = new Pose2d(-60,-36,-90); //TODO Configure starting positions
+
+    public double[] UP_ROBOT_COEFFICIENTS = {-1,-1,1,1};
 }
