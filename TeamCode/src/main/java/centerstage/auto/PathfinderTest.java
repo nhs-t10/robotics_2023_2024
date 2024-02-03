@@ -31,9 +31,11 @@ public class PathfinderTest extends AutonomousOpMode {
     public void run() {
         try {
             PathFinder pathFinder = new PathFinder("points.txt");
-            List<PathFinder.Point> points = pathFinder.findPath(new PathFinder.Point(-52, -52), new PathFinder.Point(52, -52));
-            points.addAll(pathFinder.findPath(new PathFinder.Point(52, -52), new PathFinder.Point(-52, 46)));
-            PathFinder.Point currentPos = new PathFinder.Point(-52, -52);
+            PathFinder.Point start = new PathFinder.Point(-60, -57);
+            List<PathFinder.Point> points = pathFinder.findPath(start, new PathFinder.Point(60, -57));
+            points.addAll(pathFinder.findPath(new PathFinder.Point(60, -57), new PathFinder.Point(60, 57)));
+            points.addAll(pathFinder.findPath(new PathFinder.Point(60, 57), new PathFinder.Point(-60, 57)));
+            PathFinder.Point currentPos = start;
             System.out.println("eee");
             for (PathFinder.Point point : points) {
                 System.out.println(point);
