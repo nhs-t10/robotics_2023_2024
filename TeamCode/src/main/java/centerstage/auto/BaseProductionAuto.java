@@ -4,7 +4,6 @@ import android.os.SystemClock;
 
 import centerstage.BackdropAprilTagAligner;
 import centerstage.Constants;
-import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.Alliance;
@@ -14,21 +13,14 @@ import com.pocolifo.robobase.bootstrap.Hardware;
 import com.pocolifo.robobase.motor.NovelMotor;
 import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 import com.pocolifo.robobase.novel.NovelMecanumDrive;
-import com.pocolifo.robobase.novel.Odometry;
-import com.pocolifo.robobase.vision.NovelYCrCbDetection;
+import com.pocolifo.robobase.vision.DynamicYCrCbDetection;
 import com.pocolifo.robobase.vision.Webcam;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class BaseProductionAuto extends AutonomousOpMode {
     @Hardware(name = "Webcam")
@@ -49,7 +41,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Hardware(name = "Spintake", zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
     public NovelMotor spintake;
 
-    private final NovelYCrCbDetection spikeDetector;
+    private final DynamicYCrCbDetection spikeDetector;
     private final Alliance alliance;
     private final StartSide startSide;
     private NovelMecanumDrive driver;
@@ -59,7 +51,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
 //    private Odometry odometry;
 
 
-    public BaseProductionAuto(NovelYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
+    public BaseProductionAuto(DynamicYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
         this.spikeDetector = spikeDetector;
         this.alliance = alliance;
         this.startSide = startSide;
@@ -84,7 +76,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     public void run() {
         try {
             System.out.println("StartingAuto");
-            NovelYCrCbDetection pipeline = (NovelYCrCbDetection) this.webcam.getPipeline();
+            DynamicYCrCbDetection pipeline = (DynamicYCrCbDetection) this.webcam.getPipeline();
             SpikePosition spikePosition;
             do {
                 spikePosition = pipeline.getResult();
