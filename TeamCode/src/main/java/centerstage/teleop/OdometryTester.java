@@ -1,53 +1,39 @@
 package centerstage.teleop;
 
+import centerstage.CenterStageRobotConfiguration;
 import centerstage.Constants;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
-import com.pocolifo.robobase.motor.CarWheels;
-import com.pocolifo.robobase.novel.Odometry;
+import com.pocolifo.robobase.novel.hardware.NovelOdometry;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import static centerstage.Constants.ROBOT;
 
 @TeleOp(name = "Odometry Tester")
 public class OdometryTester extends TeleOpOpMode {
-    private CarWheels carWheels;
-    private Odometry odometry;
+    private NovelOdometry odometry;
+    private CenterStageRobotConfiguration c;
+    private NovelMecanumDrive driver;
 
     @Override
     public void initialize() {
-        this.carWheels = new CarWheels(
-                hardwareMap,
-                Constants.MOTOR_TICK_COUNT,
-                9.6d,
-                ROBOT,
-                "FL",
-                "FR",
-                "BL",
-                "BR",
-                "FL"
-        );
-
-        this.odometry = new Odometry(hardwareMap, new  Pose2d(0, 0,0),
-                "SpinningIntake",
-                "Roller",
-                "LinearSlideLeft");
+        this.c = new CenterStageRobotConfiguration(this.hardwareMap);
+        this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        this.odometry = this.c.createOdometry(new Pose2d(0, 0, 0));
     }
 
     @Override
     public void loop() {
         telemetry.addData("X: ", odometry.getX());
         telemetry.addData("Y: ", odometry.getY());
-        telemetry.addData("θ: ", odometry.getRotation());
+        telemetry.addData("θ: ", odometry.getHeading());
         telemetry.addData("LW: ", odometry.leftWheel.getCurrentPosition());
+        telemetry.addData("RW: ", odometry.rightWheel.getCurrentPosition());
+        telemetry.addData("PW: ", odometry.perpendicularWheel.getCurrentPosition());
+
         telemetry.update();
         odometry.update();
         telemetry.clear();
 
-        this.carWheels.driveOmni(
-                this.gamepad1.left_stick_y * -1 / 2,
-                this.gamepad1.left_stick_x * -1 / 2,
-                this.gamepad1.right_stick_x * -1 / 2
-        );
+        this.driver.useGamepad(this.gamepad1, 2);
     }
 }

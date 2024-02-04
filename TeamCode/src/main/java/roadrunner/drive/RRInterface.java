@@ -118,16 +118,16 @@ public class RRInterface extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        fl.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.frontLeft > 0
+        fl.setDirection(Constants.Coefficients.PRODUCTION_COEFFICIENTS.totals.frontLeft > 0
                 ? DcMotorSimple.Direction.FORWARD
                 : DcMotorSimple.Direction.REVERSE);
-        bl.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.backLeft > 0
+        bl.setDirection(Constants.Coefficients.PRODUCTION_COEFFICIENTS.totals.backLeft > 0
                 ? DcMotorSimple.Direction.FORWARD
                 : DcMotorSimple.Direction.REVERSE);
-        fr.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.frontRight > 0
+        fr.setDirection(Constants.Coefficients.PRODUCTION_COEFFICIENTS.totals.frontRight > 0
                 ? DcMotorSimple.Direction.FORWARD
                 : DcMotorSimple.Direction.REVERSE);
-        br.setDirection(Constants.ROBOT.omniDriveCoefficients.totals.backRight > 0
+        br.setDirection(Constants.Coefficients.PRODUCTION_COEFFICIENTS.totals.backRight > 0
                 ? DcMotorSimple.Direction.FORWARD
                 : DcMotorSimple.Direction.REVERSE);
 

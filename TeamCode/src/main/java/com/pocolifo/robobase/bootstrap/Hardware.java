@@ -16,5 +16,5 @@ public @interface Hardware {
     double ticksPerRevolution() default -1;
     DcMotor.ZeroPowerBehavior zeroPowerBehavior() default DcMotor.ZeroPowerBehavior.BRAKE;
     int gearRatio() default 1;
-    double wheelDiameterIn() default -1;
+    double diameterIn() default -1;
 }

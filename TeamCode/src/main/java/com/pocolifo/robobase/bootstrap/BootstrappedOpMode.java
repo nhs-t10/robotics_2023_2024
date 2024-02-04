@@ -1,17 +1,9 @@
 package com.pocolifo.robobase.bootstrap;
 
 import android.os.SystemClock;
-import com.pocolifo.robobase.motor.Motor;
-import com.pocolifo.robobase.motor.NovelMotor;
-import com.pocolifo.robobase.motor.Wheel;
-import com.pocolifo.robobase.vision.Webcam;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import java.lang.reflect.Field;
 
 /**
  * <p>"Bootstrapping" is the preparing another program to initialize.

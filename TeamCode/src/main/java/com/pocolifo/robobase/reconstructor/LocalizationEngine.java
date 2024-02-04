@@ -30,7 +30,7 @@ public class LocalizationEngine {
                 .build();
 
         this.aprilTagVisionPortal = new VisionPortal.Builder()
-                .setCameraResolution(new Size(Constants.CAMERA_RES_WIDTH, Constants.CAMERA_RES_HEIGHT))
+                .setCameraResolution(new Size(Constants.Webcam.CAMERA_RES_WIDTH, Constants.Webcam.CAMERA_RES_HEIGHT))
                 .setCamera(webcam)
                 .addProcessor(this.aprilTagProcessor)
                 .enableLiveView(true)

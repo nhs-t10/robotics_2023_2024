@@ -2,7 +2,7 @@ package com.pocolifo.robobase.reconstructor;
 
 import android.os.SystemClock;
 
-import com.pocolifo.robobase.novel.NovelMecanumDrive;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDrive;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
