@@ -6,11 +6,11 @@ import centerstage.Constants;
 import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.pocolifo.robobase.Alliance;
-import com.pocolifo.robobase.StartSide;
+import com.pocolifo.robobase.utils.Alliance;
+import centerstage.StartSide;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
-import com.pocolifo.robobase.novel.NovelMecanumDrive;
-import com.pocolifo.robobase.vision.DynamicYCrCbDetection;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDrive;
+import centerstage.vision.DynamicYCrCbDetection;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -34,7 +34,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Override
     public void initialize() {
         this.c.webcam.open(this.spikeDetector);
-        this.driver = new NovelMecanumDrive(this.c.fl, this.c.fr, this.c.bl, this.c.br, Constants.PRODUCTION_COEFFICIENTS);
+        this.driver = new NovelMecanumDrive(this.c.fl, this.c.fr, this.c.bl, this.c.br, Constants.Coefficients.PRODUCTION_COEFFICIENTS);
     }
 
     @Override
@@ -42,6 +42,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
         try {
             DynamicYCrCbDetection pipeline = (DynamicYCrCbDetection) this.c.webcam.getPipeline();
             SpikePosition spikePosition;
+
             do {
                 spikePosition = pipeline.getResult();
                 sleep(100);
@@ -128,10 +129,15 @@ public class BaseProductionAuto extends AutonomousOpMode {
             switch (spikePosition){
                 case LEFT:
                     driveHorizontal(-8,0.5);
+                    break;
+
                 case RIGHT:
                     driveHorizontal(8,0.5);
+                    break;
+
                 case CENTER:
                     //do nothing
+                    break;
             }
             driveHorizontal(24*alliance.getAllianceSwapConstant(),1.5);
             c.imu.resetYaw();
@@ -158,7 +164,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     public void rotate(double degrees, double time) throws InterruptedException {
         //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
         this.driver.setVelocity(new Vector3D(0,0,
-                (Math.toRadians(degrees) * (Constants.ROBOT_DIAMETER_IN)/time)));
+                (Math.toRadians(degrees) * (Constants.Robot.ROBOT_DIAMETER_IN)/time)));
         sleep((long)time*1000);
         this.driver.stop();
     }
@@ -188,7 +194,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     public void dropPixel()
     {
         //todo: fix power
-        this.capabilities.runOuttake();
+        this.capabilities.runOuttake(0.25);
         SystemClock.sleep(1000);
         this.capabilities.stopIntakeOuttake();
     }

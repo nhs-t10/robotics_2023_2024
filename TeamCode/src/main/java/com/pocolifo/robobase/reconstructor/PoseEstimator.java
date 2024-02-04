@@ -1,8 +1,8 @@
 //package com.pocolifo.robobase.reconstructor;
 //
 //import com.acmerobotics.roadrunner.geometry.Pose2d;
-//import com.pocolifo.robobase.novel.NovelMecanumDrive;
-//import com.pocolifo.robobase.novel.Odometry;
+//import com.pocolifo.robobase.novel.motion.NovelMecanumDrive;
+//import com.pocolifo.robobase.novel.hardware.NovelOdometry;
 //import com.qualcomm.robotcore.hardware.IMU;
 //import org.firstinspires.ftc.robotcore.external.navigation.*;
 //import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -11,10 +11,10 @@
 //public class PoseEstimator {
 //    private final IMU imu;
 //    private final AprilTagProcessor aprilTagProcessor;
-//    private final Odometry odometry;
+//    private final NovelOdometry odometry;
 //    private final NovelMecanumDrive novelMecanumDrive;
 //
-//    public PoseEstimator(IMU imu, AprilTagProcessor aprilTagProcessor, Odometry odometry, NovelMecanumDrive novelMecanumDrive) {
+//    public PoseEstimator(IMU imu, AprilTagProcessor aprilTagProcessor, NovelOdometry odometry, NovelMecanumDrive novelMecanumDrive) {
 //        this.imu = imu;
 //        this.aprilTagProcessor = aprilTagProcessor;
 //        this.odometry = odometry;
@@ -44,7 +44,7 @@
 ////        aprilTagRobotPosEstimateXAvg /= this.aprilTagProcessor.getDetections().size();
 ////        aprilTagRobotPosEstimateYAvg /= this.aprilTagProcessor.getDetections().size();
 //
-//        // Odometry estimate
+//        // NovelOdometry estimate
 //        double odometryX = this.odometry.getX();
 //        double odometryY = this.odometry.getY();
 //        double odometryRotation = this.odometry.getRotation();

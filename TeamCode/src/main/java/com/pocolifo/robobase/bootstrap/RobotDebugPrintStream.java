@@ -1,7 +1,5 @@
 package com.pocolifo.robobase.bootstrap;
 
-import static com.pocolifo.robobase.utils.JSONUtils.JSONify;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.io.OutputStream;
