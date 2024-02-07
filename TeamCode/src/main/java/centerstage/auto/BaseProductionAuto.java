@@ -15,7 +15,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class BaseProductionAuto extends AutonomousOpMode {
-    private final CenterStageRobotConfiguration c;
+    private CenterStageRobotConfiguration c;
     private RobotCapabilities capabilities;
     private final DynamicYCrCbDetection spikeDetector;
     private final Alliance alliance;
@@ -27,14 +27,14 @@ public class BaseProductionAuto extends AutonomousOpMode {
         this.spikeDetector = spikeDetector;
         this.alliance = alliance;
         this.startSide = startSide;
-        this.c = new CenterStageRobotConfiguration(this.hardwareMap);
-        this.capabilities = new RobotCapabilities(this.c);
     }
 
     @Override
     public void initialize() {
+        this.c = new CenterStageRobotConfiguration(this.hardwareMap);
         this.c.webcam.open(this.spikeDetector);
         this.driver = new NovelMecanumDrive(this.c.fl, this.c.fr, this.c.bl, this.c.br, Constants.PRODUCTION_COEFFICIENTS);
+        this.capabilities = new RobotCapabilities(this.c);
     }
 
     @Override
