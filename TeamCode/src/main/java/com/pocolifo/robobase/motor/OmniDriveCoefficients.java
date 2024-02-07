@@ -18,7 +18,7 @@ public class OmniDriveCoefficients {
     /**
      * DO NOT CHANGE!!!
      */
-    public final CoefficientSet rotational = new CoefficientSet(1, -1, 1, -1);
+    public final CoefficientSet rotational = new CoefficientSet(-1, 1, -1, 1);
 
     /**
      * Omni driving coefficients are used...
