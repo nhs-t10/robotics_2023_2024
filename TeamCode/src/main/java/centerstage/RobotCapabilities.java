@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class RobotCapabilities {
-    public static final double INTAKE_OUTTAKE_SPEED = 0.95;
     public static final int LIFT_FULLY_EXTENDED_ENCODER_POS = 1500;
     public final CenterStageRobotConfiguration c;
 
@@ -68,13 +67,13 @@ public class RobotCapabilities {
     }
 
     public void runIntake() {
-        this.c.roller.setPower(INTAKE_OUTTAKE_SPEED);
-        this.c.spinningIntake.setPower(INTAKE_OUTTAKE_SPEED);
+        this.c.roller.setPower(Constants.INTAKE_OUTTAKE_SPEED);
+        this.c.spinningIntake.setPower(Constants.INTAKE_OUTTAKE_SPEED);
     }
 
     public void runOuttake() {
-        this.c.roller.setPower(-INTAKE_OUTTAKE_SPEED/2);
-        this.c.spinningIntake.setPower(-INTAKE_OUTTAKE_SPEED/2);
+        this.c.roller.setPower(-Constants.INTAKE_OUTTAKE_SPEED/2);
+        this.c.spinningIntake.setPower(-Constants.INTAKE_OUTTAKE_SPEED/2);
     }
 
     public void stopIntakeOuttake() {
