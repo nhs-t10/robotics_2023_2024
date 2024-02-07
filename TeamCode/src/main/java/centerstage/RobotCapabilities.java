@@ -71,6 +71,14 @@ public class RobotCapabilities {
         this.c.spinningIntake.setPower(Constants.INTAKE_OUTTAKE_SPEED);
     }
 
+    public void runRoller() {
+        this.c.roller.setPower(Constants.ROLLER_SPEED * -1);
+    }
+
+    public void stopRoller() {
+        this.c.roller.setPower(0);
+    }
+
     public void runOuttake() {
         this.c.roller.setPower(-Constants.INTAKE_OUTTAKE_SPEED);
         this.c.spinningIntake.setPower(-Constants.INTAKE_OUTTAKE_SPEED);

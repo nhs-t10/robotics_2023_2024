@@ -79,8 +79,10 @@ public class DynamicYCrCbDetection extends AbstractResultCvPipeline<SpikePositio
             result = SpikePosition.LEFT;
         } else if (centerColorness > leftColorness && centerColorness > rightColorness) {
             result = SpikePosition.CENTER;
-        } else {
+        } else if (rightColorness > leftColorness && rightColorness > centerColorness) {
             result = SpikePosition.RIGHT; // Will return right if not found
+        } else {
+            result = SpikePosition.NOT_FOUND;
         }
 
         // Optional: Visualization and debugging
