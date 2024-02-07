@@ -9,7 +9,7 @@ import com.pocolifo.robobase.novel.NovelMecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@TeleOp(name = "Kearing 3")
+@TeleOp(name = "Kearing v4")
 public class KearingTeleop extends TeleOpOpMode {
     private RobotCapabilities capabilities;
     private NovelMecanumDrive driver;
