@@ -57,4 +57,6 @@ public class Constants {
 
     public double[] UP_ROBOT_COEFFICIENTS = {-1,-1,1,1};
     public static final double INTAKE_OUTTAKE_SPEED = 0.6;
+
+    public static final double ROLLER_SPEED = 0.6;
 }

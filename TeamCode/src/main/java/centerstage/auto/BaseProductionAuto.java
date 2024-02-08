@@ -51,31 +51,31 @@ public class BaseProductionAuto extends AutonomousOpMode {
             switch (spikePosition) {
                 case LEFT:
                     System.out.println("left");
-                    driveVertical(-27, 2);
+                    driveVertical(29, 2);
                     sleep(500);
-                    rotateIMU(90);
-                    driveVertical(2, 0.5);
-                    dropPixel();
-                    driveVertical(-2, 0.5);
                     rotateIMU(-90);
+                    driveVertical(-6, 0.5);
+                    dropPixel();
+                    driveVertical(10, 0.5);
+                    rotateIMU(90);
                     //driveHorizontal(16, 1);
                     break;
 
                 case RIGHT:
                     System.out.println("right");
-                    driveVertical(-27, 2);
+                    driveVertical(29, 2);
                     sleep(500);
-                    rotateIMU(-90);
-                    driveVertical(2, 0.5);
-                    dropPixel();
-                    driveVertical(-2, 0.5);
                     rotateIMU(90);
+                    driveVertical(-6, 0.5);
+                    dropPixel();
+                    driveVertical(10, 0.5);
+                    rotateIMU(-90);
                     //driveHorizontal(-16, 1);
                     break;
 
                 case CENTER:
                     System.out.println("center");
-                    driveVertical(-51, 3);
+                    driveVertical(46, 3);
                     dropPixel();
                     break;
             }
@@ -84,56 +84,56 @@ public class BaseProductionAuto extends AutonomousOpMode {
             SystemClock.sleep(500);
 
             //Reset to neutral position - GOOD
-            switch (spikePosition) {
-                case LEFT:
-                    //driveHorizontal(-16, 1);
-                    break;
+//            switch (spikePosition) {
+//                case LEFT:
+//                    //driveHorizontal(-16, 1);
+//                    break;
+//
+//                case RIGHT:
+//                    //driveHorizontal(16, 1);
+//                    break;
+//
+//                case CENTER:
+//                    driveVertical(24, 1.25);
+//                    break;
+//            }
 
-                case RIGHT:
-                    //driveHorizontal(16, 1);
-                    break;
-
-                case CENTER:
-                    driveVertical(24, 1.25);
-                    break;
-            }
-
-            SystemClock.sleep(500);
-
-            driveHorizontal((42 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5 + (startSide.getSideSwapConstantIn() / 16));
-            SystemClock.sleep(500);
-
-            rotateIMU(-90 * alliance.getAllianceSwapConstant());
-            SystemClock.sleep(500);
-
-            //this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
-            //alignWithAprilTag();
-            switch (spikePosition) {
-                case LEFT:
-                    driveHorizontal(8, 0.5);
-                    break;
-
-                case RIGHT:
-                    driveHorizontal(-8, 0.5);
-                    break;
-
-                case CENTER:
-                    break;
-            }
-
-            SystemClock.sleep(500);
-
-            //todo: place!!!
-
-            switch (spikePosition){
-                case LEFT:
-                    driveHorizontal(-8,0.5);
-                case RIGHT:
-                    driveHorizontal(8,0.5);
-                case CENTER:
-                    //do nothing
-            }
-            driveHorizontal(24*alliance.getAllianceSwapConstant(),1.5);
+//            SystemClock.sleep(500);
+//
+//            driveHorizontal((42 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5 + (startSide.getSideSwapConstantIn() / 16));
+//            SystemClock.sleep(500);
+//
+//            rotateIMU(-90 * alliance.getAllianceSwapConstant());
+//            SystemClock.sleep(500);
+//
+//            //this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
+//            //alignWithAprilTag();
+//            switch (spikePosition) {
+//                case LEFT:
+//                    driveHorizontal(8, 0.5);
+//                    break;
+//
+//                case RIGHT:
+//                    driveHorizontal(-8, 0.5);
+//                    break;
+//
+//                case CENTER:
+//                    break;
+//            }
+//
+//            SystemClock.sleep(500);
+//
+//            //todo: place!!!
+//
+//            switch (spikePosition){
+//                case LEFT:
+//                    driveHorizontal(-8,0.5);
+//                case RIGHT:
+//                    driveHorizontal(8,0.5);
+//                case CENTER:
+//                    //do nothing
+//            }
+//            driveHorizontal(24*alliance.getAllianceSwapConstant(),1.5);
             c.imu.resetYaw();
         } catch (Throwable e) {
             System.out.println("Stopped");
@@ -188,9 +188,9 @@ public class BaseProductionAuto extends AutonomousOpMode {
     public void dropPixel()
     {
         //todo: fix power
-        this.capabilities.runOuttake();
+        this.capabilities.runRoller();
         SystemClock.sleep(1000);
-        this.capabilities.stopIntakeOuttake();
+        this.capabilities.stopRoller();
     }
     public void align(boolean imu_button) throws InterruptedException {
         double imu_init;
