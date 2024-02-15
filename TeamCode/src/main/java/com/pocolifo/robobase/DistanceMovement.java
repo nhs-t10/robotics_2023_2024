@@ -4,13 +4,13 @@ import com.pocolifo.robobase.novel.NovelMecanumDrive;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 public class DistanceMovement {
-    private static double PRECISION_IN = 0.5;
-    private static double MAX_SPEED = 5;
+    private static final double PRECISION_IN = 0.5;
+    private static final double MAX_SPEED = 5;
     private static NovelMecanumDrive movementController;
     public static void move(Vector3D movement) {
         Vector3D position = DeadWheels.getPosition();
         Vector3D target = position.add(movement);
-        while (position.distance(target) > 0.5) {
+        while (position.distance(target) > PRECISION_IN) {
             position = DeadWheels.getPosition();
             movementController.setVelocity(getNewVelocity(position, target));
         }
