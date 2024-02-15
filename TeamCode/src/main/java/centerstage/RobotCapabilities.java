@@ -67,6 +67,14 @@ public class RobotCapabilities {
         this.c.spinningIntake.setPower(-Math.abs(speed));
     }
 
+    /**
+     * Run the mini-roller.
+     * @param speed Negative is outtake, positive is intake
+     */
+    public void runRoller(double speed) {
+        this.c.roller.setPower(speed);
+    }
+
     public void stopIntakeOuttake() {
         this.c.roller.setPower(0);
         this.c.spinningIntake.setPower(0);

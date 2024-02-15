@@ -9,32 +9,31 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.utils.Alliance;
 import centerstage.StartSide;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
-import com.pocolifo.robobase.novel.motion.NovelMecanumDrive;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import centerstage.vision.DynamicYCrCbDetection;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class BaseProductionAuto extends AutonomousOpMode {
-    private final CenterStageRobotConfiguration c;
+    private CenterStageRobotConfiguration c;
     private RobotCapabilities capabilities;
     private final DynamicYCrCbDetection spikeDetector;
     private final Alliance alliance;
     private final StartSide startSide;
-    private NovelMecanumDrive driver;
-
+    private NovelMecanumDriver driver;
 
     public BaseProductionAuto(DynamicYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
         this.spikeDetector = spikeDetector;
         this.alliance = alliance;
         this.startSide = startSide;
-        this.c = new CenterStageRobotConfiguration(this.hardwareMap);
-        this.capabilities = new RobotCapabilities(this.c);
     }
 
     @Override
     public void initialize() {
+        this.c = new CenterStageRobotConfiguration(this.hardwareMap);
+        this.capabilities = new RobotCapabilities(this.c);
         this.c.webcam.open(this.spikeDetector);
-        this.driver = new NovelMecanumDrive(this.c.fl, this.c.fr, this.c.bl, this.c.br, Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
     }
 
     @Override
@@ -47,7 +46,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
                 spikePosition = pipeline.getResult();
                 sleep(100);
             } while (spikePosition == null);
-            System.out.println(spikePosition.toString());
+
+            System.out.println(spikePosition);
 
             switch (spikePosition) {
                 case LEFT:

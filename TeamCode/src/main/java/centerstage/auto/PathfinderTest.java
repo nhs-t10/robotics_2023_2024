@@ -1,10 +1,11 @@
 package centerstage.auto;
 
 import centerstage.CenterStageRobotConfiguration;
+import centerstage.Constants;
 import com.acmerobotics.dashboard.config.Config;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.novel.OmniDriveCoefficients;
-import com.pocolifo.robobase.novel.motion.NovelMecanumDrive;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import com.pocolifo.robobase.reconstructor.PathFinder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -15,7 +16,7 @@ import java.util.List;
 @Config
 @Autonomous(name = "Pathfinder")
 public class PathfinderTest extends AutonomousOpMode {
-    private NovelMecanumDrive driver;
+    private NovelMecanumDriver driver;
 
     private static final double MAX_SPEED = 8.0;
     private CenterStageRobotConfiguration c;
@@ -24,7 +25,7 @@ public class PathfinderTest extends AutonomousOpMode {
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
-        this.driver = new NovelMecanumDrive(c.fl, c.fr, c.bl, c.br, new OmniDriveCoefficients(new double[]{ 1, -1, 1, -1 }));
+        this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
     }
 
     @Override

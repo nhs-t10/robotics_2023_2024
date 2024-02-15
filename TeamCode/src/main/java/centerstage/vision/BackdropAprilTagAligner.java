@@ -3,8 +3,8 @@ package centerstage.vision;
 import android.util.Size;
 import centerstage.Constants;
 import centerstage.SpikePosition;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import com.pocolifo.robobase.utils.Alliance;
-import com.pocolifo.robobase.novel.motion.NovelMecanumDrive;
 import com.pocolifo.robobase.vision.Webcam;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.Optional;
 
 public class BackdropAprilTagAligner implements AutoCloseable {
-    private final NovelMecanumDrive driver;
+    private final NovelMecanumDriver driver;
     private final int aprilTagId;
     private final int webcamCenterX;
     private final int pixelErrorThreshold;
@@ -26,7 +26,7 @@ public class BackdropAprilTagAligner implements AutoCloseable {
     private final VisionPortal aprilTagVisionPortal;
     private AlignmentStatus status;
 
-    public BackdropAprilTagAligner(NovelMecanumDrive driver, SpikePosition detectedPosition, Webcam webcam, Alliance alliance, int pixelErrorThreshold, double alignmentSpeed) {
+    public BackdropAprilTagAligner(NovelMecanumDriver driver, SpikePosition detectedPosition, Webcam webcam, Alliance alliance, int pixelErrorThreshold, double alignmentSpeed) {
         this.driver = driver;
         this.aprilTagId = alliance.getAprilTagIDForAlliance(detectedPosition);
         this.webcamCenterX = Constants.Webcam.CAMERA_RES_WIDTH / 2;

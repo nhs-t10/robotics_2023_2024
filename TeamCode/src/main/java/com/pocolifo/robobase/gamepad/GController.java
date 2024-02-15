@@ -29,8 +29,6 @@ public class GController {
         this.rightTrigger = new GTrigger(this, () -> gamepad.right_trigger);
     }
 
-
-
     public void update() {
         this.x.update();
         this.y.update();

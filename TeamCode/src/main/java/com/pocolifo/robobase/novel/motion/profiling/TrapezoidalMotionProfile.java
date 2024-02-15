@@ -1,4 +1,4 @@
-package com.pocolifo.robobase.novel.motion;
+package com.pocolifo.robobase.novel.motion.profiling;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 

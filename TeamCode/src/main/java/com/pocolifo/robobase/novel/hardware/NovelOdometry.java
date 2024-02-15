@@ -1,40 +1,35 @@
 package com.pocolifo.robobase.novel.hardware;
 
 import centerstage.Constants;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.novel.OdometryCoefficientSet;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.pocolifo.robobase.reconstructor.Pose;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class NovelOdometry {
     private final OdometryCoefficientSet coefficients;
-    private Pose2d robotPosition;
+    public final NovelEncoder rightEncoder;
+    public final NovelEncoder leftEncoder;
+    public final NovelEncoder perpendicularEncoder;
     private double leftWheelPos;
     private double rightWheelPos;
     private double perpendicularWheelPos;
-    public final DcMotor rightWheel;
-    public final DcMotor leftWheel;
-    public final DcMotor perpendicularWheel;
+    private Pose relativePose;
 
-    public NovelOdometry(Pose2d robotPosition, OdometryCoefficientSet coefficients, DcMotor rightWheel, DcMotor leftWheel, DcMotor perpendicularWheel) {
-        this.robotPosition = robotPosition;
+    public NovelOdometry(OdometryCoefficientSet coefficients, NovelEncoder rightEncoder, NovelEncoder leftEncoder, NovelEncoder perpendicularEncoder) {
         this.coefficients = coefficients;
+        this.rightEncoder = rightEncoder;
+        this.leftEncoder = leftEncoder;
+        this.perpendicularEncoder = perpendicularEncoder;
 
-        this.rightWheel = rightWheel;
-        this.leftWheel = leftWheel;
-        this.perpendicularWheel = perpendicularWheel;
-
-        this.rightWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.leftWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.perpendicularWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        this.updateWheelPositions();
+        this.resetRelativePose();
     }
 
+    // Adapted from https://gm0.org/en/latest/docs/software/concepts/odometry.html
     public void update() {
         // Get new wheel positions
-        double newLeftWheelPos = this.getLeftWheelPosIn();
-        double newRightWheelPos = this.getRightWheelPosIn();
-        double newPerpendicularWheelPos = this.getPerpendicularWheelPosIn();
+        double newLeftWheelPos = this.leftEncoder.getCurrentInches();
+        double newRightWheelPos = this.rightEncoder.getCurrentInches();
+        double newPerpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();
 
         // Get changes in odometer wheel positions since last update
         double deltaLeftWheelPos = this.coefficients.leftCoefficient * (newLeftWheelPos - this.leftWheelPos);
@@ -45,14 +40,11 @@ public class NovelOdometry {
         double deltaMiddlePos = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
         double deltaPerpendicularPos = deltaPerpendicularWheelPos - Constants.Odometry.ODOMETRY_ROTATIONAL_WHEEL_OFFSET * phi;
 
-        double deltaX = deltaMiddlePos * Math.cos(this.getHeading()) - deltaPerpendicularPos * Math.sin(this.getHeading());
-        double deltaY = deltaMiddlePos * Math.sin(this.getHeading()) + deltaPerpendicularPos * Math.cos(this.getHeading());
+        double heading = this.relativePose.getHeading(AngleUnit.RADIANS);
+        double deltaX = deltaMiddlePos * Math.cos(heading) - deltaPerpendicularPos * Math.sin(heading);
+        double deltaY = deltaMiddlePos * Math.sin(heading) + deltaPerpendicularPos * Math.cos(heading);
 
-        this.robotPosition = new Pose2d(
-                this.robotPosition.getX() + deltaX,
-                this.robotPosition.getY() + deltaY,
-                this.robotPosition.getHeading() + phi
-        );
+        this.relativePose = this.relativePose.add(new Pose(deltaX, deltaY, phi, AngleUnit.RADIANS));
 
         // Update encoder wheel position
         this.leftWheelPos = newLeftWheelPos;
@@ -60,33 +52,14 @@ public class NovelOdometry {
         this.perpendicularWheelPos = newPerpendicularWheelPos;
     }
 
-    public double getX() {
-        return robotPosition.getX();
+    public Pose getRelativePose() {
+        return this.relativePose;
     }
 
-    public double getY() {
-        return robotPosition.getY();
-    }
-
-    public void updateWheelPositions() {
-        this.leftWheelPos = leftWheel.getCurrentPosition() / Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION * Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN * Math.PI;
-        this.rightWheelPos = rightWheel.getCurrentPosition() / Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION * Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN * Math.PI;
-        this.perpendicularWheelPos = perpendicularWheel.getCurrentPosition() / Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION * Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN * Math.PI;
-    }
-
-    public double getLeftWheelPosIn() {
-        return leftWheel.getCurrentPosition() / Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION * Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN * Math.PI;
-    }
-
-    public double getRightWheelPosIn() {
-        return rightWheel.getCurrentPosition() / Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION * Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN * Math.PI;
-    }
-
-    public double getPerpendicularWheelPosIn() {
-        return perpendicularWheel.getCurrentPosition() / Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION * Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN * Math.PI;
-    }
-
-    public double getHeading() {
-        return this.robotPosition.getHeading();
+    public void resetRelativePose() {
+        this.relativePose = new Pose(0, 0, 0, AngleUnit.RADIANS);
+        this.leftWheelPos = this.leftEncoder.getCurrentInches();
+        this.rightWheelPos = this.rightEncoder.getCurrentInches();
+        this.perpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();
     }
 }

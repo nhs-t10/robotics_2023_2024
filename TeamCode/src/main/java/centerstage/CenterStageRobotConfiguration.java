@@ -1,22 +1,26 @@
 package centerstage;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.pocolifo.robobase.bootstrap.Hardware;
 import com.pocolifo.robobase.novel.OdometryCoefficientSet;
 import com.pocolifo.robobase.novel.OmniDriveCoefficients;
-import com.pocolifo.robobase.novel.hardware.NovelOdometry;
-import com.pocolifo.robobase.novel.motion.NovelMecanumDrive;
-import com.pocolifo.robobase.utils.RobotConfiguration;
-import com.pocolifo.robobase.bootstrap.Hardware;
+import com.pocolifo.robobase.novel.hardware.NovelEncoder;
 import com.pocolifo.robobase.novel.hardware.NovelMotor;
+import com.pocolifo.robobase.novel.hardware.NovelOdometry;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
+import com.pocolifo.robobase.reconstructor.Pose;
+import com.pocolifo.robobase.utils.RobotConfiguration;
 import com.pocolifo.robobase.vision.Webcam;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class CenterStageRobotConfiguration extends RobotConfiguration {
     @Hardware(name = "Webcam")
     public Webcam webcam;
 
-    /***************\
+     /***************\
      |* CONTROL HUB *|
      \***************/
 
@@ -40,7 +44,7 @@ public class CenterStageRobotConfiguration extends RobotConfiguration {
     @Hardware(name = "AirplaneLauncher")
     public Servo airplaneLauncher;
 
-    /*****************\
+     /*****************\
      |* EXPANSION HUB *|
      \*****************/
 
@@ -95,7 +99,7 @@ public class CenterStageRobotConfiguration extends RobotConfiguration {
     public CenterStageRobotConfiguration(HardwareMap hardwareMap) {
         super(hardwareMap);
 
-        imu.initialize(
+        this.imu.initialize(
                 new IMU.Parameters(new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                         RevHubOrientationOnRobot.UsbFacingDirection.UP
@@ -103,11 +107,23 @@ public class CenterStageRobotConfiguration extends RobotConfiguration {
         );
     }
 
-    public NovelMecanumDrive createDriver(OmniDriveCoefficients coefficients) {
-        return new NovelMecanumDrive(fl, fr, bl, br, coefficients);
+    public NovelMecanumDriver createDriver(OmniDriveCoefficients coefficients) {
+        return new NovelMecanumDriver(
+                this.fl,
+                this.fr,
+                this.bl,
+                this.br,
+                this.imu,
+                coefficients
+        );
     }
 
-    public NovelOdometry createOdometry(Pose2d startPose) {
-        return new NovelOdometry(startPose, new OdometryCoefficientSet(), linearSlideRight.motor, roller.motor, linearSlideLeft.motor);
+    public NovelOdometry createOdometry() {
+        return new NovelOdometry(
+                new OdometryCoefficientSet(),
+                new NovelEncoder(this.linearSlideRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new NovelEncoder(this.roller.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new NovelEncoder(this.linearSlideLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION)
+        );
     }
 }

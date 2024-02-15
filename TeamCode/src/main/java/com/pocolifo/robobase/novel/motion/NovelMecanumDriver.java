@@ -2,22 +2,33 @@ package com.pocolifo.robobase.novel.motion;
 
 import com.pocolifo.robobase.novel.hardware.NovelMotor;
 import com.pocolifo.robobase.novel.OmniDriveCoefficients;
+import com.pocolifo.robobase.novel.motion.profiling.AbstractMotionProfile;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.IMU;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class NovelMecanumDrive {
+public class NovelMecanumDriver {
+    private final IMU imu;
     private final NovelMotor frontLeft;
     private final NovelMotor frontRight;
     private final NovelMotor backLeft;
     private final NovelMotor backRight;
     private final OmniDriveCoefficients omniDriveCoefficients;
 
-    public NovelMecanumDrive(NovelMotor frontLeft, NovelMotor frontRight, NovelMotor backLeft, NovelMotor backRight, OmniDriveCoefficients omniDriveCoefficients) {
+    public NovelMecanumDriver(
+            NovelMotor frontLeft,
+            NovelMotor frontRight,
+            NovelMotor backLeft,
+            NovelMotor backRight,
+            IMU imu,
+            OmniDriveCoefficients omniDriveCoefficients
+    ) {
+        this.imu = imu;
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
         this.backLeft = backLeft;
         this.backRight = backRight;
-
         this.omniDriveCoefficients = omniDriveCoefficients;
     }
 
@@ -64,6 +75,15 @@ public class NovelMecanumDrive {
         return this.frontRight.getEncoderInches();
     }
 
+    public void rotateTo(double targetAngle, double maxError, AngleUnit angleUnit) {
+        throw new RuntimeException("not implemented!");
+    }
+
+    // TODO: This should be moved to localization
+    private double getHeading(AngleUnit unit) {
+        return this.imu.getRobotYawPitchRollAngles().getYaw(unit);
+    }
+
     public void drive(double distanceInches, double acceleration) {
         double velocity = 0;
         double initialPosition = getEncoderInches();
@@ -83,7 +103,7 @@ public class NovelMecanumDrive {
 
     public void applyProfileTimeBased(AbstractMotionProfile profile) {
         long start = System.currentTimeMillis();
-        double duration = profile.calculateDuration();
+        double duration = profile.duration;
 
         while (true) {
             double elapsedSeconds = (System.currentTimeMillis() - start) / 1000d;
