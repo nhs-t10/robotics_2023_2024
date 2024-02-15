@@ -6,8 +6,13 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 public class DistanceMovement {
     private static final double PRECISION_IN = 0.5;
     private static final double MAX_SPEED = 5;
-    private static NovelMecanumDrive movementController;
-    public static void move(Vector3D movement) {
+    private NovelMecanumDrive movementController;
+
+    public DistanceMovement(NovelMecanumDrive movementController) {
+        this.movementController = movementController;
+    }
+
+    public void move(Vector3D movement) {
         Vector3D position = DeadWheels.getPosition();
         Vector3D target = position.add(movement);
         while (position.distance(target) > PRECISION_IN) {
