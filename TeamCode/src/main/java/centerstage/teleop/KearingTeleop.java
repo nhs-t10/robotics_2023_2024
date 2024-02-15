@@ -1,29 +1,48 @@
 package centerstage.teleop;
 
+import android.annotation.SuppressLint;
 import centerstage.CenterStageRobotConfiguration;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
 import com.pocolifo.robobase.gamepad.*;
-import com.pocolifo.robobase.novel.motion.NovelMecanumDrive;
+import com.pocolifo.robobase.novel.hardware.NovelOdometry;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
+import com.pocolifo.robobase.reconstructor.LocalizationEngine;
+import com.pocolifo.robobase.reconstructor.Pose;
+import com.pocolifo.robobase.vision.AprilTagRetriever;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "Kearing v4")
 public class KearingTeleop extends TeleOpOpMode {
     private RobotCapabilities capabilities;
-    private NovelMecanumDrive driver;
+    private NovelMecanumDriver driver;
     private GController gamepadController;
-    private Telemetry.Item telemetryItem;
     private CenterStageRobotConfiguration c;
     private int position = 1;
     private static final double[] positions = {0.95, -0.748, -1};
+    private AprilTagRetriever aprilTagRetriver;
+    private LocalizationEngine localizationEngine;
+    private NovelOdometry odometry;
+    private Telemetry.Item i;
 
     @Override
     public void initialize() {
+//        Pose pose = new Pose(0, 0, 0, AngleUnit.RADIANS);
+//        this.i = this.telemetry.addData("localized", "");
+
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
-        this.capabilities = new RobotCapabilities(c);
-        this.driver = new NovelMecanumDrive(c.fl, c.fr, c.bl, c.br, Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        this.capabilities = new RobotCapabilities(this.c);
+        this.odometry = this.c.createOdometry();
+        this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+//        this.aprilTagRetriver = new AprilTagRetriever(this.c.webcam);
+//        this.localizationEngine = new LocalizationEngine(this.c.imu, this.aprilTagRetriver, this.odometry, pose);
+
         this.gamepadController = new GController(this.gamepad1)
                 .x.initialToggleState(true).ok()  // micro-movement
                 .y.onPress(this.capabilities::launchAirplane).ok()
@@ -40,15 +59,26 @@ public class KearingTeleop extends TeleOpOpMode {
                 }).ok()
                 .dpadUp.whileDown(() -> this.capabilities.runIntake(0.96)).onRelease(this.capabilities::stopIntakeOuttake).ok()
                 .dpadDown.whileDown(() -> this.capabilities.runOuttake(0.96)).onRelease(this.capabilities::stopIntakeOuttake).ok();
-        this.telemetryItem = this.telemetry.addData("position ", 0);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void loop() {
         this.capabilities.rotateContainer(positions[position]);
-        this.telemetryItem.setValue(this.c.linearSlideRight.motor.getCurrentPosition());
         this.capabilities.update();
         this.gamepadController.update();
         this.driver.useGamepad(this.gamepad1, this.gamepadController.x.isToggled() ? 4 : 1);
+
+
+//        Pose poseEstimate = this.localizationEngine.getPoseEstimate(AngleUnit.DEGREES);
+//        if (poseEstimate != null) {
+//            TelemetryPacket packet = new TelemetryPacket();
+//            packet.fieldOverlay().strokeRect(
+//                    poseEstimate.getX()-5, poseEstimate.getY()-5, 10, 10
+//            ).setFill("white");
+//            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+//            this.i.setValue(String.format("%f %f %f", poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading(AngleUnit.DEGREES)));
+//        }
+//        this.telemetry.update();
     }
 }

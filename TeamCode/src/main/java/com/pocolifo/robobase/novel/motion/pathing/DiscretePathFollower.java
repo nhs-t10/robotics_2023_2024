@@ -1,6 +1,7 @@
-package com.pocolifo.robobase.novel.motion;
+package com.pocolifo.robobase.novel.motion.pathing;
 
 import android.os.SystemClock;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import com.pocolifo.robobase.reconstructor.PathFinder;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
@@ -26,7 +27,7 @@ public class DiscretePathFollower implements PathFollower {
     }
 
     @Override
-    public void followPath(NovelMecanumDrive driver) {
+    public void followPath(NovelMecanumDriver driver) {
         while (this.pointsIterator.hasNext()) {
             PathFinder.Point nextPoint = this.pointsIterator.next();
             int verticalDelta = nextPoint.getX() - this.currentPoint.getX();

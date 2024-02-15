@@ -4,6 +4,7 @@ import com.pocolifo.robobase.bootstrap.Hardware;
 import com.pocolifo.robobase.novel.hardware.NovelEncoder;
 import com.pocolifo.robobase.novel.hardware.NovelMotor;
 import com.pocolifo.robobase.vision.Webcam;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,6 +12,29 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import java.lang.reflect.Field;
 
 public class RobotConfiguration {
+    /**
+     * Sets fields marked with @{@link Hardware} to their initialized value based on the {@link OpMode#hardwareMap}.
+     * <p>
+     * Example where a webcam and wheel are auto initialized using @{@link Hardware}. You would be able to use these
+     * variables just like normal. RoboBase does the initialization for you. The example class:
+     *
+     * <pre>{@code
+     * public class MyRobotConfiguration extends RobotConfiguration {
+     *      @Hardware(name = "Webcam")
+     *      public Webcam webcam;
+     *
+     *      @Hardware(
+     *          name = "Chain",
+     *          wheelDiameterCm = 9.6,
+     *          ticksPerRevolution = 500,
+     *          zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+     *      )
+     *      public NovelMotor chainWheel;
+     * }
+     * }</pre>
+     *
+     * <b>Note:</b> Fields must be {@code public} and not {@code final} or {@code private}.
+     */
     public RobotConfiguration(HardwareMap hardwareMap) {
         try {
             for (Field field : this.getClass().getFields()) {

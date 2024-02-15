@@ -1,6 +1,8 @@
 package com.pocolifo.robobase.bootstrap;
 
 import android.os.SystemClock;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -19,8 +21,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  * @see System#err
  */
 public abstract class BootstrappedOpMode extends OpMode {
-    public volatile boolean stopped = false;
-
     /**
      * Sets {@link System#out} and {@link System#err} to an instance of {@link RobotDebugPrintStream}.
      * This allows {@link System#out} and {@link System#err} to be used for printing debug messages.
@@ -32,28 +32,6 @@ public abstract class BootstrappedOpMode extends OpMode {
     private void configureSystemOut() {
         System.setOut(new RobotDebugPrintStream(this.telemetry));
         System.setErr(new RobotDebugPrintStream(this.telemetry));
-    }
-
-    /**
-     * Sets fields marked with @{@link Hardware} to their initialized value based on the {@link OpMode#hardwareMap}.
-     * <p>
-     * Example where a webcam and wheel are auto initialized using @{@link Hardware}. You would be able to use these
-     * variables just like normal. RoboBase does the initialization for you.
-     *
-     * <pre>
-     * {@code
-     * @Hardware(name = "Webcam")
-     * public Webcam webcam;
-     *
-     * @Hardware(name = "Chain", wheelDiameterCm = 9.6, ticksPerRevolution = 500, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT)
-     * public Wheel chainWheel;
-     * }
-     * </pre>
-     *
-     * @throws IllegalAccessException A field has the wrong access. Fields must be {@code public} and not {@code final}.
-     */
-    private void configureHardwareVariables() throws IllegalAccessException {
-
     }
 
     /**
@@ -91,11 +69,10 @@ public abstract class BootstrappedOpMode extends OpMode {
 
     @Override
     public void init() {
-        try {
-            this.configureSystemOut();
-            this.configureHardwareVariables();
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        this.configureSystemOut();
+    }
+
+    public boolean isStopRequested() {
+        return Thread.currentThread().isInterrupted();
     }
 }

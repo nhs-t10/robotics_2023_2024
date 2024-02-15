@@ -4,26 +4,20 @@ import android.os.SystemClock;
 import centerstage.CenterStageRobotConfiguration;
 import centerstage.Constants;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
-import com.pocolifo.robobase.bootstrap.Hardware;
-import com.pocolifo.robobase.novel.OmniDriveCoefficients;
-import com.pocolifo.robobase.novel.hardware.NovelMotor;
-import com.pocolifo.robobase.novel.motion.NovelMecanumDrive;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Autonomous(name = "RotateTest")
 public class RotateTest extends AutonomousOpMode {
-    private NovelMecanumDrive driver;
+    private NovelMecanumDriver driver;
     private CenterStageRobotConfiguration c;
 
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
-        this.driver = new NovelMecanumDrive(this.c.fl, this.c.fr, this.c.bl, this.c.br, Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
     }
 
     @Override

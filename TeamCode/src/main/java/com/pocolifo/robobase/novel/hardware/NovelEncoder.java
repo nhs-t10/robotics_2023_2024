@@ -9,21 +9,16 @@ public class NovelEncoder {
 
     public NovelEncoder(DcMotor encoder, double encoderDiameterIn, double ticksPerRevolution) {
         this.encoder = encoder;
+        this.encoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.ticksPerRevolution = ticksPerRevolution;
         this.encoderDiameterIn = encoderDiameterIn;
     }
 
-    public int getCurrentPosition() {
+    public int getCurrentTicks() {
         return this.encoder.getCurrentPosition();
     }
 
-    public double encoderTicksToInches(double ticks) {
-        // TODO: does this need PI in here?
-        return ticks / this.ticksPerRevolution * this.encoderDiameterIn;
-    }
-
-    public double inchesToEncoderTicks(double inches) {
-        // TODO: does this need PI in here?
-        return (inches / this.encoderDiameterIn) * this.ticksPerRevolution;
+    public double getCurrentInches() {
+        return this.getCurrentTicks() / this.ticksPerRevolution * this.encoderDiameterIn * Math.PI;
     }
 }
