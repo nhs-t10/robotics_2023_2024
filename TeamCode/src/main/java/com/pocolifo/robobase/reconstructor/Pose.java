@@ -1,5 +1,6 @@
 package com.pocolifo.robobase.reconstructor;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Pose extends Point {
@@ -34,5 +35,13 @@ public class Pose extends Point {
                 this.headingRadians - pose.headingRadians,
                 AngleUnit.RADIANS
         );
+    }
+
+    public static Vector3D toVector3D(Pose pose) {
+        return new Vector3D(pose.getX(), pose.getY(), pose.getHeading(AngleUnit.DEGREES));
+    }
+
+    public static Pose fromVector3D(Vector3D vector3D) {
+        return new Pose(vector3D.getX(), vector3D.getY(), vector3D.getZ(), AngleUnit.DEGREES);
     }
 }
