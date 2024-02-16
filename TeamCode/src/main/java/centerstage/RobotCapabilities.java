@@ -1,10 +1,6 @@
 package centerstage;
 
 import android.os.SystemClock;
-import com.pocolifo.robobase.motor.NovelMotor;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class RobotCapabilities {
     public static final int LIFT_FULLY_EXTENDED_ENCODER_POS = 1500;
@@ -12,12 +8,9 @@ public class RobotCapabilities {
 
     public RobotCapabilities(CenterStageRobotConfiguration c) {
         this.c = c;
-        this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void downLift(double power) {
-        this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         this.c.linearSlideLeft.setPower(Math.abs(power));
         this.c.linearSlideRight.setPower(Math.abs(power));
 //        if (Math.abs(this.c.linearSlideRight.motor.getCurrentPosition()) > 0) {
@@ -27,8 +20,6 @@ public class RobotCapabilities {
     }
 
     public void upLift(double power) {
-        this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         this.c.linearSlideLeft.setPower(-Math.abs(power));
         this.c.linearSlideRight.setPower(-Math.abs(power));
 //        if (Math.abs(this.c.linearSlideRight.motor.getCurrentPosition()) < LIFT_FULLY_EXTENDED_ENCODER_POS) {
@@ -66,22 +57,14 @@ public class RobotCapabilities {
         this.c.containerPixelHolder.setPosition(1);
     }
 
-    public void runIntake() {
-        this.c.roller.setPower(Constants.INTAKE_OUTTAKE_SPEED);
-        this.c.spinningIntake.setPower(Constants.INTAKE_OUTTAKE_SPEED);
+    public void runIntake(double speed) {
+        this.c.roller.setPower(Math.abs(speed));
+        this.c.spinningIntake.setPower(Math.abs(speed));
     }
 
-    public void runRoller() {
-        this.c.roller.setPower(Constants.ROLLER_SPEED * -1);
-    }
-
-    public void stopRoller() {
-        this.c.roller.setPower(0);
-    }
-
-    public void runOuttake() {
-        this.c.roller.setPower(-Constants.INTAKE_OUTTAKE_SPEED/2);
-        this.c.spinningIntake.setPower(-Constants.INTAKE_OUTTAKE_SPEED/2);
+    public void runOuttake(double speed) {
+        this.c.roller.setPower(-Math.abs(speed));
+        this.c.spinningIntake.setPower(-Math.abs(speed));
     }
 
     /**
@@ -122,12 +105,5 @@ public class RobotCapabilities {
         if (slideEncoderAvg <= 0) {
             this.stopLift();
         }
-    }
-    public void dropPixel()
-    {
-        //todo: fix power
-        this.c.roller.setPower(-0.5);
-        SystemClock.sleep(1000);
-        this.c.roller.setPower(0);
     }
 }
