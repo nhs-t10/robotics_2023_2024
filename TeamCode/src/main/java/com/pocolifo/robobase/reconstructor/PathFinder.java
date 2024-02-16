@@ -1,20 +1,20 @@
 package com.pocolifo.robobase.reconstructor;
 
-import androidx.annotation.NonNull;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 
 public class PathFinder {
-    private final Set<Point> points;
+    private final Set<Vector3D> points;
 
     public PathFinder(String filePath) throws IOException {
         this.points = new HashSet<>();
-        readPointsFromFile(filePath);
+        readVector3DsFromFile(filePath);
     }
 
-    private void readPointsFromFile(String filePath) throws IOException {
+    private void readVector3DsFromFile(String filePath) throws IOException {
         URL resource = this.getClass().getResource("/" + filePath);
         if (resource == null) {
             throw new FileNotFoundException("File " + filePath + " is not found in /" + filePath);
@@ -27,12 +27,12 @@ public class PathFinder {
                 String[] parts = line.split(" ");
                 int x = Integer.parseInt(parts[0]);
                 int y = Integer.parseInt(parts[1]);
-                points.add(new Point(x, y));
+                points.add(new Vector3D(x, y, 0));
             }
         }
     }
 
-    public List<Point> findPath(Point start, Point goal) {
+    public List<Vector3D> findPath(Vector3D start, Vector3D goal) {
         if (!points.contains(start)) {
             throw new IllegalArgumentException("Start point " + start + " is not an open point.");
         }
@@ -40,22 +40,22 @@ public class PathFinder {
             throw new IllegalArgumentException("Goal point " + goal + " is not an open point.");
         }
         PriorityQueue<Node> openSet = new PriorityQueue<>();
-        Map<Point, Point> cameFrom = new HashMap<>();
-        Map<Point, Double> gScore = new HashMap<>();
-        Map<Point, Double> fScore = new HashMap<>();
+        Map<Vector3D, Vector3D> cameFrom = new HashMap<>();
+        Map<Vector3D, Double> gScore = new HashMap<>();
+        Map<Vector3D, Double> fScore = new HashMap<>();
 
         gScore.put(start, 0.0);
         fScore.put(start, heuristic(start, goal));
         openSet.add(new Node(start, fScore.get(start)));
 
         while (!openSet.isEmpty()) {
-            Point current = openSet.poll().point;
+            Vector3D current = openSet.poll().point;
             if (current.equals(goal)) {
-                List<Point> totalPath = reconstructPath(cameFrom, current);
+                List<Vector3D> totalPath = reconstructPath(cameFrom, current);
                 return filterPath(totalPath);
             }
 
-            for (Point neighbor : getNeighbors(current)) {
+            for (Vector3D neighbor : getNeighbors(current)) {
                 double tentativeGScore = gScore.getOrDefault(current, Double.MAX_VALUE) + distance(current, neighbor);
                 if (tentativeGScore < gScore.getOrDefault(neighbor, Double.MAX_VALUE)) {
                     cameFrom.put(neighbor, current);
@@ -71,18 +71,18 @@ public class PathFinder {
         return Collections.emptyList(); // Path not found
     }
 
-    private List<Point> filterPath(List<Point> path) {
+    private List<Vector3D> filterPath(List<Vector3D> path) {
         if (path.size() < 3) {
             return path; // No filtering needed for paths with less than 3 points
         }
 
-        List<Point> filteredPath = new ArrayList<>();
+        List<Vector3D> filteredPath = new ArrayList<>();
         filteredPath.add(path.get(0)); // Always add the start point
 
         for (int i = 1; i < path.size() - 1; i++) {
-            Point prev = path.get(i - 1);
-            Point curr = path.get(i);
-            Point next = path.get(i + 1);
+            Vector3D prev = path.get(i - 1);
+            Vector3D curr = path.get(i);
+            Vector3D next = path.get(i + 1);
 
             if (!isSameDirection(prev, curr, next)) {
                 filteredPath.add(curr);
@@ -93,19 +93,19 @@ public class PathFinder {
         return filteredPath;
     }
 
-    private boolean isSameDirection(Point a, Point b, Point c) {
+    private boolean isSameDirection(Vector3D a, Vector3D b, Vector3D c) {
         // Calculate the slope of segments (a,b) and (b,c) and compare
-        int dy1 = b.y - a.y;
-        int dx1 = b.x - a.x;
-        int dy2 = c.y - b.y;
-        int dx2 = c.x - b.x;
+        int dy1 = (int) (b.getY() - a.getY());
+        int dx1 = (int) (b.getX() - a.getX());
+        int dy2 = (int) (c.getY() - b.getY());
+        int dx2 = (int) (c.getX() - b.getX());
 
         // To avoid division and handle vertical lines, compare dy1*dx2 with dy2*dx1
         return dy1 * dx2 == dy2 * dx1;
     }
 
-    private List<Point> reconstructPath(Map<Point, Point> cameFrom, Point current) {
-        List<Point> totalPath = new ArrayList<>();
+    private List<Vector3D> reconstructPath(Map<Vector3D, Vector3D> cameFrom, Vector3D current) {
+        List<Vector3D> totalPath = new ArrayList<>();
         totalPath.add(current);
         while (cameFrom.containsKey(current)) {
             current = cameFrom.get(current);
@@ -115,17 +115,17 @@ public class PathFinder {
         return totalPath;
     }
 
-    private double heuristic(Point a, Point b) {
+    private double heuristic(Vector3D a, Vector3D b) {
         // Chebyshev distance for a grid that allows diagonal movement
-        return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
+        return Math.max(Math.abs(a.getX() - b.getX()), Math.abs(a.getY() - b.getY()));
     }
 
-    private Set<Point> getNeighbors(Point point) {
-        Set<Point> neighbors = new HashSet<>();
+    private Set<Vector3D> getNeighbors(Vector3D point) {
+        Set<Vector3D> neighbors = new HashSet<>();
         int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}; // 8-directional movement
 
         for (int[] dir : directions) {
-            Point neighbor = new Point(point.x + dir[0], point.y + dir[1]);
+            Vector3D neighbor = new Vector3D(point.getX() + dir[0], point.getY() + dir[1], 0);
             if (points.contains(neighbor)) {
                 neighbors.add(neighbor);
             }
@@ -134,59 +134,19 @@ public class PathFinder {
         return neighbors;
     }
 
-    private double distance(Point a, Point b) {
+    private double distance(Vector3D a, Vector3D b) {
         // Diagonal distance has a cost of sqrt(2)
-        if (a.x != b.x && a.y != b.y) {
+        if (a.getX() != b.getX() && a.getY() != b.getY()) {
             return Math.sqrt(2);
         }
         return 1;
     }
 
-    public static class Point {
-        int x, y;
-
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Point)) return false;
-            Point point = (Point) o;
-            return x == point.x && y == point.y;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(x, y);
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return "(" + x + ", " + y + ")";
-        }
-
-        public double distanceTo(Point other) {
-            return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y , 2));
-        }
-    }
-
     private static class Node implements Comparable<Node> {
-        Point point;
+        Vector3D point;
         double fScore;
 
-        Node(Point point, double fScore) {
+        Node(Vector3D point, double fScore) {
             this.point = point;
             this.fScore = fScore;
         }

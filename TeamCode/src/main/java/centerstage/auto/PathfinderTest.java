@@ -4,92 +4,47 @@ import centerstage.CenterStageRobotConfiguration;
 import centerstage.Constants;
 import com.acmerobotics.dashboard.config.Config;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
-import com.pocolifo.robobase.novel.OmniDriveCoefficients;
+import com.pocolifo.robobase.novel.hardware.NovelOdometry;
 import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
-import com.pocolifo.robobase.reconstructor.PathFinder;
+import com.pocolifo.robobase.virtualfield.VirtualField;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import java.io.IOException;
-import java.util.List;
 
 @Config
 @Autonomous(name = "Pathfinder")
 public class PathfinderTest extends AutonomousOpMode {
-    private NovelMecanumDriver driver;
-
-    private static final double MAX_SPEED = 8.0;
     private CenterStageRobotConfiguration c;
+    private NovelOdometry odometry;
+    private NovelMecanumDriver driver;
+    private VirtualField virtualField;
 
+    private final Vector3D startPosition = new Vector3D(10, 10, 0);
 
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
+        this.odometry = this.c.createOdometry();
         this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
-    }
-
-    @Override
-    public void run() {
         try {
-            PathFinder pathFinder = new PathFinder("points.txt");
-            PathFinder.Point start = new PathFinder.Point(-60, -57);
-            List<PathFinder.Point> points = pathFinder.findPath(start, new PathFinder.Point(60, -57));
-            points.addAll(pathFinder.findPath(new PathFinder.Point(60, -57), new PathFinder.Point(60, 57)));
-            points.addAll(pathFinder.findPath(new PathFinder.Point(60, 57), new PathFinder.Point(-60, 57)));
-            PathFinder.Point currentPos = start;
-            System.out.println("eee");
-            for (PathFinder.Point point : points) {
-                System.out.println(point);
-            }
-            System.out.println("eee");
-            for (PathFinder.Point point : points) {
-                int vertical = point.getY() - currentPos.getY();
-                int horizontal = point.getX() - currentPos.getX();
-                Movement movement = getMovement(vertical, horizontal);
-                System.out.println("moving x: " + movement.getXSpeed() + " by y: " + movement.getYSpeed() + "\nfor: " + ((long)(movement.getTime() * 1000)) + " ms");
-                driver.setVelocity(new Vector3D(movement.getYSpeed(), movement.getXSpeed(), 0));
-                sleep((long)(movement.getTime() * 1000));
-                currentPos = point;
-            }
-            driver.setVelocity(new Vector3D(0, 0, 0));
-        } catch (IOException | InterruptedException e) {
+            virtualField = new VirtualField(driver, odometry, startPosition);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    /**
-     * @param xDist the horizontal distance to move in inches (can be negative)
-     * @param yDist the vertical distance to move in inches (can be negative)
-     * @return a movement object containing the speeds and time
-     */
-    private Movement getMovement(double xDist, double yDist) {
-        double maxTime = Math.max(Math.abs(xDist), Math.abs(yDist)) / MAX_SPEED;
-        double xSpeed = xDist / maxTime;
-        double ySpeed = yDist / maxTime;
-        return new Movement(xSpeed, ySpeed, maxTime);
-    }
-}
+    @Override
+    public void run() {
+        this.c.fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.c.fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.c.br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.c.bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-class Movement {
-    private double xSpeed;
-    private double ySpeed;
-    private double time;
+        virtualField.pathTo(new Vector3D(10, 0, 0));
 
-    public Movement(double xSpeed, double ySpeed, double time) {
-        this.xSpeed = xSpeed;
-        this.ySpeed = ySpeed;
-        this.time = time;
-    }
-
-    public double getXSpeed() {
-        return xSpeed;
-    }
-
-    public double getYSpeed() {
-        return ySpeed;
-    }
-
-    public double getTime() {
-        return time;
+        driver.stop();
     }
 }
