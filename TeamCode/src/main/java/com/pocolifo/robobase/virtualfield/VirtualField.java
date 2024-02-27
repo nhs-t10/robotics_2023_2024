@@ -10,14 +10,16 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import java.io.IOException;
 import java.util.List;
 
+import centerstage.CenterStageRobotConfiguration;
+
 public class VirtualField {
     private final DistanceMovement movement;
     private final NovelOdometry odometry;
     private final Vector3D positionOffset;
     private final PathFinder pathFinder = new PathFinder("points.txt");
 
-    public VirtualField(NovelMecanumDriver driver, NovelOdometry odometry, Vector3D startPosition) throws IOException {
-        this.movement = new DistanceMovement(driver, odometry);
+    public VirtualField(NovelMecanumDriver driver, NovelOdometry odometry, CenterStageRobotConfiguration c, Vector3D startPosition) throws IOException {
+        this.movement = new DistanceMovement(driver, odometry, c.imu);
         this.odometry = odometry;
         positionOffset = startPosition;
     }
@@ -29,16 +31,18 @@ public class VirtualField {
 
     private void resetRotation() {
         double rotationNeeded = 0 - getFieldPosition().getZ();
-        movement.move(new Vector3D(0, 0, rotationNeeded));
+        movement.rotateTo(rotationNeeded);
     }
 
-    public void pathTo(Vector3D target) {
+    public void pathTo(int x, int y) {
         resetRotation();
 
-        List<Vector3D> path = pathFinder.findPath(getFieldPosition(), target);
+        List<Vector3D> path = pathFinder.findPath(getFieldPosition(), new Vector3D(x, y, 0));
 
         for (Vector3D point : path) {
-            movement.move(point.subtract(getFieldPosition()));
+            Vector3D diff = point.subtract(getFieldPosition());
+
+            movement.transformTo(diff.getX(), diff.getY());
         }
     }
 }

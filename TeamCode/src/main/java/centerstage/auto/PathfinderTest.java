@@ -30,7 +30,7 @@ public class PathfinderTest extends AutonomousOpMode {
         this.odometry = this.c.createOdometry();
         this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
         try {
-            virtualField = new VirtualField(driver, odometry, startPosition);
+            virtualField = new VirtualField(driver, odometry, c, startPosition);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -43,7 +43,7 @@ public class PathfinderTest extends AutonomousOpMode {
         this.c.br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.c.bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        virtualField.pathTo(new Vector3D(10, 0, 0));
+        virtualField.pathTo(10, 0);
 
         driver.stop();
     }

@@ -12,7 +12,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 @Autonomous
 public class OdometryMovementTest extends AutonomousOpMode {
-    private CenterStageRobotConfiguration c;
+    private CenterStag  eRobotConfiguration c;
     private NovelOdometry odometry;
     private NovelMecanumDriver driver;
     private DistanceMovement movement;
@@ -20,27 +20,28 @@ public class OdometryMovementTest extends AutonomousOpMode {
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
-        this.odometry = this.c.createOdometry();
         this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
-        this.movement = new DistanceMovement(driver, odometry);
+        this.odometry = this.c.createOdometry();
+        this.movement = new DistanceMovement(driver, odometry, c.imu);
     }
 
     @Override
     public void run() {
-        try {
+//        try {
             this.c.fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             this.c.fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             this.c.br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             this.c.bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            movement.move(new Vector3D(0, 0, 90));
+             movement.rotate(180);
 
-            Thread.sleep(2);
-            movement.move(new Vector3D(0, 0, 990));
+//            Thread.sleep(2000);
+//            movement.move(new Vector3D(0, 0, 990));
+            System.out.println("ive moveddd");
 
             this.driver.stop();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 }

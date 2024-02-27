@@ -9,13 +9,13 @@ import java.util.Iterator;
 import java.util.List;
 
 public class DiscretePathFollower implements PathFollower {
-    private final Iterator<PathFinder.Point> pointsIterator;
-    private final List<PathFinder.Point> points;
+    private final Iterator<Vector3D> pointsIterator;
+    private final List<Vector3D> points;
     private final double maxSpeed;
     private final double maxAcceleration;
-    private PathFinder.Point currentPoint;
+    private Vector3D currentPoint;
 
-    public DiscretePathFollower(List<PathFinder.Point> points, double maxSpeed, double maxAcceleration) {
+    public DiscretePathFollower(List<Vector3D> points, double maxSpeed, double maxAcceleration) {
         if (points.size() >= 2)
             throw new IllegalArgumentException("Points must have at least 2 points (a start and an end point)");
 
@@ -29,9 +29,9 @@ public class DiscretePathFollower implements PathFollower {
     @Override
     public void followPath(NovelMecanumDriver driver) {
         while (this.pointsIterator.hasNext()) {
-            PathFinder.Point nextPoint = this.pointsIterator.next();
-            int verticalDelta = nextPoint.getX() - this.currentPoint.getX();
-            int horizontalDelta = nextPoint.getY() - this.currentPoint.getY();
+            Vector3D nextPoint = this.pointsIterator.next();
+            double verticalDelta = nextPoint.getX() - this.currentPoint.getX();
+            double horizontalDelta = nextPoint.getY() - this.currentPoint.getY();
             double maxTime = Math.max(Math.abs(horizontalDelta), Math.abs(verticalDelta)) / this.maxSpeed;
 
             driver.setVelocity(new Vector3D(
@@ -54,9 +54,9 @@ public class DiscretePathFollower implements PathFollower {
         double duration = 0;
 
         for (int i = 0; this.points.size() - 1 > i; i++) {
-            PathFinder.Point nextPoint = this.points.get(i + 1);
-            int verticalDelta = nextPoint.getX() - this.currentPoint.getX();
-            int horizontalDelta = nextPoint.getY() - this.currentPoint.getY();
+            Vector3D nextPoint = this.points.get(i + 1);
+            double verticalDelta = nextPoint.getX() - this.currentPoint.getX();
+            double horizontalDelta = nextPoint.getY() - this.currentPoint.getY();
             double maxTime = Math.max(Math.abs(horizontalDelta), Math.abs(verticalDelta)) / this.maxSpeed;
 
             duration += maxTime;
