@@ -31,17 +31,16 @@ public class LocalizationEngine {
 
     public Pose getPoseEstimate(AngleUnit angleUnit) {
         Pose aprilTagEstimate = this.aprilTagLocalizerThread.getCurrentEstimate();
-//        Point odometryEstimate = this.odometryLocalizerThread.getCurrentEstimate();
+        Point odometryEstimate = this.odometryLocalizerThread.getCurrentEstimate();
         double heading = this.imu.getRobotYawPitchRollAngles().getYaw(angleUnit);
 
         if (aprilTagEstimate == null) {
-//            return new Pose(
-//                    odometryEstimate.x,
-//                    odometryEstimate.y,
-//                    heading,
-//                    angleUnit
-//            );
-            return null;
+            return new Pose(
+                    odometryEstimate.x,
+                    odometryEstimate.y,
+                    heading,
+                    angleUnit
+            );
         } else {
             this.odometryLocalizerThread.resetOdometry(aprilTagEstimate);
 

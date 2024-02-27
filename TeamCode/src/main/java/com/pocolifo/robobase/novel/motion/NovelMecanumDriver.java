@@ -1,8 +1,10 @@
 package com.pocolifo.robobase.novel.motion;
 
-import com.pocolifo.robobase.novel.hardware.NovelMotor;
 import com.pocolifo.robobase.novel.OmniDriveCoefficients;
-import com.pocolifo.robobase.novel.motion.profiling.AbstractMotionProfile;
+import com.pocolifo.robobase.novel.hardware.NovelMotor;
+import com.pocolifo.robobase.novel.motion.profiling.TrapezoidalMotionProfile;
+import com.pocolifo.robobase.reconstructor.LocalizationEngine;
+import com.pocolifo.robobase.reconstructor.Pose;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -79,76 +81,31 @@ public class NovelMecanumDriver {
         throw new RuntimeException("not implemented!");
     }
 
-    // TODO: This should be moved to localization
-    private double getHeading(AngleUnit unit) {
-        return this.imu.getRobotYawPitchRollAngles().getYaw(unit);
-    }
+    public void drive(LocalizationEngine engine, double lateralInches, double horizontalInches, double acceleration, double maxVelocity) {
+        TrapezoidalMotionProfile lateral = new TrapezoidalMotionProfile(acceleration, 0, lateralInches, maxVelocity);
+        TrapezoidalMotionProfile horizontal = new TrapezoidalMotionProfile(acceleration, 0, horizontalInches, maxVelocity);
+        Pose initialPose = engine.getPoseEstimate(AngleUnit.RADIANS);
 
-    public void drive(double distanceInches, double acceleration) {
-        double velocity = 0;
-        double initialPosition = getEncoderInches();
+        while (!Thread.currentThread().isInterrupted()) {
+            Pose currentPose = engine.getPoseEstimate(AngleUnit.RADIANS);
+            double lateralDistance = currentPose.getX() - initialPose.getX();
+            double horizontalDistance = currentPose.getY() - initialPose.getY();
+            double lateralVelocity = lateral.computeVelocity(lateralDistance);
+            double horizontalVelocity = horizontal.computeVelocity(horizontalDistance);
 
-        while (getEncoderInches() - initialPosition < distanceInches / 2) {
-            velocity += acceleration;
-            setVelocity(new Vector3D(0, velocity, 0));
-        }
-
-        while (getEncoderInches() - initialPosition < distanceInches && velocity > 0) {
-            velocity -= acceleration;
-            setVelocity(new Vector3D(0, velocity, 0));
-        }
-
-        this.stop();
-    }
-
-    public void applyProfileTimeBased(AbstractMotionProfile profile) {
-        long start = System.currentTimeMillis();
-        double duration = profile.duration;
-
-        while (true) {
-            double elapsedSeconds = (System.currentTimeMillis() - start) / 1000d;
-
-            if (elapsedSeconds >= duration) {
-                break;
+            if (lateralDistance >= lateralInches) {
+                lateralVelocity = 0;
             }
 
-            Vector3D vector3D = profile.solveTime(elapsedSeconds);
-            this.setVelocity(vector3D);
-        }
-
-        this.stop();
-    }
-
-    public void applyProfileDisplacementBased(AbstractMotionProfile profile) {
-        double frontLeftInchesStart = this.frontLeft.getEncoderInches();
-        double frontRightInchesStart = this.frontRight.getEncoderInches();
-        double backLeftInchesStart = this.backLeft.getEncoderInches();
-        double backRightInchesStart = this.backRight.getEncoderInches();
-
-        while (true) {
-            double frontLeftInches = (this.frontLeft.getEncoderInches() - frontLeftInchesStart) * this.omniDriveCoefficients.totals.frontLeft;
-            double frontRightInches = (this.frontRight.getEncoderInches() - frontRightInchesStart) * this.omniDriveCoefficients.totals.frontRight;
-            double backLeftInches = (this.backLeft.getEncoderInches() - backLeftInchesStart) * this.omniDriveCoefficients.totals.backLeft;
-            double backRightInches = (this.backRight.getEncoderInches() - backRightInchesStart) * this.omniDriveCoefficients.totals.backRight;
-
-            Vector3D displacementVector = this.omniDriveCoefficients.calculatePowerWithCoefficients(
-                    new OmniDriveCoefficients.CoefficientSet(
-                        frontLeftInches,
-                        frontRightInches,
-                        backLeftInches,
-                        backRightInches
-                    )
-            );
-
-            if (displacementVector.getNorm() >= profile.targetDisplacement.getNorm()) {
-                break;
+            if (horizontalDistance >= horizontalInches) {
+                horizontalVelocity = 0;
             }
 
-            Vector3D velocity = profile.solveDisplacement(displacementVector);
-
-            this.setVelocity(velocity);
+            this.setVelocity(new Vector3D(lateralVelocity, horizontalVelocity, 0));
+            
+            if (lateralVelocity == 0 && horizontalVelocity == 0) {
+                return;
+            }
         }
-
-        this.stop();
     }
 }

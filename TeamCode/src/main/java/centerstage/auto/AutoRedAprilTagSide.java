@@ -3,6 +3,7 @@ package centerstage.auto;
 import centerstage.CenterStageRobotConfiguration;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
+import centerstage.SpikePosition;
 import com.acmerobotics.dashboard.config.Config;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
@@ -16,6 +17,7 @@ public class AutoRedAprilTagSide extends AutonomousOpMode {
     private CenterStageRobotConfiguration c;
     private RobotCapabilities capabilities;
     private NovelMecanumDriver driver;
+    private static double timeMultiplier = 2;
 
     @Override
     public void initialize() {
@@ -27,22 +29,73 @@ public class AutoRedAprilTagSide extends AutonomousOpMode {
     @Override
     public void run() {
         try {
-            driveVertical((12 + 12 + 9), 1);
-            rotateIMU(90);
-            driveVertical(-5, 0.5);
-
-            this.capabilities.runRoller(-1);
-            sleep(1000);
-            this.capabilities.runRoller(0);
-
-            driveVertical(5, 0.5);
-            driveHorizontal(-12 - 5, 1);
-
-            driveVertical(84, 4);
-            driveHorizontal(18, 0.5);
-        } catch (Exception e) {
-            e.printStackTrace();
+            runPath(SpikePosition.LEFT);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public void runPath(SpikePosition spikePosition) throws InterruptedException {
+        placePixel(spikePosition);
+        driveVertical(84, 4 * timeMultiplier);
+        lockRotation(-90, 0.5);
+        sleep(100);
+
+        switch (spikePosition) {
+            case LEFT:
+                driveHorizontal(-18 - 8 * 1, 2.5 * timeMultiplier);
+                break;
+
+            case CENTER:
+                driveHorizontal(-18 - 8 * 2, 3 * timeMultiplier);
+                break;
+
+            case RIGHT:
+                driveHorizontal(-18 - 8 * 3, 4 * timeMultiplier);
+                break;
+        }
+
+        sleep(100);
+        lockRotation(-90, 0.25);
+    }
+
+    public void placePixel(SpikePosition position) throws InterruptedException {
+        switch (position) {
+            case LEFT:
+                driveVertical((12 + 12 + 9), 1 * timeMultiplier);
+                rotateIMU(-90, 2);
+                driveVertical(-5, 0.5 * timeMultiplier);
+                dropAutoPixel();
+                driveVertical(5, 0.5 * timeMultiplier);
+                driveHorizontal(12 + 5 + 5, 1 * timeMultiplier);
+                lockRotation(-90, 0.5);
+                sleep(100);
+                break;
+
+            case CENTER:
+                driveVertical((12 + 12 + 9 + 10), 2 * timeMultiplier);
+                dropAutoPixel();
+                driveVertical(12, 0.75 * timeMultiplier);
+                lockRotation(-90, 0.5);
+                break;
+
+            case RIGHT:
+                driveVertical((12 + 12 + 9), 1 * timeMultiplier);
+                rotateIMU(90, 2);
+                driveVertical(-5, 0.5 * timeMultiplier);
+                dropAutoPixel();
+                driveVertical(5, 0.5 * timeMultiplier);
+                lockRotation(-90, 0.5);
+                driveHorizontal(12 + 5 + 5, 1 * timeMultiplier);
+                sleep(100);
+                break;
+        }
+    }
+
+    public void dropAutoPixel() throws InterruptedException {
+        this.capabilities.runRoller(-1);
+        sleep(1000);
+        this.capabilities.runRoller(0);
     }
 
     public void driveVertical(double inches, double time) throws InterruptedException {
@@ -61,25 +114,44 @@ public class AutoRedAprilTagSide extends AutonomousOpMode {
         this.driver.stop();
     }
 
-    public void rotateIMU(double degrees) throws InterruptedException {
-        int direction = 1;
-        if(degrees < 0) {
-            direction = -1;
-        }
-        c.imu.resetYaw();
-        //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
-        this.driver.setVelocity(new Vector3D(0,0, 20*direction));
+    public void rotateIMU(double degrees, double precision) throws InterruptedException {
+        double initialRotation = c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double relativeRotation;
+        double error = degrees;
 
-        while(Math.abs(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) < 90)
-        {
-            System.out.println(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        while (Math.abs(error) > precision && !Thread.currentThread().isInterrupted()) {
+            relativeRotation = c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - initialRotation;
+            error = relativeRotation - degrees;
+
+            this.driver.setVelocity(new Vector3D(0, 0, error));
         }
-        System.out.println("correcting..." + (c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - 90));
-        this.driver.setVelocity(new Vector3D(0,0,-4*direction));
-        while(Math.abs(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) > degrees*direction)
-        {
-            System.out.println(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        }
+
         this.driver.stop();
+
+
+//        double initialRotation =
+//        int direction = 1;
+//        if(degrees < 0) {
+//            direction = -1;
+//        }
+//        c.imu.resetYaw();
+//        //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
+//        this.driver.setVelocity(new Vector3D(0,0, 20*direction));
+//
+//        while(Math.abs(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) < 90)
+//        {
+//            System.out.println(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+//        }
+//        System.out.println("correcting..." + (c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - 90));
+//        this.driver.setVelocity(new Vector3D(0,0,-4*direction));
+//        while(Math.abs(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) > degrees*direction)
+//        {
+//            System.out.println(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+//        }
+//        this.driver.stop();
+    }
+
+    public void lockRotation(double degrees, double precision) throws InterruptedException {
+        rotateIMU(-(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - degrees), precision);
     }
 }

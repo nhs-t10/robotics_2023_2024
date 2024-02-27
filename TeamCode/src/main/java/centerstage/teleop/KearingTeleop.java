@@ -64,8 +64,8 @@ public class KearingTeleop extends TeleOpOpMode {
     @SuppressLint("DefaultLocale")
     @Override
     public void loop() {
-        this.capabilities.rotateContainer(positions[position]);
         this.capabilities.update();
+        this.capabilities.rotateContainer(positions[position]);
         this.gamepadController.update();
         this.driver.useGamepad(this.gamepad1, this.gamepadController.x.isToggled() ? 4 : 1);
 

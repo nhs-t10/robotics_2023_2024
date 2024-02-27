@@ -11,30 +11,34 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.lang.reflect.Field;
 
+/**
+ * Sets fields marked with @{@link Hardware} to their initialized value based on the {@link OpMode#hardwareMap}.
+ * <p>
+ * Example where a webcam and wheel are auto initialized using @{@link Hardware}. You would be able to use these
+ * variables just like normal. RoboBase does the initialization for you. The example class:
+ *
+ * <pre>{@code
+ * public class MyRobotConfiguration extends RobotConfiguration {
+ *      @Hardware(name = "Webcam")
+ *      public Webcam webcam;
+ *
+ *      @Hardware(
+ *          name = "Chain",
+ *          wheelDiameterCm = 9.6,
+ *          ticksPerRevolution = 500,
+ *          zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+ *      )
+ *      public NovelMotor chainWheel;
+ * }
+ * }</pre>
+ *
+ * <b>Notes:</b>
+ * <ul>
+ *     <li>Fields must be {@code public} and not {@code final} or {@code private}.</li>
+ *     <li>Hardware not found will throw an exception; all hardware defined in the configuration must be present.</li>
+ * </ul>
+ */
 public class RobotConfiguration {
-    /**
-     * Sets fields marked with @{@link Hardware} to their initialized value based on the {@link OpMode#hardwareMap}.
-     * <p>
-     * Example where a webcam and wheel are auto initialized using @{@link Hardware}. You would be able to use these
-     * variables just like normal. RoboBase does the initialization for you. The example class:
-     *
-     * <pre>{@code
-     * public class MyRobotConfiguration extends RobotConfiguration {
-     *      @Hardware(name = "Webcam")
-     *      public Webcam webcam;
-     *
-     *      @Hardware(
-     *          name = "Chain",
-     *          wheelDiameterCm = 9.6,
-     *          ticksPerRevolution = 500,
-     *          zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-     *      )
-     *      public NovelMotor chainWheel;
-     * }
-     * }</pre>
-     *
-     * <b>Note:</b> Fields must be {@code public} and not {@code final} or {@code private}.
-     */
     public RobotConfiguration(HardwareMap hardwareMap) {
         try {
             for (Field field : this.getClass().getFields()) {
