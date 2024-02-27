@@ -1,17 +1,15 @@
 package com.pocolifo.robobase;
 
-import com.pocolifo.robobase.novel.NovelMecanumDrive;
-
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-
+import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import kotlin.NotImplementedError;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class DistanceMovement {
     private static final double PRECISION_IN = 0.5;
     private static final double MAX_SPEED = 5;
-    private NovelMecanumDrive movementController;
+    private NovelMecanumDriver movementController;
 
-    public DistanceMovement(NovelMecanumDrive movementController) {
+    public DistanceMovement(NovelMecanumDriver movementController) {
         this.movementController = movementController;
     }
 
