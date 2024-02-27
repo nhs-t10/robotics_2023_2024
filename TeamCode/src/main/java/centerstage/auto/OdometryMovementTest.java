@@ -8,11 +8,10 @@ import com.pocolifo.robobase.novel.hardware.NovelOdometry;
 import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 @Autonomous
 public class OdometryMovementTest extends AutonomousOpMode {
-    private CenterStag  eRobotConfiguration c;
+    private CenterStageRobotConfiguration c;
     private NovelOdometry odometry;
     private NovelMecanumDriver driver;
     private DistanceMovement movement;
@@ -33,10 +32,10 @@ public class OdometryMovementTest extends AutonomousOpMode {
             this.c.br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             this.c.bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-             movement.rotate(180);
+             movement.rotateTo(180);
 
 //            Thread.sleep(2000);
-//            movement.move(new Vector3D(0, 0, 990));
+//            movement.moveTo(new Vector3D(0, 0, 990));
             System.out.println("ive moveddd");
 
             this.driver.stop();
