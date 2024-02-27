@@ -5,7 +5,9 @@ import org.opencv.core.Rect;
 public enum SpikePosition {
     LEFT,
     CENTER,
-    RIGHT;
+    RIGHT,
+
+    NOT_FOUND;
 
     public static SpikePosition fromXPosition(int cameraWidth, Rect largestBoundingBox) {
         final int thirdOfCameraWidth = cameraWidth / 3;

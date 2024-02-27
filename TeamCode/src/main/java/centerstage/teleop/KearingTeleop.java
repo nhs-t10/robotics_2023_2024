@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name = "Kearing 3")
+@TeleOp(name = "Kearing v4")
 public class KearingTeleop extends TeleOpOpMode {
     private RobotCapabilities capabilities;
     private NovelMecanumDriver driver;
