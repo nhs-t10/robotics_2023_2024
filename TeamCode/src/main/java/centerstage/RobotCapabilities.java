@@ -9,12 +9,12 @@ public class RobotCapabilities {
 
     public RobotCapabilities(CenterStageRobotConfiguration c) {
         this.c = c;
-        this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.c.linearSlideLeft.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void downLift(double power) {
-        this.c.linearSlideLeft.setPower(-Math.abs(power));
+        this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.c.linearSlideLeft.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.c.linearSlideLeft.setPower(Math.abs(power));
         this.c.linearSlideRight.setPower(Math.abs(power));
 //        if (Math.abs(this.c.linearSlideRight.motor.getCurrentPosition()) > 0) {
 //        } else {
@@ -23,7 +23,9 @@ public class RobotCapabilities {
     }
 
     public void upLift(double power) {
-        this.c.linearSlideLeft.setPower(Math.abs(power));
+        this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.c.linearSlideLeft.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.c.linearSlideLeft.setPower(-Math.abs(power));
         this.c.linearSlideRight.setPower(-Math.abs(power));
 //        if (Math.abs(this.c.linearSlideRight.motor.getCurrentPosition()) < LIFT_FULLY_EXTENDED_ENCODER_POS) {
 //        } else {
@@ -32,6 +34,8 @@ public class RobotCapabilities {
     }
 
     public void stopLift() {
+        this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.c.linearSlideLeft.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.c.linearSlideLeft.setPower(0);
         this.c.linearSlideRight.setPower(0);
     }

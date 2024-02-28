@@ -32,15 +32,20 @@ public class NovelOdometry {
         double newPerpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();
 
         // Get changes in odometer wheel positions since last update
-        double deltaLeftWheelPos = this.coefficients.leftCoefficient * (newLeftWheelPos - this.leftWheelPos);
-        double deltaRightWheelPos = this.coefficients.rightCoefficient * (newRightWheelPos - this.rightWheelPos); // Manual adjustment for inverted odometry wheel
+        double deltaLeftWheelPos =          this.coefficients.leftCoefficient          * (newLeftWheelPos          - this.leftWheelPos);
+        double deltaRightWheelPos =         this.coefficients.rightCoefficient         * (newRightWheelPos         - this.rightWheelPos); // Manual adjustment for inverted odometry wheel
         double deltaPerpendicularWheelPos = this.coefficients.perpendicularCoefficient * (newPerpendicularWheelPos - this.perpendicularWheelPos);
 
         double phi = (deltaLeftWheelPos - deltaRightWheelPos) / Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE;
         double deltaMiddlePos = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
         double deltaPerpendicularPos = deltaPerpendicularWheelPos - Constants.Odometry.ODOMETRY_ROTATIONAL_WHEEL_OFFSET * phi;
 
-        double heading = this.relativePose.getHeading(AngleUnit.RADIANS);
+        // Heading of movement is assumed average between last known and current rotation
+        //                    CURRENT ROTATION                                             LAST SAVED ROTATION       
+        // double currentRotation = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
+        // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
+        // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
+        double heading = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
         double deltaX = deltaMiddlePos * Math.cos(heading) - deltaPerpendicularPos * Math.sin(heading);
         double deltaY = deltaMiddlePos * Math.sin(heading) + deltaPerpendicularPos * Math.cos(heading);
 

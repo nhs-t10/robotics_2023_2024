@@ -25,7 +25,7 @@ public class KearingTeleop extends TeleOpOpMode {
     private GController gamepadController;
     private CenterStageRobotConfiguration c;
     private int position = 1;
-    private static final double[] positions = {0.95, -0.748, -1};
+    private static final double[] positions = {1, -1};
     private AprilTagRetriever aprilTagRetriver;
     private LocalizationEngine localizationEngine;
     private NovelOdometry odometry;
@@ -33,15 +33,10 @@ public class KearingTeleop extends TeleOpOpMode {
 
     @Override
     public void initialize() {
-//        Pose pose = new Pose(0, 0, 0, AngleUnit.RADIANS);
-//        this.i = this.telemetry.addData("localized", "");
-
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
         this.capabilities = new RobotCapabilities(this.c);
         this.odometry = this.c.createOdometry();
         this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
-//        this.aprilTagRetriver = new AprilTagRetriever(this.c.webcam);
-//        this.localizationEngine = new LocalizationEngine(this.c.imu, this.aprilTagRetriver, this.odometry, pose);
 
         this.gamepadController = new GController(this.gamepad1)
                 .x.initialToggleState(true).ok()  // micro-movement
@@ -49,7 +44,7 @@ public class KearingTeleop extends TeleOpOpMode {
                 .a.onToggleOn(this.capabilities::gripPixels).onToggleOff(this.capabilities::releasePixelGrip).ok()
                 .rightTrigger.whileDown(this.capabilities::upLift).onRelease(this.capabilities::stopLift).ok()
                 .leftTrigger.whileDown(this.capabilities::downLift).onRelease(this.capabilities::stopLift).ok()
-                .rightBumper.onPress(() -> position = (position + 1) % 3).ok()
+                .rightBumper.onPress(() -> position = (position + 1) % positions.length).ok()
                 .leftBumper.onPress(() -> {
                     position--;
 
@@ -68,17 +63,5 @@ public class KearingTeleop extends TeleOpOpMode {
         this.capabilities.rotateContainer(positions[position]);
         this.gamepadController.update();
         this.driver.useGamepad(this.gamepad1, this.gamepadController.x.isToggled() ? 4 : 1);
-
-
-//        Pose poseEstimate = this.localizationEngine.getPoseEstimate(AngleUnit.DEGREES);
-//        if (poseEstimate != null) {
-//            TelemetryPacket packet = new TelemetryPacket();
-//            packet.fieldOverlay().strokeRect(
-//                    poseEstimate.getX()-5, poseEstimate.getY()-5, 10, 10
-//            ).setFill("white");
-//            FtcDashboard.getInstance().sendTelemetryPacket(packet);
-//            this.i.setValue(String.format("%f %f %f", poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading(AngleUnit.DEGREES)));
-//        }
-//        this.telemetry.update();
     }
 }
