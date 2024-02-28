@@ -80,8 +80,8 @@ public class RobotCapabilities {
     }
 
     public void runOuttake() {
-        this.c.roller.setPower(-Constants.INTAKE_OUTTAKE_SPEED);
-        this.c.spinningIntake.setPower(-Constants.INTAKE_OUTTAKE_SPEED);
+        this.c.roller.setPower(-Constants.INTAKE_OUTTAKE_SPEED/2);
+        this.c.spinningIntake.setPower(-Constants.INTAKE_OUTTAKE_SPEED/2);
     }
 
     public void stopIntakeOuttake() {
@@ -114,5 +114,12 @@ public class RobotCapabilities {
         if (slideEncoderAvg <= 0) {
             this.stopLift();
         }
+    }
+    public void dropPixel()
+    {
+        //todo: fix power
+        this.c.roller.setPower(-0.5);
+        SystemClock.sleep(1000);
+        this.c.roller.setPower(0);
     }
 }

@@ -37,7 +37,7 @@ public class Constants {
 
     public static final double WHEEL_DIAMETER_IN = 11.8737360135;
     public static final OmniDriveCoefficients PRODUCTION_COEFFICIENTS = new OmniDriveCoefficients(new double[] {
-            1, -1, 1, -1
+            -1, -1, 1, 1
     });
     public static final double ODOMETRY_LATERAL_WHEEL_DISTANCE = 12;
 
