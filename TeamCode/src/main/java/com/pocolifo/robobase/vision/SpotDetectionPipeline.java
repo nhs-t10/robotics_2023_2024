@@ -17,6 +17,7 @@ public class SpotDetectionPipeline extends AbstractResultCvPipeline<Integer> {
     // Colors Used to Display Detection Results
     static final Scalar BLUE = new Scalar(0, 0, 255);
     static final Scalar GREEN = new Scalar(0, 255, 0);
+    static final Scalar BLACK = new Scalar(0, 0, 0);
 
     // Points Used to Determine Detection Bounds
     static final Point SPOT1_TOPLEFT_ANCHOR_POINT = new Point(10, 190);
@@ -33,6 +34,12 @@ public class SpotDetectionPipeline extends AbstractResultCvPipeline<Integer> {
     private final Mat Cb = new Mat();
     int avg1, avg2, avg3;
     private volatile SpikePosition position = SpikePosition.LEFT;
+    static final Point CALIBRATION_VERTEX_LEFT_1 = new Point(0, 260);
+    static final Point CALIBRATION_VERTEX_LEFT_2 = new Point(40, 240);
+    static final Point CALIBRATION_VERTEX_CENTER_1 = new Point(360, 250);
+    static final Point CALIBRATION_VERTEX_CENTER_2 = new Point(280, 250);
+    static final Point CALIBRATION_VERTEX_RIGHT_1 = new Point(610, 250);
+    static final Point CALIBRATION_VERTEX_RIGHT_2 = new Point(640, 270);
     public SpotDetectionPipeline(Alliance alliance) {
         this.alliance = alliance;
     }
@@ -132,6 +139,24 @@ public class SpotDetectionPipeline extends AbstractResultCvPipeline<Integer> {
                     GREEN,
                     -1);
         }
+
+        Imgproc.line(input,
+                CALIBRATION_VERTEX_LEFT_1,
+                CALIBRATION_VERTEX_LEFT_2,
+                BLACK,
+                2);
+
+        Imgproc.line(input,
+                CALIBRATION_VERTEX_CENTER_1,
+                CALIBRATION_VERTEX_CENTER_2,
+                BLACK,
+                2);
+
+        Imgproc.line(input,
+                CALIBRATION_VERTEX_RIGHT_1,
+                CALIBRATION_VERTEX_RIGHT_2,
+                BLACK,
+                2);
 
         // Render Edited Image (w/ Visual Aids) to Phone Camera Stream
         return input;
