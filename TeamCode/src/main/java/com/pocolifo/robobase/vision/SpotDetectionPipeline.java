@@ -20,12 +20,12 @@ public class SpotDetectionPipeline extends AbstractResultCvPipeline<Integer> {
     static final Scalar BLACK = new Scalar(0, 0, 0);
 
     // Points Used to Determine Detection Bounds
-    static final Point SPOT1_TOPLEFT_ANCHOR_POINT = new Point(10, 190);
-    static final Point SPOT1_BOTTOMRIGHT_ANCHOR_POINT = new Point(40, 220);
+    static final Point SPOT1_TOPLEFT_ANCHOR_POINT = new Point(0, 190);
+    static final Point SPOT1_BOTTOMRIGHT_ANCHOR_POINT = new Point(30, 220);
     static final Point SPOT2_TOPLEFT_ANCHOR_POINT = new Point(305, 160);
     static final Point SPOT2_BOTTOMRIGHT_ANCHOR_POINT = new Point(335, 190);
-    static final Point SPOT3_TOPLEFT_ANCHOR_POINT = new Point(600, 190);
-    static final Point SPOT3_BOTTOMRIGHT_ANCHOR_POINT = new Point(630, 220);
+    static final Point SPOT3_TOPLEFT_ANCHOR_POINT = new Point(610, 190);
+    static final Point SPOT3_BOTTOMRIGHT_ANCHOR_POINT = new Point(640, 220);
 
     // Mats Used to Extract Color & Region Data from Input Frame
     Mat region1_Cr, region2_Cr, region3_Cr, region1_Cb, region2_Cb, region3_Cb;
