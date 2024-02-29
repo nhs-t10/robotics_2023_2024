@@ -26,28 +26,41 @@ public class NovelOdometry {
 
     // Adapted from https://gm0.org/en/latest/docs/software/concepts/odometry.html
     public void update() {
-        // Get new wheel positions
         double newLeftWheelPos = this.leftEncoder.getCurrentInches();
         double newRightWheelPos = this.rightEncoder.getCurrentInches();
         double newPerpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();
 
-        // Get changes in odometer wheel positions since last update
-        double deltaLeftWheelPos =          this.coefficients.leftCoefficient          * (newLeftWheelPos          - this.leftWheelPos);
-        double deltaRightWheelPos =         this.coefficients.rightCoefficient         * (newRightWheelPos         - this.rightWheelPos); // Manual adjustment for inverted odometry wheel
-        double deltaPerpendicularWheelPos = this.coefficients.perpendicularCoefficient * (newPerpendicularWheelPos - this.perpendicularWheelPos);
+        // Calculate deltas for each wheel position
+        double deltaLeftWheelPos = coefficients.leftCoefficient * (newLeftWheelPos - leftWheelPos);
+        double deltaRightWheelPos = coefficients.rightCoefficient * (newRightWheelPos - rightWheelPos);
+        double deltaPerpendicularWheelPos = coefficients.perpendicularCoefficient * (newPerpendicularWheelPos - perpendicularWheelPos);
 
-        double phi = (deltaLeftWheelPos - deltaRightWheelPos) / Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE;
-        double deltaMiddlePos = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
-        double deltaPerpendicularPos = deltaPerpendicularWheelPos - Constants.Odometry.ODOMETRY_ROTATIONAL_WHEEL_OFFSET * phi;
+        // Calculate the change in orientation (phi)
+        double averageMovementLeftRight = (deltaLeftWheelPos - deltaRightWheelPos) / 2;
+        System.out.println("Average Movement Left Right: " + averageMovementLeftRight);
+        double phi = averageMovementLeftRight / (Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE);
+        System.out.println("phi: " + phi);
 
-        // Heading of movement is assumed average between last known and current rotation
-        //                    CURRENT ROTATION                                             LAST SAVED ROTATION       
-        // double currentRotation = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
-        // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
-        // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
-        double heading = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
-        double deltaX = deltaMiddlePos * Math.cos(heading) - deltaPerpendicularPos * Math.sin(heading);
-        double deltaY = deltaMiddlePos * Math.sin(heading) + deltaPerpendicularPos * Math.cos(heading);
+        // Calculate the average forward movement
+        double deltaMiddlePos = (deltaLeftWheelPos + deltaRightWheelPos) / 2.0;
+        System.out.println("deltaMiddlePos: " + deltaMiddlePos);
+
+        // Correct deltaPerpendicularPos to eliminate the rotational component
+        System.out.println("deltaPerpendicularWheelPos: " + deltaPerpendicularWheelPos);
+        double deltaPerpendicularPos = deltaPerpendicularWheelPos - averageMovementLeftRight;
+        System.out.println("deltaPerpendicularPos: " + deltaPerpendicularPos);
+
+        // Assuming currentOrientation is the robot's orientation at the start of this calculation
+        double initialOrientation = relativePose.getHeading(AngleUnit.RADIANS); // Assuming this is the orientation at the start
+        double newOrientation = initialOrientation + phi;
+
+        //double heading = (phi + this.relativePose.getHeading(AngleUnit.RADIANS) + this.relativePose.getHeading(AngleUnit.RADIANS)) / 2;
+
+        double currentOrientation = (initialOrientation + newOrientation) / 2.0;
+        // Calculate global movement deltas
+        double deltaX = deltaMiddlePos * Math.sin(currentOrientation) - deltaPerpendicularPos * Math.cos(currentOrientation);
+        double deltaY = deltaMiddlePos * Math.cos(currentOrientation) + deltaPerpendicularPos * Math.sin(currentOrientation);
+
 
         this.relativePose = this.relativePose.add(new Pose(deltaX, deltaY, phi, AngleUnit.RADIANS));
 

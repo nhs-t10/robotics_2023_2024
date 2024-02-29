@@ -1,5 +1,6 @@
 package centerstage.vision;
 
+import com.pocolifo.robobase.utils.Alliance;
 import com.pocolifo.robobase.vision.AbstractResultCvPipeline;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -15,10 +16,10 @@ import centerstage.SpikePosition;
 public class DynamicYCrCbDetection extends AbstractResultCvPipeline<SpikePosition> {
     private Mat YCrCb;
     private Mat temp;
-    private final boolean checkForRed;
+    private Alliance checkForAlliance;
 
-    public DynamicYCrCbDetection(boolean checkForRed) {
-        this.checkForRed = checkForRed;
+    public DynamicYCrCbDetection(Alliance checkForAlliance) {
+        this.checkForAlliance = checkForAlliance;
     }
 
     @Override
@@ -28,8 +29,8 @@ public class DynamicYCrCbDetection extends AbstractResultCvPipeline<SpikePositio
     }
 
     private double computeDynamicColorness(Mat mat) {
-        int channelIndex = checkForRed ? 1 : 2; // Use 1 for Cr (red), 2 for Cb (blue)
-        int oppositeIndex = checkForRed ? 2 : 1;
+        int channelIndex = (checkForAlliance == Alliance.RED) ? 2 : 1; // Use 1 for Cr (red), 2 for Cb (blue)
+        int oppositeIndex = (checkForAlliance == Alliance.RED) ? 1 : 2;
 
         // Split the YCrCb image into its individual channels
         List<Mat> channels = new ArrayList<>();

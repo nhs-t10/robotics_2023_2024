@@ -19,7 +19,7 @@ public class OdometryMovementTest extends AutonomousOpMode {
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
-        this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        this.driver = this.c.createDriver(Constants.Coefficients.SOFTWARE_ROBOT_COEFFICIENTS);
         this.odometry = this.c.createOdometry();
         this.movement = new DistanceMovement(driver, odometry, c.imu);
     }

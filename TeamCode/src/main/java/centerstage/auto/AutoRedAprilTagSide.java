@@ -3,9 +3,13 @@ package centerstage.auto;
 import centerstage.CenterStageRobotConfiguration;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
+import centerstage.SpikePosition;
+import centerstage.vision.DynamicYCrCbDetection;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
+import com.pocolifo.robobase.utils.Alliance;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -16,33 +20,75 @@ public class AutoRedAprilTagSide extends AutonomousOpMode {
     private CenterStageRobotConfiguration c;
     private RobotCapabilities capabilities;
     private NovelMecanumDriver driver;
+    private DynamicYCrCbDetection spikeDetector;
+    private Alliance alliance = Alliance.BLUE;
 
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
         this.capabilities = new RobotCapabilities(this.c);
         this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        this.spikeDetector = new DynamicYCrCbDetection(alliance);
+        this.c.webcam.open(spikeDetector);
     }
 
     @Override
     public void run() {
+        boolean isRed = alliance == Alliance.RED;
         try {
+            SpikePosition spikePos = getSpikePosition();
+
             driveVertical((12 + 12 + 9), 1);
-            rotateIMU(90);
-            driveVertical(-5, 0.5);
+
+            switch (spikePos) {
+                case RIGHT:
+                    rotateIMU(90);
+                    break;
+                case CENTER:
+                    driveVertical(25, 3);
+                    break;
+                case LEFT:
+                    rotateIMU(-90);
+                    break;
+            }
+            driveVertical(-5, 2);
 
             this.capabilities.runRoller(-1);
             sleep(1000);
             this.capabilities.runRoller(0);
 
             driveVertical(5, 0.5);
-            driveHorizontal(-12 - 5, 1);
 
-            driveVertical(84, 4);
-            driveHorizontal(18, 0.5);
+            switch (spikePos) {
+                case RIGHT:
+                    rotateIMU(-90);
+                    break;
+                case LEFT:
+                    rotateIMU(90);
+                    break;
+            }
+
+            driveVertical(12 - 5, 1);
+
+            rotateIMU(-90);
+            driveVertical(84, 5);
+            rotateIMU(90);
+            driveVertical(18, 3);
+            rotateIMU(-90);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public SpikePosition getSpikePosition() throws InterruptedException {
+        DynamicYCrCbDetection pipeline = (DynamicYCrCbDetection) this.c.webcam.getPipeline();
+        SpikePosition spikePosition;
+        do {
+            spikePosition = pipeline.getResult();
+            sleep(100);
+        } while (spikePosition == null);
+        System.out.println(spikePosition.toString());
+        return spikePosition;
     }
 
     public void driveVertical(double inches, double time) throws InterruptedException {
