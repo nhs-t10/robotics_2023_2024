@@ -3,6 +3,10 @@ package com.pocolifo.robobase.virtualfield;
 import com.pocolifo.robobase.novel.hardware.NovelOdometry;
 import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import com.pocolifo.robobase.reconstructor.Pose;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class DistanceMovement {
     private static final double PRECISION_IN = 0.5;
@@ -21,14 +25,14 @@ public class DistanceMovement {
     }
 
     public void updatePositionalAndRotationalDifference(Vector3D movement, Vector3D position) {
-        positionalDifference = Math.sqrt(Math.pow(position.getX() - target.getX(), 2) + Math.pow(position.getY() - movement.getY(), 2));
+        positionalDifference = Math.sqrt(Math.pow(position.getX() - movement.getX(), 2) + Math.pow(position.getY() - movement.getY(), 2));
         rotationaldifference = Math.abs(position.getZ() - movement.getZ());
     }
 
     private void moveBy(Vector3D movement) {
 
-        updatePositionalAndRotationalDifference(movement);
         Vector3D position = getPosition();
+        updatePositionalAndRotationalDifference(movement, position);
 
         while (positionalDifference > PRECISION_IN || rotationaldifference > PERCISION_DEG) {
             position = getPosition();

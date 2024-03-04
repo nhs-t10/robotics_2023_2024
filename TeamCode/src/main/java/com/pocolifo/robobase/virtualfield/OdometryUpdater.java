@@ -3,8 +3,8 @@ package com.pocolifo.robobase.virtualfield;
 import com.pocolifo.robobase.novel.hardware.NovelOdometry;
 
 public class OdometryUpdater extends Thread {
-    private NovelOdometry odometry;
-    private int updatesPerSecond;
+    private final NovelOdometry odometry;
+    private final int updatesPerSecond;
     private boolean running;
     public void stopRunning() {
         running = false;
