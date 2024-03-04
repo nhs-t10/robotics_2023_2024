@@ -5,10 +5,7 @@ import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import com.pocolifo.robobase.reconstructor.PathFinder;
 import com.pocolifo.robobase.reconstructor.Pose;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-
 import java.io.IOException;
-import java.util.List;
 
 import centerstage.CenterStageRobotConfiguration;
 
@@ -31,10 +28,15 @@ public class VirtualField {
 
     private void resetRotation() {
         double rotationNeeded = 0 - getFieldPosition().getZ();
-        movement.rotateTo(rotationNeeded);
+        movement.rotate(rotationNeeded);
     }
 
-    public void pathTo(int x, int y) {
+    public void rotateTo(int degrees) {
+        int degreesNeeded = degrees - getFieldPosition().getZ();
+        movement.rotate(degreesNeeded);
+    }
+
+    public void pathTo(int x, int y, int degrees) {
         resetRotation();
 
         List<Vector3D> path = pathFinder.findPath(getFieldPosition(), new Vector3D(x, y, 0));
@@ -42,7 +44,9 @@ public class VirtualField {
         for (Vector3D point : path) {
             Vector3D diff = point.subtract(getFieldPosition());
 
-            movement.transformTo(diff.getX(), diff.getY());
+            movement.move(diff.getX(), diff.getY());
         }
+
+        rotateTo(degrees);
     }
 }

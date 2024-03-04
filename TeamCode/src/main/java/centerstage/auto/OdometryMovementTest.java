@@ -6,8 +6,7 @@ import com.pocolifo.robobase.virtualfield.DistanceMovement;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.novel.hardware.NovelOdometry;
 import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.pocolifo.robobase.virtualfield.OdometryUpdater;
 
 @Autonomous
 public class OdometryMovementTest extends AutonomousOpMode {
@@ -15,6 +14,7 @@ public class OdometryMovementTest extends AutonomousOpMode {
     private NovelOdometry odometry;
     private NovelMecanumDriver driver;
     private DistanceMovement movement;
+    private OdometryUpdater updater;
 
     @Override
     public void initialize() {
@@ -22,25 +22,22 @@ public class OdometryMovementTest extends AutonomousOpMode {
         this.driver = this.c.createDriver(Constants.Coefficients.SOFTWARE_ROBOT_COEFFICIENTS);
         this.odometry = this.c.createOdometry();
         this.movement = new DistanceMovement(driver, odometry, c.imu);
+        this.updater = new OdometryUpdater(odometry);
     }
 
     @Override
     public void run() {
-//        try {
-            this.c.fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            this.c.fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            this.c.br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            this.c.bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        updater.start();
 
-             movement.rotateTo(180);
+        this.c.fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.c.fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.c.br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.c.bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-//            Thread.sleep(2000);
-//            movement.moveTo(new Vector3D(0, 0, 990));
-            System.out.println("ive moveddd");
+        movement.rotate(180);
 
-            this.driver.stop();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        System.out.println("ive moveddd");
+
+        this.driver.stop();
     }
 }
