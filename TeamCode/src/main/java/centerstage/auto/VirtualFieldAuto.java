@@ -16,13 +16,12 @@ import com.pocolifo.robobase.virtualfield.OdometryUpdater;
 import com.pocolifo.robobase.virtualfield.VirtualField;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.io.IOException;
 
 @Autonomous
 @Config
-public class VirtualFieldRedSpikeSide extends AutonomousOpMode {
+public class VirtualFieldAuto extends AutonomousOpMode {
     private CenterStageRobotConfiguration c;
     private RobotCapabilities capabilities;
     private NovelMecanumDriver driver;
@@ -96,37 +95,61 @@ public class VirtualFieldRedSpikeSide extends AutonomousOpMode {
         return Vector3D.ZERO;
     }
 
+    private Vector3D getAfterSpikePosition() {
+        if (alliance == Alliance.RED && startSide == StartSide.APRIL_TAG_SIDE) {
+            return new Vector3D(90, 35, 0);
+        }
+        if (alliance == Alliance.RED && startSide == StartSide.BACKDROP_SIDE) {
+            return new Vector3D(90, 84, 0);
+        }
+        if (alliance == Alliance.BLUE && startSide == StartSide.APRIL_TAG_SIDE) {
+            return new Vector3D(52, 35, 0);
+        }
+        if (alliance == Alliance.BLUE && startSide == StartSide.BACKDROP_SIDE) {
+            return new Vector3D(52, 84, 0);
+        }
+        return Vector3D.ZERO;
+    }
+
     @Override
     public void run() {
         updater.start();
 
-        virtualField.pathTo(getSpikePlacementPosition());
-
-        SpikePosition spikePosition;
-
         try {
-             spikePosition = getSpikePosition();
+            SpikePosition spikePosition = getSpikePosition();
+
+            virtualField.pathTo(getSpikePlacementPosition());
+
+            placeSpike(spikePosition);
+
+            virtualField.pathTo(getParkPosition());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        placeSpike(spikePosition);
-
-        virtualField.pathTo(getParkPosition());
     }
 
-    private void placeSpike(SpikePosition position) {
+    private void placeSpike(SpikePosition position) throws InterruptedException {
         switch (position) {
             case LEFT:
                 virtualField.rotateTo(90);
+                dropSpike();
+                virtualField.rotateTo(0);
                 break;
             case RIGHT:
                 virtualField.rotateTo(-90);
+                dropSpike();
+                virtualField.rotateTo(0);
                 break;
             case CENTER:
-                virtualField.getMovement().transform(alliance == Alliance.BLUE ? 10 : -10, 0);
-
+                virtualField.pathTo(getAfterSpikePosition());
+                dropSpike();
         }
+    }
+
+    private void dropSpike() throws InterruptedException {
+        capabilities.runRoller(1);
+        sleep(500);
+        capabilities.runRoller(0);
     }
 
     private SpikePosition getSpikePosition() throws InterruptedException {
