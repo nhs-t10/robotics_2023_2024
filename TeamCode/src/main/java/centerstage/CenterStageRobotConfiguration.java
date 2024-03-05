@@ -41,7 +41,7 @@ public class CenterStageRobotConfiguration extends RobotConfiguration {
     public NovelMotor roller;
 
     // Servos
-    @Hardware(name = "AirplaneLauncher")
+//    @Hardware(name = "AirplaneLauncher")
     public Servo airplaneLauncher;
 
      /*****************\
@@ -120,7 +120,7 @@ public class CenterStageRobotConfiguration extends RobotConfiguration {
 
     public NovelOdometry createOdometry() {
         return new NovelOdometry(
-                new OdometryCoefficientSet(),
+                new OdometryCoefficientSet(1, 1, 1),
                 new NovelEncoder(this.linearSlideLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.spinningIntake.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.roller.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION)

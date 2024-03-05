@@ -46,8 +46,8 @@ public class NovelOdometry {
         // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
         // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
         double heading = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
-        double deltaX = deltaMiddlePos * Math.cos(heading) - deltaPerpendicularPos * Math.sin(heading);
-        double deltaY = deltaMiddlePos * Math.sin(heading) + deltaPerpendicularPos * Math.cos(heading);
+        double deltaX = deltaMiddlePos * Math.sin(heading) + deltaPerpendicularPos * Math.cos(heading);
+        double deltaY = deltaMiddlePos * Math.cos(heading) - deltaPerpendicularPos * Math.sin(heading);
 
         this.relativePose = this.relativePose.add(new Pose(deltaX, deltaY, phi, AngleUnit.RADIANS));
 
