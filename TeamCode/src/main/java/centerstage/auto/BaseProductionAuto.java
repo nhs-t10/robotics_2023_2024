@@ -5,6 +5,8 @@ import centerstage.CenterStageRobotConfiguration;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;
+import centerstage.TestBotRobotConfiguration;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.Alliance;
 import com.pocolifo.robobase.StartSide;
@@ -15,7 +17,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class BaseProductionAuto extends AutonomousOpMode {
-    private CenterStageRobotConfiguration c;
+    private TestBotRobotConfiguration config;
     private RobotCapabilities capabilities;
     private final DynamicYCrCbDetection spikeDetector;
     private final Alliance alliance;
@@ -31,22 +33,15 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
     @Override
     public void initialize() {
-        this.c = new CenterStageRobotConfiguration(this.hardwareMap);
-        this.c.webcam.open(this.spikeDetector);
-        this.driver = new NovelMecanumDrive(this.c.fl, this.c.fr, this.c.bl, this.c.br, Constants.PRODUCTION_COEFFICIENTS);
-        this.capabilities = new RobotCapabilities(this.c);
+        this.config = new TestBotRobotConfiguration(this.hardwareMap);
+        this.driver = new NovelMecanumDrive(this.config.fl, this.config.fr, this.config.bl, this.config.br, Constants.TESTBOT_COEFFICIENTS);
     }
 
     @Override
     public void run() {
         try {
-            DynamicYCrCbDetection pipeline = (DynamicYCrCbDetection) this.c.webcam.getPipeline();
-            SpikePosition spikePosition;
-            do {
-                spikePosition = pipeline.getResult();
-                sleep(100);
-            } while (spikePosition == null);
-            System.out.println(spikePosition.toString());
+            SpikePosition spikePosition = SpikePosition.CENTER;
+            System.out.println("Going " + spikePosition.toString());
 
             switch (spikePosition) {
                 case LEFT:
@@ -134,7 +129,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
 //                    //do nothing
 //            }
 //            driveHorizontal(24*alliance.getAllianceSwapConstant(),1.5);
-            c.imu.resetYaw();
+            config.imu.resetYaw();
         } catch (Throwable e) {
             System.out.println("Stopped");
         }
@@ -167,19 +162,19 @@ public class BaseProductionAuto extends AutonomousOpMode {
         if(degrees < 0) {
             direction = -1;
         }
-        c.imu.resetYaw();
+        config.imu.resetYaw();
         //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
         this.driver.setVelocity(new Vector3D(0,0, 20*direction));
 
-        while(Math.abs(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) < 90)
+        while(Math.abs(config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) < 90)
         {
-            System.out.println(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            System.out.println(config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         }
-        System.out.println("correcting..." + (c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - 90));
+        System.out.println("correcting..." + (config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - 90));
         this.driver.setVelocity(new Vector3D(0,0,-4*direction));
-        while(Math.abs(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) > degrees*direction)
+        while(Math.abs(config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) > degrees*direction)
         {
-            System.out.println(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            System.out.println(config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         }
         this.driver.stop();
     }
@@ -196,8 +191,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
         double imu_init;
         double turnTo;
         if(imu_button) {
-            imu_init = c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) % 360;
-            c.imu.resetYaw();
+            imu_init = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) % 360;
+            config.imu.resetYaw();
             turnTo = 360 - imu_init;
             rotateIMU(turnTo);
         }
