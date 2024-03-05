@@ -39,6 +39,9 @@ public class Constants {
     public static final OmniDriveCoefficients PRODUCTION_COEFFICIENTS = new OmniDriveCoefficients(new double[] {
             -1, -1, 1, 1
     });
+    public static final OmniDriveCoefficients TESTBOT_COEFFICIENTS = new OmniDriveCoefficients(new double[] {
+            1, -1, -1, -1
+    });
     public static final double ODOMETRY_LATERAL_WHEEL_DISTANCE = 12;
 
     public static final double ODOMETRY_ROTATIONAL_WHEEL_OFFSET = 7;
