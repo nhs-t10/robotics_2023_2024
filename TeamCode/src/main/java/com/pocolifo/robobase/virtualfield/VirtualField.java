@@ -39,10 +39,10 @@ public class VirtualField {
         movement.rotate(degreesNeeded);
     }
 
-    public void pathTo(int x, int y, int degrees) {
+    public void pathTo(Vector3D position) {
         resetRotation();
 
-        List<Vector3D> path = pathFinder.findPath(getFieldPosition(), new Vector3D(x, y, 0));
+        List<Vector3D> path = pathFinder.findPath(getFieldPosition(), new Vector3D(position.getX(), position.getY(), 0));
 
         for (Vector3D point : path) {
             Vector3D diff = point.subtract(getFieldPosition());
@@ -50,6 +50,10 @@ public class VirtualField {
             movement.transform(diff.getX(), diff.getY());
         }
 
-        rotateTo(degrees);
+        rotateTo(position.getZ());
+    }
+
+    public DistanceMovement getMovement() {
+        return movement;
     }
 }
