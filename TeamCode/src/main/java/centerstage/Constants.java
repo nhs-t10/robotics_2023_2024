@@ -40,7 +40,7 @@ public class Constants {
             -1, -1, 1, 1
     });
     public static final OmniDriveCoefficients TESTBOT_COEFFICIENTS = new OmniDriveCoefficients(new double[] {
-            1, -1, -1, -1
+            -1, 1, 1, 1
     });
     public static final double ODOMETRY_LATERAL_WHEEL_DISTANCE = 12;
 

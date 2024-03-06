@@ -13,20 +13,21 @@ import com.pocolifo.robobase.StartSide;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.novel.NovelMecanumDrive;
 import com.pocolifo.robobase.vision.DynamicYCrCbDetection;
+import com.pocolifo.robobase.vision.SpotDetectionPipeline;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class BaseProductionAuto extends AutonomousOpMode {
     private TestBotRobotConfiguration config;
     private RobotCapabilities capabilities;
-    private final DynamicYCrCbDetection spikeDetector;
+    private final SpotDetectionPipeline spikeDetector;
     private final Alliance alliance;
     private final StartSide startSide;
     private NovelMecanumDrive driver;
     private double currentAngle;
 
 
-    public BaseProductionAuto(DynamicYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
+    public BaseProductionAuto(SpotDetectionPipeline spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
         this.spikeDetector = spikeDetector;
         this.alliance = alliance;
         this.startSide = startSide;
@@ -41,20 +42,104 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Override
     public void run() {
         try {
-            SpikePosition spikePosition = SpikePosition.CENTER;
-            System.out.println("Going " + spikePosition.toString());
-        if(spikePosition == spikePosition.CENTER)
-        {
-            driveVertical(-46,5);
-            //todo: drop pixel
-            driveVertical(-5,1);
-            rotateIMU(90* alliance.getAllianceRedIsPositive());
-            driveVertical(-(36+startSide.getSideDistance()),(3.6+startSide.getSideTime()));
-            driveHorizontal(-24* alliance.getAllianceRedIsPositive(),2.4);
-            //todo: slides do their thing
-            driveHorizontal(24* alliance.getAllianceRedIsPositive(),2.4);
+            /*DynamicYCrCbDetection pipeline = (DynamicYCrCbDetection) this.c.webcam.getPipeline();
+            SpikePosition spikePosition;
+            do {
+                spikePosition = pipeline.getResult();
+                sleep(100);
+            } while (spikePosition == null);*/
+            SpikePosition spikePosition = SpikePosition.LEFT;
+            System.out.println(spikePosition.toString());
 
-        }
+            switch (spikePosition) {
+                case LEFT:
+                    System.out.println("left");
+                    driveVertical(-30, 2);
+                    sleep(500);
+                    rotateIMU(90);
+                    driveVertical(6, 0.5);
+                    dropPixel();
+                    driveVertical(-6, 0.5);
+                    driveHorizontal(-24, 2);
+                    break;
+
+                case RIGHT:
+                    System.out.println("right");
+                    driveVertical(-30, 2);
+                    sleep(500);
+                    rotateIMU(-90);
+                    driveVertical(6, 0.5);
+                    dropPixel();
+                    driveVertical(-6, 0.5);
+                    rotateIMU(90);
+                    rotateIMU(90); //TODO when IMU is fixed revert to one call of 180 degrees
+                    driveHorizontal(24, 2);
+                    break;
+
+                case CENTER:
+                    System.out.println("center");
+                    driveVertical(-46, 4);
+                    dropPixel();
+                    driveVertical(-5, 1);
+                    rotateIMU(90);
+                    break;
+            }
+
+            // TODO: drop the auto pixel
+            SystemClock.sleep(500);
+
+            //Reset to neutral position - GOOD
+//            switch (spikePosition) {
+//                case LEFT:
+//                    //driveHorizontal(-16, 1);
+//                    break;
+//
+//                case RIGHT:
+//                    //driveHorizontal(16, 1);
+//                    break;
+//
+//                case CENTER:
+//                    driveVertical(24, 1.25);
+//                    break;
+//            }
+
+//            SystemClock.sleep(500);
+//
+//            driveHorizontal((42 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5 + (startSide.getSideSwapConstantIn() / 16));
+//            SystemClock.sleep(500);
+//
+//            rotateIMU(-90 * alliance.getAllianceSwapConstant());
+//            SystemClock.sleep(500);
+//
+//            //this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
+//            //alignWithAprilTag();
+//            switch (spikePosition) {
+//                case LEFT:
+//                    driveHorizontal(8, 0.5);
+//                    break;
+//
+//                case RIGHT:
+//                    driveHorizontal(-8, 0.5);
+//                    break;
+//
+//                case CENTER:
+//                    break;
+//            }
+//
+//            SystemClock.sleep(500);
+//
+//            //todo: place!!!
+//
+//            switch (spikePosition){
+//                case LEFT:
+//                    driveHorizontal(-8,0.5);
+//                case RIGHT:
+//                    driveHorizontal(8,0.5);
+//                case CENTER:
+//                    //do nothing
+//            }
+//            driveHorizontal(24*alliance.getAllianceSwapConstant(),1.5);
+            config.imu.resetYaw();
         } catch (Throwable e) {
             System.out.println("Stopped");
         }
@@ -105,6 +190,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     }
     public void absoluteRotateIMU(double degrees) throws InterruptedException {
         currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        System.out.println(currentAngle);
         if(degrees < currentAngle + 180)
         {
             while(currentAngle < degrees)
@@ -142,10 +228,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
     public void dropPixel()
     {
-        //todo: fix power
-        this.capabilities.runRoller();
-        SystemClock.sleep(1000);
-        this.capabilities.stopRoller();
+        //todo: implement
     }
     public void align(boolean imu_button) throws InterruptedException {
         double imu_init;
