@@ -117,9 +117,8 @@ public class RobotCapabilities {
     }
     public void dropPixel()
     {
-        //todo: fix power
-        this.c.roller.setPower(-0.5);
+        runOuttake();
         SystemClock.sleep(1000);
-        this.c.roller.setPower(0);
+        stopIntakeOuttake();
     }
 }

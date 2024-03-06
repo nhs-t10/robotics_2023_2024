@@ -2,13 +2,11 @@ package centerstage.auto;
 
 import android.os.SystemClock;
 
-import centerstage.Constants;
-import centerstage.RobotCapabilities;
-import centerstage.SpikePosition;
-import centerstage.TestBotRobotConfiguration;
+import centerstage.*;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.Alliance;
+import com.pocolifo.robobase.RobotConfiguration;
 import com.pocolifo.robobase.StartSide;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.novel.NovelMecanumDrive;
@@ -18,7 +16,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class BaseProductionAuto extends AutonomousOpMode {
-    private TestBotRobotConfiguration config;
+    private CenterStageRobotConfiguration config;
     private RobotCapabilities capabilities;
     private final SpotDetectionPipeline spikeDetector;
     private final Alliance alliance;
@@ -36,23 +34,24 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
     @Override
     public void initialize() {
-        this.config = new TestBotRobotConfiguration(this.hardwareMap);
-        this.driver = new NovelMecanumDrive(this.config.fl, this.config.fr, this.config.bl, this.config.br, Constants.TESTBOT_COEFFICIENTS);
+        this.config = new CenterStageRobotConfiguration(this.hardwareMap);
+        this.driver = new NovelMecanumDrive(this.config.fl, this.config.fr, this.config.bl, this.config.br, Constants.PRODUCTION_COEFFICIENTS);
+        this.capabilities = new RobotCapabilities(this.config);
+        this.config.webcam.open(this.spikeDetector);
     }
 
     @Override
     public void run() {
         try {
             config.imu.resetYaw();
-            /*SpotDetectionPipeline pipeline = (SpotDetectionPipeline) this.c.webcam.getPipeline();
+            SpotDetectionPipeline pipeline = (SpotDetectionPipeline) this.config.webcam.getPipeline();
             SpikePosition spikePosition;
             do {
                 spikePosition = pipeline.getResult();
                 sleep(100);
-            } while (spikePosition == null);*/
-            SpikePosition spikePosition = SpikePosition.RIGHT;
+            } while (spikePosition == null);
 
-            System.out.println(spikePosition.toString());
+            System.out.println(spikePosition);
 
             switch (spikePosition) {
                 case LEFT:
@@ -94,7 +93,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
             if (startSide == StartSide.APRIL_TAG_SIDE)
             {
-                driveVertical(-50, 5);
+                driveVertical(-50, 3);
                 if(alliance == Alliance.RED) {
                     absoluteRotateIMU(90);
                 }
@@ -105,14 +104,14 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
             switch (alliance) {
                 case RED:
-                    driveVertical(-40, 4);
+                    driveVertical(-40, 2);
                     absoluteRotateIMU(90);
-                    driveHorizontal(30, 3);
+                    driveHorizontal(30, 2);
                     break;
                 case BLUE:
-                    driveVertical(-40, 4);
+                    driveVertical(-40, 2);
                     absoluteRotateIMU(-90);
-                    driveHorizontal(-30, 3);
+                    driveHorizontal(-30, 2);
                     break;
             }
 
@@ -121,7 +120,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
             config.imu.resetYaw();
         } catch (Throwable e) {
-            System.out.println("Stopped");
+            System.out.println("Error Thrown!");
+            e.printStackTrace();
         }
     }
 
@@ -252,8 +252,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
     public void dropPixel()
     {
-        //todo: implement. For now:
-        SystemClock.sleep(1000);
+        this.capabilities.dropPixel();
     }
     public void align(boolean imu_button) throws InterruptedException {
         double imu_init;
