@@ -6,7 +6,7 @@ public enum StartSide {
 
 
     public double getSideDistance() {
-        return this == StartSide.APRIL_TAG_SIDE ? 48 : 0;
+        return this == StartSide.APRIL_TAG_SIDE ? 50 : 0;
     }
     public double getSideTime() {
         return getSideDistance()/10;
