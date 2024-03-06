@@ -149,6 +149,10 @@ public class BaseProductionAuto extends AutonomousOpMode {
                 currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 System.out.println(currentAngle);
             }
+            while(currentAngle > degrees)
+            {
+                this.driver.setVelocity(new Vector3D(0,0, -3));
+            }
         }
         else if (degrees < currentAngle - 180)
         {
