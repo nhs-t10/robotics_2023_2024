@@ -41,7 +41,7 @@ public class TestBotRobotConfiguration extends RobotConfiguration {
         super(hardwareMap);
         imu.initialize(
                 new IMU.Parameters(new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                         RevHubOrientationOnRobot.UsbFacingDirection.UP
                 ))
         );

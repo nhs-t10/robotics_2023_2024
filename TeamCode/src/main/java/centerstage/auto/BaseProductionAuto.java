@@ -43,13 +43,14 @@ public class BaseProductionAuto extends AutonomousOpMode {
     public void run() {
         try {
             config.imu.resetYaw();
-            /*DynamicYCrCbDetection pipeline = (DynamicYCrCbDetection) this.c.webcam.getPipeline();
+            /*SpotDetectionPipeline pipeline = (SpotDetectionPipeline) this.c.webcam.getPipeline();
             SpikePosition spikePosition;
             do {
                 spikePosition = pipeline.getResult();
                 sleep(100);
             } while (spikePosition == null);*/
-            SpikePosition spikePosition = SpikePosition.LEFT;
+            SpikePosition spikePosition = SpikePosition.RIGHT;
+
             System.out.println(spikePosition.toString());
 
             switch (spikePosition) {
@@ -57,11 +58,12 @@ public class BaseProductionAuto extends AutonomousOpMode {
                     System.out.println("left");
                     driveVertical(-30, 2);
                     sleep(500);
-                    rotateIMU(90);
+                    absoluteRotateIMU(90);
                     driveVertical(6, 0.5);
                     dropPixel();
                     driveVertical(-6, 0.5);
-                    driveHorizontal(-24, 2);
+                    if (alliance == Alliance.BLUE) {absoluteRotateIMU(-90);} //TODO when IMU is fixed revert to one call of 180 degrees
+                    driveHorizontal(24, 2);
                     break;
 
                 case RIGHT:
@@ -72,9 +74,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
                     driveVertical(6, 0.5);
                     dropPixel();
                     driveVertical(-6, 0.5);
-                    rotateIMU(90);
-                    rotateIMU(90); //TODO when IMU is fixed revert to one call of 180 degrees
-                    driveHorizontal(24, 2);
+                    if (alliance == Alliance.RED) {absoluteRotateIMU(90);} //TODO when IMU is fixed revert to one call of 180 degrees
+                    driveHorizontal(-24, 2);
                     break;
 
                 case CENTER:
@@ -82,9 +83,26 @@ public class BaseProductionAuto extends AutonomousOpMode {
                     driveVertical(-46, 4);
                     dropPixel();
                     driveVertical(-5, 1);
-                    rotateIMU(90);
+                    if (alliance == Alliance.RED) absoluteRotateIMU(90);
+                    else absoluteRotateIMU(-90);
                     break;
             }
+
+            // ensure that robot is locked on target
+            System.out.println(config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+
+            if (startSide == StartSide.APRIL_TAG_SIDE) driveVertical(-50, 5);
+
+            switch (alliance) {
+                case RED:
+                    driveVertical(-40, 4);
+                    driveHorizontal(30, 3);
+                    break;
+                case BLUE:
+                    driveVertical(-40, 4);
+                    driveHorizontal(-30, 3);
+            }
+
 
 
 
@@ -139,7 +157,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     }
     public void absoluteRotateIMU(double degrees) throws InterruptedException {
         int direction = 0;
-        currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         System.out.println(currentAngle);
         if(degrees < currentAngle + 180)
         {
@@ -148,7 +166,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
             {
                 direction = 1;
                 this.driver.setVelocity(new Vector3D(0,0, 10));
-                currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 System.out.println(currentAngle);
             }
         }
@@ -159,7 +177,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
             while(!(currentAngle < 0) || currentAngle < degrees)
             {
                 this.driver.setVelocity(new Vector3D(0,0, 10));
-                currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 System.out.println(currentAngle);
             }
         }
@@ -170,7 +188,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
             while(currentAngle < 0 || currentAngle > degrees)
             {
                 this.driver.setVelocity(new Vector3D(0,0, -10));
-                currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 System.out.println(currentAngle);
             }
         }
@@ -181,7 +199,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
             while(currentAngle > 0 || currentAngle < degrees)
             {
                 this.driver.setVelocity(new Vector3D(0,0, -10));
-                currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 System.out.println(currentAngle);
             }
         }
@@ -189,12 +207,14 @@ public class BaseProductionAuto extends AutonomousOpMode {
         if(Math.abs(degrees) > 170) {
             if (direction > 0) {
                 while (currentAngle > degrees) {
+                    currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                     this.driver.setVelocity(new Vector3D(0, 0, -3 * direction));
                 }
             }
             else if (direction < 0)
             {
                 while (currentAngle < degrees) {
+                    currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                     this.driver.setVelocity(new Vector3D(0, 0, -3 * direction));
                 }
             }
@@ -202,6 +222,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
         else if(direction > 0){
             while(currentAngle > degrees )
             {
+                currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 this.driver.setVelocity(new Vector3D(0,0, -3*direction));
             }
         }
@@ -209,6 +230,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
         {
             while(currentAngle < degrees)
             {
+                currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 this.driver.setVelocity(new Vector3D(0,0, -3*direction));
             }
         }
