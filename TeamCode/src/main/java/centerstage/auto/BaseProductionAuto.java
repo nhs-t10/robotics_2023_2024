@@ -42,6 +42,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     @Override
     public void run() {
         try {
+            config.imu.resetYaw();
             /*DynamicYCrCbDetection pipeline = (DynamicYCrCbDetection) this.c.webcam.getPipeline();
             SpikePosition spikePosition;
             do {
@@ -85,60 +86,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
                     break;
             }
 
-            // TODO: drop the auto pixel
-            SystemClock.sleep(500);
 
-            //Reset to neutral position - GOOD
-//            switch (spikePosition) {
-//                case LEFT:
-//                    //driveHorizontal(-16, 1);
-//                    break;
-//
-//                case RIGHT:
-//                    //driveHorizontal(16, 1);
-//                    break;
-//
-//                case CENTER:
-//                    driveVertical(24, 1.25);
-//                    break;
-//            }
 
-//            SystemClock.sleep(500);
-//
-//            driveHorizontal((42 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5 + (startSide.getSideSwapConstantIn() / 16));
-//            SystemClock.sleep(500);
-//
-//            rotateIMU(-90 * alliance.getAllianceSwapConstant());
-//            SystemClock.sleep(500);
-//
-//            //this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
-//            //alignWithAprilTag();
-//            switch (spikePosition) {
-//                case LEFT:
-//                    driveHorizontal(8, 0.5);
-//                    break;
-//
-//                case RIGHT:
-//                    driveHorizontal(-8, 0.5);
-//                    break;
-//
-//                case CENTER:
-//                    break;
-//            }
-//
-//            SystemClock.sleep(500);
-//
-//            //todo: place!!!
-//
-//            switch (spikePosition){
-//                case LEFT:
-//                    driveHorizontal(-8,0.5);
-//                case RIGHT:
-//                    driveHorizontal(8,0.5);
-//                case CENTER:
-//                    //do nothing
-//            }
-//            driveHorizontal(24*alliance.getAllianceSwapConstant(),1.5);
             config.imu.resetYaw();
         } catch (Throwable e) {
             System.out.println("Stopped");
@@ -193,34 +142,42 @@ public class BaseProductionAuto extends AutonomousOpMode {
         System.out.println(currentAngle);
         if(degrees < currentAngle + 180)
         {
+            System.out.println("Case 1");
             while(currentAngle < degrees)
             {
                 this.driver.setVelocity(new Vector3D(0,0, 10));
                 currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                System.out.println(currentAngle);
             }
         }
         else if (degrees < currentAngle - 180)
         {
+            System.out.println("Case 2");
             while(!(currentAngle < 0) || currentAngle < degrees)
             {
                 this.driver.setVelocity(new Vector3D(0,0, 10));
                 currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                System.out.println(currentAngle);
             }
         }
         else if(degrees > currentAngle + 180)
         {
+            System.out.println("Case 3");
             while(currentAngle < 0 || currentAngle > degrees)
             {
                 this.driver.setVelocity(new Vector3D(0,0, -10));
                 currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                System.out.println(currentAngle);
             }
         }
         else if (degrees > currentAngle - 180)
         {
+            System.out.println("Case 4");
             while(currentAngle > 0 || currentAngle < degrees)
             {
                 this.driver.setVelocity(new Vector3D(0,0, -10));
                 currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                System.out.println(currentAngle);
             }
         }
     }
