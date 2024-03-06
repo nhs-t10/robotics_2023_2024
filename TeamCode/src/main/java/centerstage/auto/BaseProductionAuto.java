@@ -138,6 +138,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
         this.driver.stop();
     }
     public void absoluteRotateIMU(double degrees) throws InterruptedException {
+        int direction = 0;
         currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         System.out.println(currentAngle);
         if(degrees < currentAngle + 180)
@@ -145,17 +146,15 @@ public class BaseProductionAuto extends AutonomousOpMode {
             System.out.println("Case 1");
             while(currentAngle < degrees)
             {
+                direction = 1;
                 this.driver.setVelocity(new Vector3D(0,0, 10));
                 currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 System.out.println(currentAngle);
             }
-            while(currentAngle > degrees)
-            {
-                this.driver.setVelocity(new Vector3D(0,0, -3));
-            }
         }
         else if (degrees < currentAngle - 180)
         {
+            direction = 1;
             System.out.println("Case 2");
             while(!(currentAngle < 0) || currentAngle < degrees)
             {
@@ -166,6 +165,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
         }
         else if(degrees > currentAngle + 180)
         {
+            direction = -1;
             System.out.println("Case 3");
             while(currentAngle < 0 || currentAngle > degrees)
             {
@@ -176,12 +176,40 @@ public class BaseProductionAuto extends AutonomousOpMode {
         }
         else if (degrees > currentAngle - 180)
         {
+            direction = -1;
             System.out.println("Case 4");
             while(currentAngle > 0 || currentAngle < degrees)
             {
                 this.driver.setVelocity(new Vector3D(0,0, -10));
                 currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 System.out.println(currentAngle);
+            }
+        }
+
+        if(Math.abs(degrees) > 170) {
+            if (direction > 0) {
+                while (currentAngle > degrees) {
+                    this.driver.setVelocity(new Vector3D(0, 0, -3 * direction));
+                }
+            }
+            else if (direction < 0)
+            {
+                while (currentAngle < degrees) {
+                    this.driver.setVelocity(new Vector3D(0, 0, -3 * direction));
+                }
+            }
+        }
+        else if(direction > 0){
+            while(currentAngle > degrees )
+            {
+                this.driver.setVelocity(new Vector3D(0,0, -3*direction));
+            }
+        }
+        else
+        {
+            while(currentAngle < degrees)
+            {
+                this.driver.setVelocity(new Vector3D(0,0, -3*direction));
             }
         }
     }
