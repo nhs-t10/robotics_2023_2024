@@ -2,6 +2,11 @@ package centerstage.auto;
 
 import android.os.SystemClock;
 
+import centerstage.BackdropAprilTagAligner;
+import centerstage.Constants;
+import centerstage.RobotCapabilities;
+import centerstage.SpikePosition;
+import centerstage.TestBotRobotConfiguration;
 import centerstage.*;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -24,6 +29,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     private NovelMecanumDrive driver;
     private double currentAngle;
     private int correctionSpeed = -2;
+    private BackdropAprilTagAligner aprilTagAligner;
 
 
     public BaseProductionAuto(SpotDetectionPipeline spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
@@ -114,6 +120,10 @@ public class BaseProductionAuto extends AutonomousOpMode {
                     driveHorizontal(-30, 2);
                     break;
             }
+            this.aprilTagAligner =  new BackdropAprilTagAligner(driver, spikePosition, config.webcam,alliance,0,0);
+            double apriltagX = aprilTagAligner.getTagX();
+            driveHorizontal(apriltagX, apriltagX/10);
+            capabilities.moveLiftToPosition(3500,0.9);
 
 
 

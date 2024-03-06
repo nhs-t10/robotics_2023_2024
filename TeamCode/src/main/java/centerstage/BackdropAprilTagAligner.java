@@ -76,6 +76,18 @@ public class BackdropAprilTagAligner implements AutoCloseable {
         }
     }
 
+    public double getTagX() {
+        Optional<AprilTagDetection> possibleTag = this.aprilTagProcessor.getDetections().stream().filter(detection -> detection.id == this.aprilTagId).findFirst();
+
+        if (!possibleTag.isPresent()) {
+            return 0;
+        }
+        AprilTagDetection tag = possibleTag.get();
+        double tagCenterX = tag.center.x;
+
+        return (webcamCenterX - tagCenterX);
+    }
+
     public AlignmentStatus getStatus() {
         return status;
     }

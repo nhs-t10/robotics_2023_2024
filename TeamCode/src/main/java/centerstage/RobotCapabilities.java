@@ -45,7 +45,12 @@ public class RobotCapabilities {
     public void moveLiftToPosition(int position, double power) {
         this.c.linearSlideLeft.setPower(-Math.abs(power));
         this.c.linearSlideRight.setPower(-Math.abs(power));
-        // todo
+        while(c.linearSlideRight.motor.getCurrentPosition() < 3500)
+        {
+            //do nothing
+        }
+        this.c.linearSlideLeft.setPower(0);
+        this.c.linearSlideRight.setPower(0);
     }
 
     public void extendLiftFully() {
