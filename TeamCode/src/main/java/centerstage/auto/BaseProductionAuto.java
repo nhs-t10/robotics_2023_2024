@@ -1,7 +1,7 @@
 package centerstage.auto;
 
 import android.os.SystemClock;
-import centerstage.CenterStageRobotConfiguration;
+
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;
@@ -23,6 +23,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     private final Alliance alliance;
     private final StartSide startSide;
     private NovelMecanumDrive driver;
+    private double currentAngle;
 
 
     public BaseProductionAuto(DynamicYCrCbDetection spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
@@ -42,94 +43,18 @@ public class BaseProductionAuto extends AutonomousOpMode {
         try {
             SpikePosition spikePosition = SpikePosition.CENTER;
             System.out.println("Going " + spikePosition.toString());
+        if(spikePosition == spikePosition.CENTER)
+        {
+            driveVertical(-46,5);
+            //todo: drop pixel
+            driveVertical(-5,1);
+            rotateIMU(90* alliance.getAllianceRedIsPositive());
+            driveVertical(-(36+startSide.getSideDistance()),(3.6+startSide.getSideTime()));
+            driveHorizontal(-24* alliance.getAllianceRedIsPositive(),2.4);
+            //todo: slides do their thing
+            driveHorizontal(24* alliance.getAllianceRedIsPositive(),2.4);
 
-            switch (spikePosition) {
-                case LEFT:
-                    System.out.println("left");
-                    driveVertical(29, 2);
-                    sleep(500);
-                    rotateIMU(-90);
-                    driveVertical(-6, 0.5);
-                    dropPixel();
-                    driveVertical(10, 0.5);
-                    rotateIMU(90);
-                    //driveHorizontal(16, 1);
-                    break;
-
-                case RIGHT:
-                    System.out.println("right");
-                    driveVertical(29, 2);
-                    sleep(500);
-                    rotateIMU(90);
-                    driveVertical(-6, 0.5);
-                    dropPixel();
-                    driveVertical(10, 0.5);
-                    rotateIMU(-90);
-                    //driveHorizontal(-16, 1);
-                    break;
-
-                case CENTER:
-                    System.out.println("center");
-                    driveVertical(46, 3);
-                    dropPixel();
-                    break;
-            }
-
-            // TODO: drop the auto pixel
-            SystemClock.sleep(500);
-
-            //Reset to neutral position - GOOD
-//            switch (spikePosition) {
-//                case LEFT:
-//                    //driveHorizontal(-16, 1);
-//                    break;
-//
-//                case RIGHT:
-//                    //driveHorizontal(16, 1);
-//                    break;
-//
-//                case CENTER:
-//                    driveVertical(24, 1.25);
-//                    break;
-//            }
-
-//            SystemClock.sleep(500);
-//
-//            driveHorizontal((42 + startSide.getSideSwapConstantIn()) * alliance.getAllianceSwapConstant(), 1.5 + (startSide.getSideSwapConstantIn() / 16));
-//            SystemClock.sleep(500);
-//
-//            rotateIMU(-90 * alliance.getAllianceSwapConstant());
-//            SystemClock.sleep(500);
-//
-//            //this.aprilTagAligner = new BackdropAprilTagAligner(this.driver, SpikePosition.RIGHT, this.webcam, this.alliance, 30, 4);
-//            //alignWithAprilTag();
-//            switch (spikePosition) {
-//                case LEFT:
-//                    driveHorizontal(8, 0.5);
-//                    break;
-//
-//                case RIGHT:
-//                    driveHorizontal(-8, 0.5);
-//                    break;
-//
-//                case CENTER:
-//                    break;
-//            }
-//
-//            SystemClock.sleep(500);
-//
-//            //todo: place!!!
-//
-//            switch (spikePosition){
-//                case LEFT:
-//                    driveHorizontal(-8,0.5);
-//                case RIGHT:
-//                    driveHorizontal(8,0.5);
-//                case CENTER:
-//                    //do nothing
-//            }
-//            driveHorizontal(24*alliance.getAllianceSwapConstant(),1.5);
-            config.imu.resetYaw();
+        }
         } catch (Throwable e) {
             System.out.println("Stopped");
         }
@@ -177,6 +102,41 @@ public class BaseProductionAuto extends AutonomousOpMode {
             System.out.println(config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         }
         this.driver.stop();
+    }
+    public void absoluteRotateIMU(double degrees) throws InterruptedException {
+        currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        if(degrees < currentAngle + 180)
+        {
+            while(currentAngle < degrees)
+            {
+                this.driver.setVelocity(new Vector3D(0,0, 10));
+                currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            }
+        }
+        else if (degrees < currentAngle - 180)
+        {
+            while(!(currentAngle < 0) || currentAngle < degrees)
+            {
+                this.driver.setVelocity(new Vector3D(0,0, 10));
+                currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            }
+        }
+        else if(degrees > currentAngle + 180)
+        {
+            while(currentAngle < 0 || currentAngle > degrees)
+            {
+                this.driver.setVelocity(new Vector3D(0,0, -10));
+                currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            }
+        }
+        else if (degrees > currentAngle - 180)
+        {
+            while(currentAngle > 0 || currentAngle < degrees)
+            {
+                this.driver.setVelocity(new Vector3D(0,0, -10));
+                currentAngle = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            }
+        }
     }
 
 
