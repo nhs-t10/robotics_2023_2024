@@ -1,21 +1,16 @@
 package centerstage.auto;
 
-import android.os.SystemClock;
-
 import centerstage.BackdropAprilTagAligner;
 import centerstage.Constants;
 import centerstage.RobotCapabilities;
 import centerstage.SpikePosition;
-import centerstage.TestBotRobotConfiguration;
 import centerstage.*;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.Alliance;
-import com.pocolifo.robobase.RobotConfiguration;
 import com.pocolifo.robobase.StartSide;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.novel.NovelMecanumDrive;
-import com.pocolifo.robobase.vision.DynamicYCrCbDetection;
 import com.pocolifo.robobase.vision.SpotDetectionPipeline;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -29,7 +24,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     private final StartSide startSide;
     private NovelMecanumDrive driver;
     private double currentAngle;
-    private int correctionSpeed = -2;
+    private int correctionSpeed = 2;
     private BackdropAprilTagAligner aprilTagAligner;
     private Telemetry.Item angleTelemtry;
 
@@ -65,9 +60,9 @@ public class BaseProductionAuto extends AutonomousOpMode {
             switch (spikePosition) {
                 case LEFT:
                     System.out.println("left");
-                    driveVertical(-34, 2);
+                    driveVertical(-30, 2);
                     sleep(500);
-                    absoluteRotateIMU(90);
+                    turnTo90();
                     driveVertical(6, 1);
                     dropPixel();
                     driveVertical(-6, 1);
@@ -76,9 +71,9 @@ public class BaseProductionAuto extends AutonomousOpMode {
 
                 case RIGHT:
                     System.out.println("right");
-                    driveVertical(-34, 2);
+                    driveVertical(-30, 2);
                     sleep(500);
-                    absoluteRotateIMU(-90);
+                    turnToNeg90();
                     driveVertical(6, 1);
                     dropPixel();
                     driveVertical(-6, 1);
@@ -93,9 +88,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
                     break;
             }
 
-            if (alliance == Alliance.RED) absoluteRotateIMU(90);
-            else absoluteRotateIMU(-90);
-            if (true) throw new RuntimeException("Robot stopped by intentional auto design");
+            if (alliance == Alliance.RED) turnTo90();
+            else turnToNeg90();
 
             // ensure that robot is locked on target
             System.out.println(config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
@@ -104,22 +98,22 @@ public class BaseProductionAuto extends AutonomousOpMode {
             {
                 driveVertical(-50, 3);
                 if(alliance == Alliance.RED) {
-                    absoluteRotateIMU(90);
+                    turnTo90();
                 }
                 else{
-                    absoluteRotateIMU(-90);
+                    turnToNeg90();
                 }
             }
 
             switch (alliance) {
                 case RED:
                     driveVertical(-40, 2);
-                    absoluteRotateIMU(90);
+                    turnTo90();
                     driveHorizontal(30, 2);
                     break;
                 case BLUE:
                     driveVertical(-40, 2);
-                    absoluteRotateIMU(-90);
+                    turnToNeg90();
                     driveHorizontal(-30, 2);
                     break;
             }
@@ -181,92 +175,66 @@ public class BaseProductionAuto extends AutonomousOpMode {
         }
         this.driver.stop();
     }
+    public void turnTo90()
+    {
+        double angle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        while(angle < 90 || angle > 120)
+        {
+            driver.setVelocity(new Vector3D(0,0,(90-Math.abs(angle))/2));
+            angle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        }
+    }
+    public void turnToNeg90()
+    {
+        double angle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        while(angle > -90 || angle < -120)
+        {
+            driver.setVelocity(new Vector3D(0,0,(-90-Math.abs(angle))/2));
+            angle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        }
+    }
     public void absoluteRotateIMU(double degrees) throws InterruptedException {
-        int direction = 0;
-        currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double error = degrees;
+
+        while (Math.abs(error) > 1) {
+            error = config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - degrees;
+            this.driver.setVelocity(new Vector3D(0, 0, error));
+        }
+
+        this.driver.stop();
+
+
+        /*currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         System.out.println(currentAngle);
         angleTelemtry.setValue(currentAngle);
         telemetry.update();
-        if(degrees < currentAngle + 180)
+        if(Math.abs(currentAngle) < 90)
         {
-            direction = 1;
-            System.out.println("Case 1");
-            while(currentAngle < degrees)
+            while(Math.abs(currentAngle) < Math.abs(degrees))
             {
-                this.driver.setVelocity(new Vector3D(0,0, 10));
+                driver.setVelocity(new Vector3D(0,0,10*Math.signum(degrees)));
                 currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                telemetry.update();
+            }
+            while(Math.abs(currentAngle) > Math.abs(degrees))
+            {
+                driver.setVelocity(new Vector3D(0,0,-2*Math.signum(degrees)));
+                currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             }
         }
-        else if (degrees < currentAngle - 180)
+        else if(Math.abs(currentAngle) > 90)
         {
-            direction = 1;
-            System.out.println("Case 2");
-            while(!(currentAngle < 0) || currentAngle < degrees)
+            while(Math.abs(currentAngle) > Math.abs(degrees))
             {
-                this.driver.setVelocity(new Vector3D(0,0, 10));
+                driver.setVelocity(new Vector3D(0,0,-10*Math.signum(degrees)));
                 currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                telemetry.update();
             }
-        }
-        else if(degrees > currentAngle + 180)
-        {
-            direction = -1;
-            System.out.println("Case 3");
-            while(currentAngle < 0 || currentAngle > degrees)
+            while(Math.abs(currentAngle) < Math.abs(degrees))
             {
-                this.driver.setVelocity(new Vector3D(0,0, -10));
+                driver.setVelocity(new Vector3D(0,0,2*Math.signum(degrees)));
                 currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                telemetry.update();
             }
         }
-        else if (degrees > currentAngle - 180)
-        {
-            direction = -1;
-            System.out.println("Case 4");
-            while(currentAngle > 0 || currentAngle < degrees)
-            {
-                this.driver.setVelocity(new Vector3D(0,0, -10));
-                currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                telemetry.update();
-            }
-        }
-
-        if(Math.abs(degrees) > 170) {
-            if (direction > 0) {
-                while (currentAngle > degrees) {
-                    currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                    this.driver.setVelocity(new Vector3D(0, 0, correctionSpeed * direction));
-                    telemetry.update();
-                }
-            }
-            else if (direction < 0)
-            {
-                while (currentAngle < degrees) {
-                    currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                    this.driver.setVelocity(new Vector3D(0, 0, correctionSpeed * direction));
-                    telemetry.update();
-                }
-            }
-        }
-        else if(direction > 0){
-            while(currentAngle > degrees )
-            {
-                currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                this.driver.setVelocity(new Vector3D(0,0, correctionSpeed*direction));
-                telemetry.update();
-            }
-        }
-        else
-        {
-            while(currentAngle < degrees)
-            {
-                currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                this.driver.setVelocity(new Vector3D(0,0, correctionSpeed*direction));
-                telemetry.update();
-            }
-        }
-        this.driver.setVelocity(new Vector3D(0,0,0));
+        this.driver.setVelocity(new Vector3D(0,0, 0));*/
     }
 
 
@@ -284,4 +252,5 @@ public class BaseProductionAuto extends AutonomousOpMode {
             rotateIMU(turnTo);
         }
     }
+
 }
