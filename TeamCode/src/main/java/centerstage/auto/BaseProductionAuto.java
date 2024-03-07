@@ -65,37 +65,37 @@ public class BaseProductionAuto extends AutonomousOpMode {
             switch (spikePosition) {
                 case LEFT:
                     System.out.println("left");
-                    driveVertical(-30, 2);
+                    driveVertical(-34, 2);
                     sleep(500);
                     absoluteRotateIMU(90);
                     driveVertical(6, 1);
                     dropPixel();
                     driveVertical(-6, 1);
-                    driveHorizontal(-24, 2);
-                    if (alliance == Alliance.BLUE) {absoluteRotateIMU(-90);} //TODO when IMU is fixed revert to one call of 180 degrees
+                    driveHorizontal(-28, 2);
                     break;
 
                 case RIGHT:
                     System.out.println("right");
-                    driveVertical(-30, 2);
+                    driveVertical(-34, 2);
                     sleep(500);
-                    rotateIMU(-90);
+                    absoluteRotateIMU(-90);
                     driveVertical(6, 1);
                     dropPixel();
                     driveVertical(-6, 1);
-                    driveHorizontal(24, 2);
-                    if (alliance == Alliance.RED) {absoluteRotateIMU(90);} //TODO when IMU is fixed revert to one call of 180 degrees
+                    driveHorizontal(28, 2);
                     break;
 
                 case CENTER:
                     System.out.println("center");
-                    driveVertical(-46, 4);
+                    driveVertical(-47, 4);
                     dropPixel();
-                    driveVertical(-5, 1);
-                    if (alliance == Alliance.RED) absoluteRotateIMU(90);
-                    else absoluteRotateIMU(-90);
+                    driveVertical(-9, 1);
                     break;
             }
+
+            if (alliance == Alliance.RED) absoluteRotateIMU(90);
+            else absoluteRotateIMU(-90);
+            if (true) throw new RuntimeException("Robot stopped by intentional auto design");
 
             // ensure that robot is locked on target
             System.out.println(config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
@@ -189,10 +189,10 @@ public class BaseProductionAuto extends AutonomousOpMode {
         telemetry.update();
         if(degrees < currentAngle + 180)
         {
+            direction = 1;
             System.out.println("Case 1");
             while(currentAngle < degrees)
             {
-                direction = 1;
                 this.driver.setVelocity(new Vector3D(0,0, 10));
                 currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 telemetry.update();
@@ -266,6 +266,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
                 telemetry.update();
             }
         }
+        this.driver.setVelocity(new Vector3D(0,0,0));
     }
 
 

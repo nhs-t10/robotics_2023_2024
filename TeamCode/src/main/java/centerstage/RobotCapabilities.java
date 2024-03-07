@@ -122,8 +122,8 @@ public class RobotCapabilities {
     }
     public void dropPixel()
     {
-        runOuttake();
-        SystemClock.sleep(1000);
-        stopIntakeOuttake();
+        this.c.spinningIntake.setPower(-0.2);
+        SystemClock.sleep(250);
+        this.c.spinningIntake.setPower(0);
     }
 }
