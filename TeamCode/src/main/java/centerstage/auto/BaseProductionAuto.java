@@ -18,6 +18,7 @@ import com.pocolifo.robobase.novel.NovelMecanumDrive;
 import com.pocolifo.robobase.vision.DynamicYCrCbDetection;
 import com.pocolifo.robobase.vision.SpotDetectionPipeline;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class BaseProductionAuto extends AutonomousOpMode {
@@ -30,6 +31,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
     private double currentAngle;
     private int correctionSpeed = -2;
     private BackdropAprilTagAligner aprilTagAligner;
+    private Telemetry.Item angleTelemtry;
 
 
     public BaseProductionAuto(SpotDetectionPipeline spikeDetector, Alliance alliance, StartSide startSide, Pose2d startPosition) {
@@ -44,6 +46,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
         this.driver = new NovelMecanumDrive(this.config.fl, this.config.fr, this.config.bl, this.config.br, Constants.PRODUCTION_COEFFICIENTS);
         this.capabilities = new RobotCapabilities(this.config);
         this.config.webcam.open(this.spikeDetector);
+        angleTelemtry = this.telemetry.addData("angle: ", currentAngle);
     }
 
     @Override
@@ -182,6 +185,8 @@ public class BaseProductionAuto extends AutonomousOpMode {
         int direction = 0;
         currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         System.out.println(currentAngle);
+        angleTelemtry.setValue(currentAngle);
+        telemetry.update();
         if(degrees < currentAngle + 180)
         {
             System.out.println("Case 1");
@@ -190,7 +195,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
                 direction = 1;
                 this.driver.setVelocity(new Vector3D(0,0, 10));
                 currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                System.out.println(currentAngle);
+                telemetry.update();
             }
         }
         else if (degrees < currentAngle - 180)
@@ -201,7 +206,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
             {
                 this.driver.setVelocity(new Vector3D(0,0, 10));
                 currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                System.out.println(currentAngle);
+                telemetry.update();
             }
         }
         else if(degrees > currentAngle + 180)
@@ -212,7 +217,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
             {
                 this.driver.setVelocity(new Vector3D(0,0, -10));
                 currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                System.out.println(currentAngle);
+                telemetry.update();
             }
         }
         else if (degrees > currentAngle - 180)
@@ -223,7 +228,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
             {
                 this.driver.setVelocity(new Vector3D(0,0, -10));
                 currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                System.out.println(currentAngle);
+                telemetry.update();
             }
         }
 
@@ -232,6 +237,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
                 while (currentAngle > degrees) {
                     currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                     this.driver.setVelocity(new Vector3D(0, 0, correctionSpeed * direction));
+                    telemetry.update();
                 }
             }
             else if (direction < 0)
@@ -239,6 +245,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
                 while (currentAngle < degrees) {
                     currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                     this.driver.setVelocity(new Vector3D(0, 0, correctionSpeed * direction));
+                    telemetry.update();
                 }
             }
         }
@@ -247,6 +254,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
             {
                 currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 this.driver.setVelocity(new Vector3D(0,0, correctionSpeed*direction));
+                telemetry.update();
             }
         }
         else
@@ -255,6 +263,7 @@ public class BaseProductionAuto extends AutonomousOpMode {
             {
                 currentAngle = -config.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 this.driver.setVelocity(new Vector3D(0,0, correctionSpeed*direction));
+                telemetry.update();
             }
         }
     }
