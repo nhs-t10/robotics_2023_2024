@@ -1,11 +1,9 @@
 package com.pocolifo.robobase.novel;
 
-import android.os.health.SystemHealthManager;
 import centerstage.Constants;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Const;
 
 public class Odometry {
     private Pose2d robotPosition;

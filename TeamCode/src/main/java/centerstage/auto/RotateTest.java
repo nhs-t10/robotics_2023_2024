@@ -2,31 +2,20 @@ package centerstage.auto;
 
 import android.os.SystemClock;
 
-import com.pocolifo.robobase.Alliance;
-import com.pocolifo.robobase.StartSide;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.bootstrap.Hardware;
 import com.pocolifo.robobase.motor.NovelMotor;
 import com.pocolifo.robobase.motor.OmniDriveCoefficients;
 import com.pocolifo.robobase.novel.NovelMecanumDrive;
-import com.pocolifo.robobase.vision.NovelYCrCbDetection;
-import com.pocolifo.robobase.vision.Webcam;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import centerstage.Constants;
-import centerstage.RobotCapabilities;
-import centerstage.SpikePosition;
 
 @Autonomous(name = "RotateTest")
 public class RotateTest extends AutonomousOpMode {

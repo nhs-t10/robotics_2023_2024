@@ -1,10 +1,7 @@
 package centerstage;
 
 import android.os.SystemClock;
-import com.pocolifo.robobase.motor.NovelMotor;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class RobotCapabilities {
     public static final int LIFT_FULLY_EXTENDED_ENCODER_POS = 1500;

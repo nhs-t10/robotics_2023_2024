@@ -1,7 +1,5 @@
 package com.pocolifo.robobase.control;
 
-import org.firstinspires.ftc.teamcode.R;
-
 import java.util.function.Consumer;
 
 public class NToggleable implements InputType<Boolean> {

@@ -8,19 +8,22 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: temurin
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v3
+        with:
+          log-accepted-android-sdk-licenses: false
+          packages: "platforms;android-29 platforms;android-34 tools platform-tools"
 
       - name: Build Javadocs
-        run: ./gradlew :TeamCode:javadocRelease
+        run: ./gradlew --no-daemon :TeamCode:javadocRelease
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
