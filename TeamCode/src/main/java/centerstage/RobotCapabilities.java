@@ -42,7 +42,12 @@ public class RobotCapabilities {
     public void moveLiftToPosition(int position, double power) {
         this.c.linearSlideLeft.setPower(-Math.abs(power));
         this.c.linearSlideRight.setPower(-Math.abs(power));
-        // todo
+        while(c.linearSlideRight.motor.getCurrentPosition() < 3500)
+        {
+            //do nothing
+        }
+        this.c.linearSlideLeft.setPower(0);
+        this.c.linearSlideRight.setPower(0);
     }
 
     public void extendLiftFully() {
@@ -114,9 +119,8 @@ public class RobotCapabilities {
     }
     public void dropPixel()
     {
-        //todo: fix power
-        this.c.roller.setPower(-0.5);
-        SystemClock.sleep(1000);
-        this.c.roller.setPower(0);
+        this.c.spinningIntake.setPower(-0.2);
+        SystemClock.sleep(250);
+        this.c.spinningIntake.setPower(0);
     }
 }

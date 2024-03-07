@@ -8,6 +8,10 @@ import com.pocolifo.robobase.control.*;
 import com.pocolifo.robobase.novel.NovelMecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name = "Kearing v4")
 public class KearingTeleop extends TeleOpOpMode {
@@ -41,7 +45,7 @@ public class KearingTeleop extends TeleOpOpMode {
                 }))
                 .up(new NDownable().onDown(this.capabilities::runIntake).onRelease(this.capabilities::stopIntakeOuttake))
                 .down(new NDownable().onDown(this.capabilities::runOuttake).onRelease(this.capabilities::stopIntakeOuttake));
-        this.telemetryItem = this.telemetry.addData("position ", 0);
+        this.telemetryItem = this.telemetry.addData("angle ", 0);
     }
 
     @Override
@@ -51,5 +55,8 @@ public class KearingTeleop extends TeleOpOpMode {
         this.capabilities.update();
         this.gamepadController.update();
         this.driver.useGamepad(this.gamepad1, this.gamepadController.x() ? 4 : 1);
+
+        YawPitchRollAngles angles = this.c.imu.getRobotYawPitchRollAngles();
+        this.telemetryItem.setValue(angles.getYaw(AngleUnit.DEGREES));
     }
 }

@@ -11,7 +11,7 @@ import org.opencv.imgproc.Imgproc;
 
 import centerstage.SpikePosition;
 
-public class SpotDetectionPipeline extends AbstractResultCvPipeline<Integer> {
+public class SpotDetectionPipeline extends AbstractResultCvPipeline<SpikePosition> {
     Alliance alliance;
 
     // Colors Used to Display Detection Results
@@ -163,8 +163,8 @@ public class SpotDetectionPipeline extends AbstractResultCvPipeline<Integer> {
     }
 
     @Override
-    public Integer getResult() {
-        result =  position.ordinal();
+    public SpikePosition getResult() {
+        result = position;
         return super.getResult();
     }
 

@@ -19,7 +19,7 @@ public enum Alliance {
         }
     }
 
-    public double getAllianceSwapConstant() {
+    public double getAllianceRedIsPositive() {
         return this == Alliance.RED ? 1 : -1;
     }
 }
