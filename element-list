@@ -11,8 +11,3 @@ com.pocolifo.robobase.reconstructor
 com.pocolifo.robobase.utils
 com.pocolifo.robobase.vision
 com.pocolifo.robobase.vision.apriltag
-roadrunner.drive
-roadrunner.drive.opmode
-roadrunner.trajectorysequence
-roadrunner.trajectorysequence.sequencesegment
-roadrunner.util
