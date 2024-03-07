@@ -29,7 +29,7 @@ public class DynamicYCrCbDetection extends AbstractResultCvPipeline<SpikePositio
     }
 
     private double computeDynamicColorness(Mat mat) {
-        int channelIndex = (checkForAlliance == Alliance.RED) ? 2 : 1; // Use 1 for Cr (red), 2 for Cb (blue)
+        int channelIndex = (checkForAlliance == Alliance.RED) ? 2 : 1;
         int oppositeIndex = (checkForAlliance == Alliance.RED) ? 1 : 2;
 
         // Split the YCrCb image into its individual channels

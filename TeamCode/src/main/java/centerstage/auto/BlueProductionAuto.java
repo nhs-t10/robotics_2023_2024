@@ -7,6 +7,6 @@ import centerstage.vision.DynamicYCrCbDetection;
 
 public class BlueProductionAuto extends BaseProductionAuto {
     public BlueProductionAuto(StartSide startSide, Pose2d startPosition) {
-        super(new DynamicYCrCbDetection(false), Alliance.BLUE, startSide, startPosition);
+        super(new DynamicYCrCbDetection(Alliance.BLUE), Alliance.BLUE, startSide, startPosition);
     }
 }
