@@ -37,7 +37,7 @@ public class Constants {
 
     public static final double WHEEL_DIAMETER_IN = 11.8737360135;
     public static final OmniDriveCoefficients PRODUCTION_COEFFICIENTS = new OmniDriveCoefficients(new double[] {
-            1, -1, 1, -1
+            -1, -1, 1, 1
     });
     public static final double ODOMETRY_LATERAL_WHEEL_DISTANCE = 12;
 
@@ -56,7 +56,10 @@ public class Constants {
     public static Pose2d START_POSE_BLUE_APRIL_TAG_SIDE = new Pose2d(-60,-36,-90); //TODO Configure starting positions
 
     public double[] UP_ROBOT_COEFFICIENTS = {-1,-1,1,1};
-    public static final double INTAKE_OUTTAKE_SPEED = 0.6;
+    public static final double ROLLER_OUTTAKE_SPEED = 0.4;
+    public static final double SPINNER_OUTTAKE_SPEED = 0.4;
+    public static final double ROLLER_INTAKE_SPEED = 0.4;
+    public static final double SPINNER_INTAKE_SPEED = 0.4;
 
     public static final double ROLLER_SPEED = 0.6;
 }
