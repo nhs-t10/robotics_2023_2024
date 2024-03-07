@@ -26,9 +26,10 @@ public class NovelOdometry {
 
     // Adapted from https://gm0.org/en/latest/docs/software/concepts/odometry.html
     public void update() {
-        double newLeftWheelPos = this.leftEncoder.getCurrentInches();
-        double newRightWheelPos = this.rightEncoder.getCurrentInches();
-        double newPerpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();
+        // Update to fetch current wheel positions
+        double newLeftWheelPos = leftEncoder.getCurrentInches();
+        double newRightWheelPos = rightEncoder.getCurrentInches();
+        double newPerpendicularWheelPos = perpendicularEncoder.getCurrentInches();
 
         // Calculate deltas for each wheel position
         double deltaLeftWheelPos = coefficients.leftCoefficient * (newLeftWheelPos - leftWheelPos);
@@ -37,18 +38,18 @@ public class NovelOdometry {
 
         // Calculate the change in orientation (phi)
         double averageMovementLeftRight = (deltaLeftWheelPos - deltaRightWheelPos) / 2;
-        System.out.println("Average Movement Left Right: " + averageMovementLeftRight);
+//        System.out.println("Average Movement Left Right: " + averageMovementLeftRight);
         double phi = averageMovementLeftRight / (Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE);
-        System.out.println("phi: " + phi);
+//        System.out.println("phi: " + phi);
 
         // Calculate the average forward movement
         double deltaMiddlePos = (deltaLeftWheelPos + deltaRightWheelPos) / 2.0;
-        System.out.println("deltaMiddlePos: " + deltaMiddlePos);
+//        System.out.println("deltaMiddlePos: " + deltaMiddlePos);
 
         // Correct deltaPerpendicularPos to eliminate the rotational component
-        System.out.println("deltaPerpendicularWheelPos: " + deltaPerpendicularWheelPos);
+//        System.out.println("deltaPerpendicularWheelPos: " + deltaPerpendicularWheelPos);
         double deltaPerpendicularPos = deltaPerpendicularWheelPos - averageMovementLeftRight;
-        System.out.println("deltaPerpendicularPos: " + deltaPerpendicularPos);
+//        System.out.println("deltaPerpendicularPos: " + deltaPerpendicularPos);
 
         // Assuming currentOrientation is the robot's orientation at the start of this calculation
         double initialOrientation = relativePose.getHeading(AngleUnit.RADIANS); // Assuming this is the orientation at the start
