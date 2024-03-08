@@ -25,18 +25,18 @@ public class KearingTeleop extends TeleOpOpMode {
     private GController gamepadController;
     private CenterStageRobotConfiguration c;
     private int position = 1;
-    private static final double[] positions = {1, -1};
-    private AprilTagRetriever aprilTagRetriver;
-    private LocalizationEngine localizationEngine;
-    private NovelOdometry odometry;
-    private Telemetry.Item i;
+    private static final double[] positions = {1, 0, -1};
+    private Telemetry.Item gripState;
+    private Telemetry.Item micromovementState;
 
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
+        this.c.airplaneLauncher.setPosition(-1);
         this.capabilities = new RobotCapabilities(this.c);
-        this.odometry = this.c.createOdometry();
         this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        this.gripState = this.telemetry.addData("Grip ", "[---]");
+        this.micromovementState = this.telemetry.addData("Micro ", "[---]");
 
         this.gamepadController = new GController(this.gamepad1)
                 .x.initialToggleState(true).ok()  // micro-movement
@@ -53,7 +53,7 @@ public class KearingTeleop extends TeleOpOpMode {
                     }
                 }).ok()
                 .dpadUp.whileDown(() -> this.capabilities.runIntake(0.96)).onRelease(this.capabilities::stopIntakeOuttake).ok()
-                .dpadDown.whileDown(() -> this.capabilities.runOuttake(0.96)).onRelease(this.capabilities::stopIntakeOuttake).ok();
+                .dpadDown.whileDown(() -> this.capabilities.runOuttake(0.25)).onRelease(this.capabilities::stopIntakeOuttake).ok();
     }
 
     @SuppressLint("DefaultLocale")
@@ -63,5 +63,8 @@ public class KearingTeleop extends TeleOpOpMode {
         this.capabilities.rotateContainer(positions[position]);
         this.gamepadController.update();
         this.driver.useGamepad(this.gamepad1, this.gamepadController.x.isToggled() ? 4 : 1);
+        this.gripState.setValue(this.c.containerPixelHolder.getPosition() == 0.0 ? "[ON]" : "[off]");
+        this.micromovementState.setValue(this.gamepadController.x.isToggled() ? "[ON]" : "[off]");
+        this.telemetry.update();
     }
 }

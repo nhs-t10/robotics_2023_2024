@@ -86,25 +86,29 @@ public class ProductionAutonomous extends AutonomousOpMode {
         } else {
             driveVertical(40, 2 * timeMultiplier);
         }
+
         sleep(100);
-//        rotate(-90);
-//        sleep(100);
-//
-//        switch (spikePosition) {
-//            case LEFT:
-//                driveHorizontal(-12 - 4, 2.5 * timeMultiplier);
-//                break;
-//
-//            case CENTER:
-//                driveHorizontal(-24 - 4, 3 * timeMultiplier);
-//                break;
-//
-//            case RIGHT:
-//                driveHorizontal(-36 - 4, 4 * timeMultiplier);
-//                break;
-//        }
-//
-//        sleep(100);
+
+        if (alliance == Alliance.RED) {
+            switch (spikePosition) {
+                case LEFT:
+                    driveHorizontal(-12 - 4, 2.5 * timeMultiplier);
+                    break;
+
+                case CENTER:
+                    driveHorizontal(-24 - 4, 3 * timeMultiplier);
+                    break;
+
+                case RIGHT:
+                    driveHorizontal(-36 - 4, 4 * timeMultiplier);
+                    break;
+            }
+        } else {
+
+        }
+
+
+        sleep(100);
     }
 
     public void placePixel(SpikePosition position) throws InterruptedException {
@@ -150,11 +154,13 @@ public class ProductionAutonomous extends AutonomousOpMode {
                 sleep(100);
 
                 if (startSide == StartSide.BACKDROP_SIDE) {
-
                     driveHorizontal(-8, 1 * timeMultiplier);
                 } else {
-
-                    driveHorizontal(-16, 1 * timeMultiplier);
+                    if (alliance == Alliance.BLUE) {
+                        driveHorizontal(-10, 0.5 * timeMultiplier);
+                    } else {
+                        driveHorizontal(-16, 1 * timeMultiplier);
+                    }
                 }
 
                 sleep(100);
@@ -166,8 +172,8 @@ public class ProductionAutonomous extends AutonomousOpMode {
 
     public void dropAutoPixel() throws InterruptedException {
         this.c.spinningIntake.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.c.spinningIntake.setPower(-0.2);
-        SystemClock.sleep(200);
+        this.c.spinningIntake.setPower(-0.28);
+        SystemClock.sleep(225);
         this.c.spinningIntake.setPower(0);
     }
 

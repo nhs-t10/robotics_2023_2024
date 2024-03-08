@@ -1,7 +1,9 @@
 package centerstage;
 
 import android.os.SystemClock;
+import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class RobotCapabilities {
     public static final int LIFT_FULLY_EXTENDED_ENCODER_POS = 1500;
@@ -55,16 +57,16 @@ public class RobotCapabilities {
 //    }
 
     public void gripPixels() {
-        System.out.println("grip");
         this.c.containerPixelHolder.setPosition(-1);
     }
 
     public void releasePixelGrip() {
-        System.out.println("release");
         this.c.containerPixelHolder.setPosition(1);
     }
 
     public void runIntake(double speed) {
+        this.c.roller.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.c.spinningIntake.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.c.roller.setPower(Math.abs(speed));
         this.c.spinningIntake.setPower(Math.abs(speed));
     }
@@ -89,11 +91,11 @@ public class RobotCapabilities {
 
     public void launchAirplane() {
         new Thread(() -> {
-            this.c.airplaneLauncher.setPosition(0.5);
-            SystemClock.sleep(1000);
             this.c.airplaneLauncher.setPosition(-1);
             SystemClock.sleep(1000);
-            this.c.airplaneLauncher.setPosition(0.5);
+            this.c.airplaneLauncher.setPosition(1);
+            SystemClock.sleep(1000);
+            this.c.airplaneLauncher.setPosition(-1);
         }).start();
     }
 

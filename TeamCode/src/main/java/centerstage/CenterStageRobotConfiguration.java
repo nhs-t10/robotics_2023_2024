@@ -11,10 +11,7 @@ import com.pocolifo.robobase.reconstructor.Pose;
 import com.pocolifo.robobase.utils.RobotConfiguration;
 import com.pocolifo.robobase.vision.Webcam;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 
 public class CenterStageRobotConfiguration extends RobotConfiguration {
     @Hardware(name = "Webcam")
@@ -41,7 +38,7 @@ public class CenterStageRobotConfiguration extends RobotConfiguration {
     public NovelMotor roller;
 
     // Servos
-//    @Hardware(name = "AirplaneLauncher")
+    @Hardware(name = "AirplaneLauncher")
     public Servo airplaneLauncher;
 
      /*****************\
