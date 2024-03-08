@@ -1,5 +1,6 @@
-package centerstage.auto;
+package centerstage.auto.prod;
 
+import android.os.SystemClock;
 import androidx.core.math.MathUtils;
 import centerstage.*;
 import centerstage.vision.SpotDetectionPipeline;
@@ -10,14 +11,12 @@ import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
 import com.pocolifo.robobase.reconstructor.Pose;
 import com.pocolifo.robobase.utils.Alliance;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-import org.firstinspires.ftc.robotcore.external.Predicate;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@Autonomous
-@Config
-public class AutoRedAprilTagSide extends AutonomousOpMode {
+public class ProductionAutonomous extends AutonomousOpMode {
     private CenterStageRobotConfiguration c;
     private RobotCapabilities capabilities;
     private NovelMecanumDriver driver;
@@ -25,12 +24,20 @@ public class AutoRedAprilTagSide extends AutonomousOpMode {
     private NovelOdometry o;
     private Telemetry.Item tX, tY, tR;
     private Telemetry.Item tHD;
-    private Alliance alliance = Alliance.BLUE;
-    private StartSide startSide = StartSide.BACKDROP_SIDE;
+    private final Alliance alliance;
+    private final StartSide startSide;
+
+    public ProductionAutonomous(Alliance alliance, StartSide startSide) {
+        this.alliance = alliance;
+        this.startSide = startSide;
+    }
 
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
+        this.c.spinningIntake.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.c.spinningIntake.setPower(0);
+
         this.capabilities = new RobotCapabilities(this.c);
         this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
         this.o = this.c.createOdometry();
@@ -71,7 +78,11 @@ public class AutoRedAprilTagSide extends AutonomousOpMode {
         this.o.resetRelativePose(new Pose(0, 0, this.alliance == Alliance.RED ? -90 : 90, AngleUnit.DEGREES));
 
         if (startSide == StartSide.APRIL_TAG_SIDE) {
-            driveVertical(94, 4 * timeMultiplier);
+            if (alliance == Alliance.BLUE) {
+                driveVertical(85, 4 * timeMultiplier);
+            } else {
+                driveVertical(90, 4 * timeMultiplier);
+            }
         } else {
             driveVertical(40, 2 * timeMultiplier);
         }
@@ -99,45 +110,64 @@ public class AutoRedAprilTagSide extends AutonomousOpMode {
     public void placePixel(SpikePosition position) throws InterruptedException {
         switch (position) {
             case LEFT:
-                driveVertical(12 + 12 + 1.5, 1 * timeMultiplier);
+                driveVertical(12 + 12 + 5, 1 * timeMultiplier);
                 rotate(-90);
                 sleep(100);
-                driveVertical(-5, 0.5 * timeMultiplier);
+                driveVertical(-2, 0.5 * timeMultiplier);
                 dropAutoPixel();
-                driveVertical(5, 0.5 * timeMultiplier);
+                driveVertical(2, 0.5 * timeMultiplier);
+                sleep(100);
+
+                if (alliance == Alliance.RED) {
+                    driveHorizontal(12 + 5 + 8, 1 * timeMultiplier);
+                } else {
+                    driveHorizontal(12 + 10, 1 * timeMultiplier);
+                }
+
+                sleep(100);
                 rotate(this.alliance == Alliance.RED ? -90 : 90);
                 sleep(100);
-                driveHorizontal((12 + 5 + 8) * (this.alliance == Alliance.RED ? 1 : -1), 1 * timeMultiplier);
-                sleep(100);
+
+
                 break;
 
             case CENTER:
-                driveVertical(12 * 4, 2 * timeMultiplier);
+                driveVertical(45, 2 * timeMultiplier);
                 dropAutoPixel();
-                driveVertical(4, 0.25 * timeMultiplier);
+                driveVertical(7, 0.25 * timeMultiplier);
                 sleep(100);
                 rotate(this.alliance == Alliance.RED ? -90 : 90);
                 sleep(100);
                 break;
 
             case RIGHT:
-                driveVertical(12 + 12 + 1.5, 1 * timeMultiplier);
+                driveVertical(12 + 12 + 5, 1 * timeMultiplier);
                 rotate(90);
                 sleep(100);
                 driveVertical(-5, 0.5 * timeMultiplier);
                 dropAutoPixel();
                 driveVertical(5, 0.5 * timeMultiplier);
-                rotate(this.alliance == Alliance.RED ? -90 : 90);
                 sleep(100);
-                driveHorizontal((12 + 5 + 8) * (this.alliance == Alliance.RED ? 1 : -1), 1 * timeMultiplier);
+
+                if (startSide == StartSide.BACKDROP_SIDE) {
+
+                    driveHorizontal(-8, 1 * timeMultiplier);
+                } else {
+
+                    driveHorizontal(-16, 1 * timeMultiplier);
+                }
+
+                sleep(100);
+                rotate(this.alliance == Alliance.RED ? -90 : 90);
                 sleep(100);
                 break;
         }
     }
 
     public void dropAutoPixel() throws InterruptedException {
-        this.c.spinningIntake.setPower(-0.3);
-        sleep(250);
+        this.c.spinningIntake.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.c.spinningIntake.setPower(-0.2);
+        SystemClock.sleep(200);
         this.c.spinningIntake.setPower(0);
     }
 
