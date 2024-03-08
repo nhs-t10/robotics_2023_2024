@@ -38,7 +38,7 @@ public class LocalizationEngine {
 
         if (aprilTagEstimate != null && !Double.isNaN(aprilTagEstimate.getX()) && !Double.isNaN(aprilTagEstimate.getY())) {
             this.mostRecentAprilTagEstimate = aprilTagEstimate;
-            this.odometry.resetRelativePose();
+            this.odometry.resetRelativePose(new Pose(0, 0, 0, AngleUnit.RADIANS));
         }
 
         Pose odometryEstimate = this.odometry.getRelativePose();

@@ -5,6 +5,8 @@ import com.pocolifo.robobase.novel.OdometryCoefficientSet;
 import com.pocolifo.robobase.reconstructor.Pose;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import javax.crypto.spec.DESedeKeySpec;
+
 public class NovelOdometry {
     private final OdometryCoefficientSet coefficients;
     public final NovelEncoder rightEncoder;
@@ -21,7 +23,7 @@ public class NovelOdometry {
         this.leftEncoder = leftEncoder;
         this.perpendicularEncoder = perpendicularEncoder;
 
-        this.resetRelativePose();
+        this.resetRelativePose(new Pose(0, 0, 0, AngleUnit.RADIANS));
     }
 
     // Adapted from https://gm0.org/en/latest/docs/software/concepts/odometry.html
@@ -61,8 +63,8 @@ public class NovelOdometry {
         return this.relativePose;
     }
 
-    public void resetRelativePose() {
-        this.relativePose = new Pose(0, 0, 0, AngleUnit.RADIANS);
+    public void resetRelativePose(Pose pose) {
+        this.relativePose = pose;
         this.leftWheelPos = this.leftEncoder.getCurrentInches();
         this.rightWheelPos = this.rightEncoder.getCurrentInches();
         this.perpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();

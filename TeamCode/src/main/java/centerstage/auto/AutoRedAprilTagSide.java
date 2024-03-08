@@ -1,14 +1,18 @@
 package centerstage.auto;
 
-import centerstage.CenterStageRobotConfiguration;
-import centerstage.Constants;
-import centerstage.RobotCapabilities;
-import centerstage.SpikePosition;
+import androidx.core.math.MathUtils;
+import centerstage.*;
+import centerstage.vision.SpotDetectionPipeline;
 import com.acmerobotics.dashboard.config.Config;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
+import com.pocolifo.robobase.novel.hardware.NovelOdometry;
 import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
+import com.pocolifo.robobase.reconstructor.Pose;
+import com.pocolifo.robobase.utils.Alliance;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.firstinspires.ftc.robotcore.external.Predicate;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Autonomous
@@ -18,18 +22,45 @@ public class AutoRedAprilTagSide extends AutonomousOpMode {
     private RobotCapabilities capabilities;
     private NovelMecanumDriver driver;
     private static double timeMultiplier = 2;
+    private NovelOdometry o;
+    private Telemetry.Item tX, tY, tR;
+    private Telemetry.Item tHD;
+    private Alliance alliance = Alliance.BLUE;
+    private StartSide startSide = StartSide.BACKDROP_SIDE;
 
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
         this.capabilities = new RobotCapabilities(this.c);
         this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        this.o = this.c.createOdometry();
+        Thread thread = Thread.currentThread();
+
+
+        this.tX = this.telemetry.addData("x ", 0);
+        this.tY = this.telemetry.addData("y ", 0);
+        this.tR = this.telemetry.addData("r ", 0);
+        this.tHD = this.telemetry.addData("hd ", 0);
+
+        new Thread(() -> {
+            while (thread.isAlive()) {
+                this.o.update();
+                this.tX.setValue(this.o.getRelativePose().getX());
+                this.tY.setValue(this.o.getRelativePose().getY());
+                this.tR.setValue(this.o.getRelativePose().getHeading(AngleUnit.DEGREES));
+                this.telemetry.update();
+            }
+        }).start();
+
+        this.c.webcam.open(new SpotDetectionPipeline(alliance));
     }
 
     @Override
     public void run() {
         try {
-            runPath(SpikePosition.LEFT);
+            SpotDetectionPipeline pipeline = (SpotDetectionPipeline) this.c.webcam.getPipeline();
+
+            runPath(pipeline.getResult());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -37,121 +68,132 @@ public class AutoRedAprilTagSide extends AutonomousOpMode {
 
     public void runPath(SpikePosition spikePosition) throws InterruptedException {
         placePixel(spikePosition);
-        driveVertical(84, 4 * timeMultiplier);
-        lockRotation(-90, 0.5);
-        sleep(100);
+        this.o.resetRelativePose(new Pose(0, 0, this.alliance == Alliance.RED ? -90 : 90, AngleUnit.DEGREES));
 
-        switch (spikePosition) {
-            case LEFT:
-                driveHorizontal(-18 - 8 * 1, 2.5 * timeMultiplier);
-                break;
-
-            case CENTER:
-                driveHorizontal(-18 - 8 * 2, 3 * timeMultiplier);
-                break;
-
-            case RIGHT:
-                driveHorizontal(-18 - 8 * 3, 4 * timeMultiplier);
-                break;
+        if (startSide == StartSide.APRIL_TAG_SIDE) {
+            driveVertical(94, 4 * timeMultiplier);
+        } else {
+            driveVertical(40, 2 * timeMultiplier);
         }
-
         sleep(100);
-        lockRotation(-90, 0.25);
+//        rotate(-90);
+//        sleep(100);
+//
+//        switch (spikePosition) {
+//            case LEFT:
+//                driveHorizontal(-12 - 4, 2.5 * timeMultiplier);
+//                break;
+//
+//            case CENTER:
+//                driveHorizontal(-24 - 4, 3 * timeMultiplier);
+//                break;
+//
+//            case RIGHT:
+//                driveHorizontal(-36 - 4, 4 * timeMultiplier);
+//                break;
+//        }
+//
+//        sleep(100);
     }
 
     public void placePixel(SpikePosition position) throws InterruptedException {
         switch (position) {
             case LEFT:
-                driveVertical((12 + 12 + 9), 1 * timeMultiplier);
-                rotateIMU(-90, 2);
+                driveVertical(12 + 12 + 1.5, 1 * timeMultiplier);
+                rotate(-90);
+                sleep(100);
                 driveVertical(-5, 0.5 * timeMultiplier);
                 dropAutoPixel();
                 driveVertical(5, 0.5 * timeMultiplier);
-                driveHorizontal(12 + 5 + 5, 1 * timeMultiplier);
-                lockRotation(-90, 0.5);
+                rotate(this.alliance == Alliance.RED ? -90 : 90);
+                sleep(100);
+                driveHorizontal((12 + 5 + 8) * (this.alliance == Alliance.RED ? 1 : -1), 1 * timeMultiplier);
                 sleep(100);
                 break;
 
             case CENTER:
-                driveVertical((12 + 12 + 9 + 10), 2 * timeMultiplier);
+                driveVertical(12 * 4, 2 * timeMultiplier);
                 dropAutoPixel();
-                driveVertical(12, 0.75 * timeMultiplier);
-                lockRotation(-90, 0.5);
+                driveVertical(4, 0.25 * timeMultiplier);
+                sleep(100);
+                rotate(this.alliance == Alliance.RED ? -90 : 90);
+                sleep(100);
                 break;
 
             case RIGHT:
-                driveVertical((12 + 12 + 9), 1 * timeMultiplier);
-                rotateIMU(90, 2);
+                driveVertical(12 + 12 + 1.5, 1 * timeMultiplier);
+                rotate(90);
+                sleep(100);
                 driveVertical(-5, 0.5 * timeMultiplier);
                 dropAutoPixel();
                 driveVertical(5, 0.5 * timeMultiplier);
-                lockRotation(-90, 0.5);
-                driveHorizontal(12 + 5 + 5, 1 * timeMultiplier);
+                rotate(this.alliance == Alliance.RED ? -90 : 90);
+                sleep(100);
+                driveHorizontal((12 + 5 + 8) * (this.alliance == Alliance.RED ? 1 : -1), 1 * timeMultiplier);
                 sleep(100);
                 break;
         }
     }
 
     public void dropAutoPixel() throws InterruptedException {
-        this.capabilities.runRoller(-1);
-        sleep(1000);
-        this.capabilities.runRoller(0);
+        this.c.spinningIntake.setPower(-0.3);
+        sleep(250);
+        this.c.spinningIntake.setPower(0);
     }
 
     public void driveVertical(double inches, double time) throws InterruptedException {
-        this.driver.setVelocity(new Vector3D(inches / time, 0, 0));
+        double error = 0;
+        Pose start = this.o.getRelativePose();
 
-        sleep((long) (time * 1000L));
+        do {
+            this.driver.setVelocity(new Vector3D(inches / time, 0, 0));
+            Pose currentPose = this.o.getRelativePose();
+            double heading = currentPose.getHeading(AngleUnit.RADIANS);
+
+            Pose deltaPose = currentPose.subtract(start);
+            double forwardDistance = Math.cos(heading) * deltaPose.getY() + Math.sin(heading) * deltaPose.getX();
+
+            error = forwardDistance - inches;
+        } while (Math.abs(error) > 0.5);
 
         this.driver.stop();
     }
 
     public void driveHorizontal(double inches, double time) throws InterruptedException {
-        this.driver.setVelocity(new Vector3D(0, inches / time, 0));
+        double error = 0;
+        Pose start = this.o.getRelativePose();
 
-        sleep((long) (time * 1000L));
+        do {
+            this.driver.setVelocity(new Vector3D(0, inches / time, 0));
+            Pose currentPose = this.o.getRelativePose();
+            double heading = currentPose.getHeading(AngleUnit.RADIANS);
 
-        this.driver.stop();
-    }
+            Pose deltaPose = currentPose.subtract(start);
+            double horizontalDistance = Math.sin(heading) * -deltaPose.getY() + Math.cos(heading) * -deltaPose.getX();
 
-    public void rotateIMU(double degrees, double precision) throws InterruptedException {
-        double initialRotation = c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        double relativeRotation;
-        double error = degrees;
-
-        while (Math.abs(error) > precision && !Thread.currentThread().isInterrupted()) {
-            relativeRotation = c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - initialRotation;
-            error = relativeRotation - degrees;
-
-            this.driver.setVelocity(new Vector3D(0, 0, error));
-        }
+            error = horizontalDistance - inches;
+            this.tHD.setValue(Math.sin(heading) * -deltaPose.getY() + " " + Math.cos(heading) * -deltaPose.getX() + " " + error);
+        } while (Math.abs(error) > 0.5);
 
         this.driver.stop();
 
-
-//        double initialRotation =
-//        int direction = 1;
-//        if(degrees < 0) {
-//            direction = -1;
-//        }
-//        c.imu.resetYaw();
-//        //If you've done circular motion, this is velocity = omega times radius. Otherwise, look up circular motion velocity to angular velocity
-//        this.driver.setVelocity(new Vector3D(0,0, 20*direction));
+//        this.driver.setVelocity(new Vector3D(0, inches / time, 0));
 //
-//        while(Math.abs(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) < 90)
-//        {
-//            System.out.println(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-//        }
-//        System.out.println("correcting..." + (c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - 90));
-//        this.driver.setVelocity(new Vector3D(0,0,-4*direction));
-//        while(Math.abs(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) > degrees*direction)
-//        {
-//            System.out.println(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-//        }
+//        sleep((long) (time * 1000L));
+//
 //        this.driver.stop();
     }
 
-    public void lockRotation(double degrees, double precision) throws InterruptedException {
-        rotateIMU(-(c.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - degrees), precision);
+    public void rotate(double degrees) {
+        double error = this.o.getRelativePose().getHeading(AngleUnit.DEGREES) - degrees;
+        error = MathUtils.clamp(error, -20, 20);
+
+        while (Math.abs(error) > 1) {
+            this.driver.setVelocity(new Vector3D(0, 0, error));
+            error = this.o.getRelativePose().getHeading(AngleUnit.DEGREES) - degrees;
+            error = MathUtils.clamp(error, -20, 20);
+        }
+
+        this.driver.stop();
     }
 }
