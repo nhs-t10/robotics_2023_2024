@@ -4,20 +4,17 @@ import android.os.SystemClock;
 import androidx.core.math.MathUtils;
 import centerstage.*;
 import centerstage.vision.SpotDetectionPipeline;
-import com.acmerobotics.dashboard.config.Config;
 import com.pocolifo.robobase.bootstrap.AutonomousOpMode;
 import com.pocolifo.robobase.novel.hardware.NovelOdometry;
 import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;
-import com.pocolifo.robobase.reconstructor.Point;
 import com.pocolifo.robobase.reconstructor.Pose;
 import com.pocolifo.robobase.utils.Alliance;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class ProductionAutonomous extends AutonomousOpMode {
+public class ProductionAutonomousQ7 extends AutonomousOpMode {
     private CenterStageRobotConfiguration c;
     private RobotCapabilities capabilities;
     private NovelMecanumDriver driver;
@@ -29,7 +26,7 @@ public class ProductionAutonomous extends AutonomousOpMode {
     private final StartSide startSide;
     private Thread mainThread;
 
-    public ProductionAutonomous(Alliance alliance, StartSide startSide) {
+    public ProductionAutonomousQ7(Alliance alliance, StartSide startSide) {
         this.alliance = alliance;
         this.startSide = startSide;
     }
@@ -173,40 +170,44 @@ public class ProductionAutonomous extends AutonomousOpMode {
 //        }
     }
 
-    public void     placePixel(SpikePosition position) throws InterruptedException {
+    public void placePixel(SpikePosition position) throws InterruptedException {
         switch (position) {
             case LEFT:
                 driveVertical(12 + 12 + 5, 1 * timeMultiplier);
                 rotate(-90);
                 sleep(100);
-                driveVertical(-5.25, 0.5 * timeMultiplier);
+                driveVertical(-6, 0.5 * timeMultiplier);
                 dropAutoPixel();
-                driveVertical(5.25, 0.5 * timeMultiplier);
+                driveVertical(6, 0.5 * timeMultiplier);
                 sleep(100);
-                driveHorizontal(20, 1 * timeMultiplier);
+                driveHorizontal(-28, 1 * timeMultiplier);
                 sleep(100);
                 rotate(this.alliance == Alliance.RED ? -90 : 90);
                 sleep(100);
                 break;
 
             case CENTER:
-                driveVertical(45, 2 * timeMultiplier);
+                driveVertical(12 + 12 + 5, 1 * timeMultiplier);
+
+                rotate(180);
+
+//                driveVertical(-20, 2 * timeMultiplier);
                 dropAutoPixel();
-                driveVertical(7, 0.25 * timeMultiplier);
+                driveVertical(12+12+5, 2 * timeMultiplier);
                 sleep(100);
                 rotate(this.alliance == Alliance.RED ? -90 : 90);
                 sleep(100);
                 break;
 
             case RIGHT:
-                driveVertical(12 + 12 + 3, 1 * timeMultiplier);
+                driveVertical(12 + 12 + 5, 1 * timeMultiplier);
                 rotate(90);
                 sleep(100);
-                driveVertical(-3, 0.25 * timeMultiplier);
+                driveVertical(-6, 0.5 * timeMultiplier);
                 dropAutoPixel();
-                driveVertical(4, 0.25 * timeMultiplier);
+                driveVertical(6, 0.5 * timeMultiplier);
                 sleep(100);
-                driveHorizontal(-22, 1 * timeMultiplier);
+                driveHorizontal(28, 1 * timeMultiplier);
                 sleep(100);
                 rotate(this.alliance == Alliance.RED ? -90 : 90);
                 sleep(100);
@@ -217,7 +218,7 @@ public class ProductionAutonomous extends AutonomousOpMode {
     public void dropAutoPixel() throws InterruptedException {
         this.c.spinningIntake.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.c.spinningIntake.setPower(-0.25);
-        SystemClock.sleep(75);
+        SystemClock.sleep(150);
         this.c.spinningIntake.setPower(0);
     }
 

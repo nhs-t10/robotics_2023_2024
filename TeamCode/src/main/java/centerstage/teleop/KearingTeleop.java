@@ -25,7 +25,7 @@ public class KearingTeleop extends TeleOpOpMode {
     private GController gamepadController;
     private CenterStageRobotConfiguration c;
     private int position = 1;
-    private static final double[] positions = {1, 0, -1};
+    private static final double[] positions = {0, 0.53};
     private Telemetry.Item gripState;
     private Telemetry.Item micromovementState;
 
@@ -53,7 +53,7 @@ public class KearingTeleop extends TeleOpOpMode {
                     }
                 }).ok()
                 .dpadUp.whileDown(() -> this.capabilities.runIntake(0.96)).onRelease(this.capabilities::stopIntakeOuttake).ok()
-                .dpadDown.whileDown(() -> this.capabilities.runOuttake(0.25)).onRelease(this.capabilities::stopIntakeOuttake).ok();
+                .dpadDown.whileDown(() -> this.capabilities.runOuttake(0.5d)).onRelease(this.capabilities::stopIntakeOuttake).ok();
     }
 
     @SuppressLint("DefaultLocale")
