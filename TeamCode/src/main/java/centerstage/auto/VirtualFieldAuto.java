@@ -38,7 +38,10 @@ public class VirtualFieldAuto extends AutonomousOpMode {
         this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
         this.spikeDetector = new DynamicYCrCbDetection(alliance);
         this.c.webcam.open(spikeDetector);
+
+        c.imu.resetYaw();
         NovelOdometry odometry = c.createOdometry();
+
         try {
             this.virtualField = new VirtualField(driver, odometry, c, getStartPosition());
         } catch (IOException e) {
@@ -47,34 +50,41 @@ public class VirtualFieldAuto extends AutonomousOpMode {
         this.updater = new OdometryUpdater(odometry);
     }
 
+    @Override
+    public void stop() {
+        super.stop();
+
+        updater.stopRunning();
+    }
+
     private Vector3D getStartPosition() {
         if (alliance == Alliance.RED && startSide == StartSide.APRIL_TAG_SIDE) {
-            return new Vector3D(133, 33, 0);
+            return new Vector3D(133, 33, -90);
         }
         if (alliance == Alliance.RED && startSide == StartSide.BACKDROP_SIDE) {
-            return new Vector3D(133, 86, 0);
+            return new Vector3D(133, 86, -90);
         }
         if (alliance == Alliance.BLUE && startSide == StartSide.APRIL_TAG_SIDE) {
-            return new Vector3D(9, 33, 0);
+            return new Vector3D(9, 33, 90);
         }
         if (alliance == Alliance.BLUE && startSide == StartSide.BACKDROP_SIDE) {
-            return new Vector3D(9, 86, 0);
+            return new Vector3D(9, 86, 90);
         }
         return Vector3D.ZERO;
     }
 
     private Vector3D getSpikePlacementPosition() {
         if (alliance == Alliance.RED && startSide == StartSide.APRIL_TAG_SIDE) {
-            return new Vector3D(101, 36, 0);
+            return new Vector3D(101, 36, -90);
         }
         if (alliance == Alliance.RED && startSide == StartSide.BACKDROP_SIDE) {
-            return new Vector3D(101, 83, 0);
+            return new Vector3D(101, 83, -90);
         }
         if (alliance == Alliance.BLUE && startSide == StartSide.APRIL_TAG_SIDE) {
-            return new Vector3D(42, 36, 0);
+            return new Vector3D(42, 36, 90);
         }
         if (alliance == Alliance.BLUE && startSide == StartSide.BACKDROP_SIDE) {
-            return new Vector3D(42, 83, 0);
+            return new Vector3D(42, 83, 90);
         }
         return Vector3D.ZERO;
     }
@@ -95,22 +105,6 @@ public class VirtualFieldAuto extends AutonomousOpMode {
         return Vector3D.ZERO;
     }
 
-    private Vector3D getAfterSpikePosition() {
-        if (alliance == Alliance.RED && startSide == StartSide.APRIL_TAG_SIDE) {
-            return new Vector3D(90, 35, 0);
-        }
-        if (alliance == Alliance.RED && startSide == StartSide.BACKDROP_SIDE) {
-            return new Vector3D(90, 84, 0);
-        }
-        if (alliance == Alliance.BLUE && startSide == StartSide.APRIL_TAG_SIDE) {
-            return new Vector3D(52, 35, 0);
-        }
-        if (alliance == Alliance.BLUE && startSide == StartSide.BACKDROP_SIDE) {
-            return new Vector3D(52, 84, 0);
-        }
-        return Vector3D.ZERO;
-    }
-
     @Override
     public void run() {
         updater.start();
@@ -118,9 +112,9 @@ public class VirtualFieldAuto extends AutonomousOpMode {
         try {
             SpikePosition spikePosition = getSpikePosition();
 
-            virtualField.pathTo(getSpikePlacementPosition());
+//            virtualField.pathTo(getSpikePlacementPosition());
 
-            placeSpike(spikePosition);
+//            placeSpike(spikePosition);
 
             virtualField.pathTo(getParkPosition());
         } catch (InterruptedException e) {
@@ -131,17 +125,15 @@ public class VirtualFieldAuto extends AutonomousOpMode {
     private void placeSpike(SpikePosition position) throws InterruptedException {
         switch (position) {
             case LEFT:
-                virtualField.rotateTo(90);
-                dropSpike();
                 virtualField.rotateTo(0);
+                dropSpike();
                 break;
             case RIGHT:
-                virtualField.rotateTo(-90);
+                virtualField.rotateTo(180);
                 dropSpike();
-                virtualField.rotateTo(0);
                 break;
             case CENTER:
-                virtualField.pathTo(getAfterSpikePosition());
+                virtualField.getDistanceMovement().transform((alliance == Alliance.RED ? -10 : 10), 0);
                 dropSpike();
         }
     }

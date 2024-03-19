@@ -12,6 +12,12 @@ import java.util.List;
 
 import centerstage.CenterStageRobotConfiguration;
 
+/**
+ * A system for using NovelOdometry, DistanceMovement, and PathFinder to pathfind to any safe point on the field
+ * @see NovelOdometry
+ * @see DistanceMovement
+ * @see PathFinder
+ */
 public class VirtualField {
     private final DistanceMovement movement;
     private final NovelOdometry odometry;
@@ -24,36 +30,53 @@ public class VirtualField {
         positionOffset = startPosition;
     }
 
+    /**
+     * A getter for the current absolute field position
+     * @return the current absolute field position with rotation as Z in degrees
+     */
     public Vector3D getFieldPosition() {
         odometry.update();
         return Pose.toVector3D(odometry.getRelativePose()).add(positionOffset);
     }
 
     private void resetRotation() {
-        double rotationNeeded = 0 - getFieldPosition().getZ();
-        movement.rotate(rotationNeeded);
+        rotateTo(0);
     }
 
+    /**
+     * Rotate to face a given absolute rotation
+     * @param degrees the rotation to face in degrees
+     */
     public void rotateTo(double degrees) {
         double degreesNeeded = degrees - getFieldPosition().getZ();
         movement.rotate(degreesNeeded);
     }
 
+    /**
+     * Path to a given absolute position including rotation as Z as degrees
+     * @param position the target position
+     */
     public void pathTo(Vector3D position) {
-        resetRotation();
+        rotateTo(position.getZ());
 
-        List<Vector3D> path = pathFinder.findPath(getFieldPosition(), new Vector3D(position.getX(), position.getY(), 0));
+        List<Vector3D> path = pathFinder.findPath(round(getFieldPosition()), round(new Vector3D(position.getX(), position.getY(), 0)))  ;
 
         for (Vector3D point : path) {
             Vector3D diff = point.subtract(getFieldPosition());
-
+            System.out.println(diff);
             movement.transform(diff.getX(), diff.getY());
         }
-
-        rotateTo(position.getZ());
     }
 
-    public DistanceMovement getMovement() {
+    /**
+     * A getter for the object's instance of DistanceMovement
+     * @return the object's instance of DistanceMovement
+     */
+    public DistanceMovement getDistanceMovement() {
         return movement;
+    }
+
+    private Vector3D round(Vector3D vector) {
+        return new Vector3D(Math.round(vector.getX()), Math.round(vector.getY()), Math.round(vector.getZ()));
     }
 }

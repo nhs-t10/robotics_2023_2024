@@ -43,7 +43,7 @@ public class PathfinderTest extends AutonomousOpMode {
         this.c.br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.c.bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        virtualField.pathTo(10, 0);
+        virtualField.pathTo(new Vector3D(10, 0, 0));
 
         driver.stop();
     }

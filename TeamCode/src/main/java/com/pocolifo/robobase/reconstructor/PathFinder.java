@@ -33,6 +33,8 @@ public class PathFinder {
     }
 
     public List<Vector3D> findPath(Vector3D start, Vector3D goal) {
+        start = new Vector3D(start.getX(), start.getY(), 0);
+        goal = new Vector3D(goal.getX(), goal.getY(), 0);
         if (!points.contains(start)) {
             throw new IllegalArgumentException("Start point " + start + " is not an open point.");
         }

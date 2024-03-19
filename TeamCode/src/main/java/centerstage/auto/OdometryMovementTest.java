@@ -21,8 +21,9 @@ public class OdometryMovementTest extends AutonomousOpMode {
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
-        this.driver = this.c.createDriver(Constants.Coefficients.SOFTWARE_ROBOT_COEFFICIENTS);
+        this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
         this.odometry = this.c.createOdometry();
+        c.imu.resetYaw();
         this.movement = new DistanceMovement(driver, odometry, c.imu);
         this.updater = new OdometryUpdater(odometry);
     }
@@ -36,9 +37,7 @@ public class OdometryMovementTest extends AutonomousOpMode {
         this.c.br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.c.bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        movement.rotate(180);
-
-        System.out.println("ive moveddd");
+        movement.transform(-29, 3);
 
         this.driver.stop();
     }
