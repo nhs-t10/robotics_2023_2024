@@ -2,7 +2,6 @@ package centerstage.teleop;
 
 import centerstage.CenterStageRobotConfiguration;
 import centerstage.Constants;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.pocolifo.robobase.bootstrap.TeleOpOpMode;
 import com.pocolifo.robobase.novel.hardware.NovelOdometry;
 import com.pocolifo.robobase.novel.motion.NovelMecanumDriver;

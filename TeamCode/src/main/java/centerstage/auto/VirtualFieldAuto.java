@@ -26,8 +26,8 @@ public class VirtualFieldAuto extends AutonomousOpMode {
     private RobotCapabilities capabilities;
     private NovelMecanumDriver driver;
     private DynamicYCrCbDetection spikeDetector;
-    private Alliance alliance = Alliance.RED;
-    private StartSide startSide = StartSide.APRIL_TAG_SIDE;
+    private final Alliance alliance = Alliance.RED;
+    private final StartSide startSide = StartSide.APRIL_TAG_SIDE;
     private VirtualField virtualField;
     private OdometryUpdater updater;
 
@@ -112,9 +112,9 @@ public class VirtualFieldAuto extends AutonomousOpMode {
         try {
             SpikePosition spikePosition = getSpikePosition();
 
-//            virtualField.pathTo(getSpikePlacementPosition());
+            virtualField.pathTo(getSpikePlacementPosition());
 
-//            placeSpike(spikePosition);
+            placeSpike(spikePosition);
 
             virtualField.pathTo(getParkPosition());
         } catch (InterruptedException e) {
