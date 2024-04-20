@@ -17,14 +17,13 @@ public class OdometryMovementTest extends AutonomousOpMode {
     private NovelMecanumDriver driver;
     private DistanceMovement movement;
     private OdometryUpdater updater;
-
     @Override
     public void initialize() {
         this.c = new CenterStageRobotConfiguration(this.hardwareMap);
         this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
         this.odometry = this.c.createOdometry();
         c.imu.resetYaw();
-        this.movement = new DistanceMovement(driver, odometry, c.imu);
+        this.movement = new DistanceMovement(driver, odometry, c.imu, 0, 5);
         this.updater = new OdometryUpdater(odometry);
     }
 
@@ -37,8 +36,6 @@ public class OdometryMovementTest extends AutonomousOpMode {
         this.c.br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.c.bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        movement.transform(-29, 3);
-
-        this.driver.stop();
+        movement.move(0, 15, 180);
     }
 }

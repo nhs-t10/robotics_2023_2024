@@ -8,13 +8,16 @@ import java.util.*;
 
 public class PathFinder {
     private final Set<Vector3D> points;
+    private final Set<Vector3D> turnPoints;
 
-    public PathFinder(String filePath) throws IOException {
+    public PathFinder(String pointsFilePath, String turnPointsFilePath) throws IOException {
         this.points = new HashSet<>();
-        readVector3DsFromFile(filePath);
+        this.turnPoints = new HashSet<>();
+        readVector3DsFromFile(pointsFilePath, points);
+        readVector3DsFromFile(turnPointsFilePath, turnPoints);
     }
 
-    private void readVector3DsFromFile(String filePath) throws IOException {
+    private void readVector3DsFromFile(String filePath, Set pointsSet) throws IOException {
         URL resource = this.getClass().getResource("/" + filePath);
         if (resource == null) {
             throw new FileNotFoundException("File " + filePath + " is not found in /" + filePath);
@@ -27,12 +30,12 @@ public class PathFinder {
                 String[] parts = line.split(" ");
                 int x = Integer.parseInt(parts[0]);
                 int y = Integer.parseInt(parts[1]);
-                points.add(new Vector3D(x, y, 0));
+                pointsSet.add(new Vector3D(x, y, 0));
             }
         }
     }
 
-    public List<Vector3D> findPath(Vector3D start, Vector3D goal) {
+    public Path findPath(Vector3D start, Vector3D goal) {
         start = new Vector3D(start.getX(), start.getY(), 0);
         goal = new Vector3D(goal.getX(), goal.getY(), 0);
         if (!points.contains(start)) {
@@ -54,7 +57,8 @@ public class PathFinder {
             Vector3D current = openSet.poll().point;
             if (current.equals(goal)) {
                 List<Vector3D> totalPath = reconstructPath(cameFrom, current);
-                return filterPath(totalPath);
+                Vector3D turnPoint = getSafeTurnPoint(totalPath);
+                return new Path(filterPath(totalPath), turnPoint);
             }
 
             for (Vector3D neighbor : getNeighbors(current)) {
@@ -70,7 +74,16 @@ public class PathFinder {
             }
         }
 
-        return Collections.emptyList(); // Path not found
+        return new Path(Collections.emptyList(), null); // Path not found
+    }
+
+    private Vector3D getSafeTurnPoint(List<Vector3D> path) {
+        for (Vector3D point : path) {
+            if (turnPoints.contains(point)) {
+                return point;
+            }
+        }
+        return null;
     }
 
     private List<Vector3D> filterPath(List<Vector3D> path) {
@@ -169,6 +182,24 @@ public class PathFinder {
         @Override
         public int hashCode() {
             return Objects.hash(point);
+        }
+    }
+
+    public class Path {
+        private List<Vector3D> points;
+        private Vector3D turnPoint;
+
+        public Path(List<Vector3D> points, Vector3D turnPoint) {
+            this.points = points;
+            this.turnPoint = turnPoint;
+        }
+
+        public List<Vector3D> getPoints() {
+            return points;
+        }
+
+        public Vector3D getTurnPoint() {
+            return turnPoint;
         }
     }
 }

@@ -19,13 +19,14 @@ import centerstage.CenterStageRobotConfiguration;
  * @see PathFinder
  */
 public class VirtualField {
+    private static final double SPEED = 10;
     private final DistanceMovement movement;
     private final NovelOdometry odometry;
     private final Vector3D positionOffset;
-    private final PathFinder pathFinder = new PathFinder("points.txt");
+    private final PathFinder pathFinder = new PathFinder("points.txt", "turnPoints.txt");
 
     public VirtualField(NovelMecanumDriver driver, NovelOdometry odometry, CenterStageRobotConfiguration c, Vector3D startPosition) throws IOException {
-        this.movement = new DistanceMovement(driver, odometry, c.imu);
+        this.movement = new DistanceMovement(driver, odometry, c.imu, startPosition.getZ(), SPEED);
         this.odometry = odometry;
         positionOffset = startPosition;
     }
@@ -35,8 +36,7 @@ public class VirtualField {
      * @return the current absolute field position with rotation as Z in degrees
      */
     public Vector3D getFieldPosition() {
-        odometry.update();
-        return Pose.toVector3D(odometry.getRelativePose()).add(positionOffset);
+        return Pose.toVector3D(odometry.getAbsolutePose(Math.toRadians(positionOffset.getZ()))).add(positionOffset);
     }
 
     private void resetRotation() {
@@ -57,13 +57,15 @@ public class VirtualField {
      * @param position the target position
      */
     public void pathTo(Vector3D position) {
-        rotateTo(position.getZ());
+//        resetRotation();
 
-        List<Vector3D> path = pathFinder.findPath(round(getFieldPosition()), round(new Vector3D(position.getX(), position.getY(), 0)))  ;
+        PathFinder.Path path = pathFinder.findPath(round(getFieldPosition()), round(new Vector3D(position.getX(), position.getY(), 0)))  ;
 
-        for (Vector3D point : path) {
+        for (Vector3D point : path.getPoints()) {
+            if (point.equals(path.getTurnPoint())) {
+                rotateTo(position.getZ());
+            }
             Vector3D diff = point.subtract(getFieldPosition());
-            System.out.println(diff);
             movement.transform(diff.getX(), diff.getY());
         }
     }

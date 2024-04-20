@@ -12,6 +12,6 @@ public class OdometryCoefficientSet {
     }
 
     public OdometryCoefficientSet() {
-        this(1, 1, 1);
+        this(-1, -1, -1);
     }
 }

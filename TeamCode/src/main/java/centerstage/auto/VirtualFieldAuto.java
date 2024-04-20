@@ -91,16 +91,16 @@ public class VirtualFieldAuto extends AutonomousOpMode {
 
     private Vector3D getParkPosition() {
         if (alliance == Alliance.RED && startSide == StartSide.APRIL_TAG_SIDE) {
-            return new Vector3D(133, 134, 0);
+            return new Vector3D(131, 132, 0);
         }
         if (alliance == Alliance.RED && startSide == StartSide.BACKDROP_SIDE) {
-            return new Vector3D(133, 134, 0);
+            return new Vector3D(131, 132, 0);
         }
         if (alliance == Alliance.BLUE && startSide == StartSide.APRIL_TAG_SIDE) {
-            return new Vector3D(9, 134, 0);
+            return new Vector3D(12, 132, 0);
         }
         if (alliance == Alliance.BLUE && startSide == StartSide.BACKDROP_SIDE) {
-            return new Vector3D(9, 134, 0);
+            return new Vector3D(12, 132, 0);
         }
         return Vector3D.ZERO;
     }
@@ -109,17 +109,17 @@ public class VirtualFieldAuto extends AutonomousOpMode {
     public void run() {
         updater.start();
 
-        try {
-            SpikePosition spikePosition = getSpikePosition();
+//        try {
+//            SpikePosition spikePosition = getSpikePosition();
 
-            virtualField.pathTo(getSpikePlacementPosition());
+//            virtualField.pathTo(getSpikePlacementPosition());
 
-            placeSpike(spikePosition);
+//            placeSpike(spikePosition);
 
             virtualField.pathTo(getParkPosition());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     private void placeSpike(SpikePosition position) throws InterruptedException {
